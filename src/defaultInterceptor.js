@@ -3,7 +3,7 @@ import { stringify } from "query-string";
  * 注册request拦截器
  * get 和 post 参数简化
  * post:
- * @param {json|form} requestType 数据的传输方式, 对应Content-Type, 覆盖常见的两种场景, 自动带上header和格式化数据.
+ * @param {json|form} requestType 数据的传输方式, 对应Content-Type, 覆盖常见的两种场景, 自动带上header和格式化数据.
  * @param {object} data 数据字段
  *
  * get:
@@ -36,7 +36,7 @@ export default (url, originOptions = {}) => {
           options.body = stringify(data);
         }
       } else {
-        // 其他requestType 自定义header
+        // 其他 requestType 自定义header
         options.headers = {
           Accept: "application/json",
           ...options.headers

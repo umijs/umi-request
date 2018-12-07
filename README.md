@@ -5,13 +5,13 @@
 
 ## 支持的功能
 - url 参数自动序列化
-- post 数据提交方式简化
+- post 数据提交方式简化
 - response 返回处理简化
 - api 超时支持
 - api 请求缓存支持
 - 支持处理 gbk
 - 类 axios 的 request 和 response 拦截器(interceptors)支持
-- 统一的错误处理方式
+- 统一的错误处理方式
 
 ## TODO 欢迎pr
 - [ ] rpc支持
@@ -27,28 +27,28 @@
 ## request options 参数
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 | --- | --- | --- | --- | --- |
-| method | 请求方式 | string | get , post , put ... | get |
+| method | 请求方式 | string | get , post , put ... | get |
 | params | url请求参数 | object | -- | -- |
 | charset | 字符集 | string | utf8 , gbk | utf8 |
-| requestType | post请求时数据类型 | string | json , form | json |
-| data | 提交的数据 | any | -- | -- |
-| responseType | 如何解析返回的数据 | string | json , text , blob , formData ... | json , text |
-| getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
-| timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
-| useCache | 是否使用缓存 | boolean | -- | false |
-| ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
-| prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
-| errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
-| headers | fetch 原有参数 | object | -- | {} | 
+| requestType | post请求时数据类型 | string | json , form | json |
+| data | 提交的数据 | any | -- | -- |
+| responseType | 如何解析返回的数据 | string | json , text , blob , formData ... | json , text |
+| getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
+| timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
+| useCache | 是否使用缓存 | boolean | -- | false |
+| ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
+| prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
+| errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
+| headers | fetch 原有参数 | object | -- | {} | 
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
 ## extend options 初始化默认参数, 支持以上所有
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
-| maxCache | 最大缓存数 | number | 不限 |
-| prefix | 默认url前缀 | string | -- |
-| errorHandler | 默认异常处理 | function(error) | -- |
+| maxCache | 最大缓存数 | number | 不限 |
+| prefix | 默认url前缀 | string | -- |
+| errorHandler | 默认异常处理 | function(error) | -- |
 | headers | 默认headers | object | {} |
 | params | 默认带上的query参数 | object | {} |
 | ... |
@@ -94,7 +94,7 @@ request('/api/v1/some/api', { method:'post', data: {foo: 'bar'} });
 // requestType: 'form', header会自动带上 application/x-www-form-urlencoded
 request('/api/v1/some/api', { method:'post', requestType: 'form', data: {foo: 'bar'} });
 
-// reponseType: 'blob', 如何处理返回的数据, 默认情况下 text 和 json 都不用加. 如blob 或 formData 之类需要加
+// reponseType: 'blob', 如何处理返回的数据, 默认情况下 text 和 json 都不用加. 如blob 或 formData 之类需要加
 request('/api/v1/some/api', { reponseType: 'blob' });
 
 // 提交其他数据, 如文本, 上传文件等, requestType不填, 手动添加对应header.
@@ -135,11 +135,11 @@ request.interceptors.response.use((response, options) => {
 ```javascript
 import request, { extend } from 'umi-request';
 /**
- * 这里介绍四种处理方式
+ * 这里介绍四种处理方式
  */
 /**
- * 1. 统一处理
- * 常用于错误码较规范的项目中, 集中处理错误.
+ * 1. 统一处理
+ * 常用于错误码较规范的项目中, 集中处理错误.
  */
 
 const codeMap = {
@@ -153,7 +153,7 @@ const errorHandler = (error) => {
   message.error(codeMap[data.errorCode]);
 
   throw error;   // 如果throw. 错误将继续抛出. 
-  // return {some: 'data'}; 如果return, 将值作为返回. 不写则相当于return undefined, 在处理结果时判断response是否有值即可.
+  // return {some: 'data'}; 如果return, 将值作为返回. 不写则相当于return undefined, 在处理结果时判断response是否有值即可.
 }
 
 const extendRequest = extend({
@@ -167,8 +167,8 @@ if (response) {
 }
 
 /**
-* 2. 单独特殊处理
-* 如果配置了统一处理, 但某个api需要特殊处理. 则在请求时, 将errorHandler作为参数传入.
+* 2. 单独特殊处理
+* 如果配置了统一处理, 但某个api需要特殊处理. 则在请求时, 将errorHandler作为参数传入.
 */
 const response = await extendRequest('/some/api', {
   method: 'get',
