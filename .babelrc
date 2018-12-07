@@ -1,0 +1,15 @@
+{
+  "plugins": ["@babel/plugin-transform-runtime"],
+  "presets": [
+    ["@babel/env", {
+      "targets": {
+        "browsers": ["last 2 versions", "IE 10"]
+      }
+    }]
+  ],
+  "env": {
+    "test": {
+      "presets": [["@babel/env"]]
+    }
+  }
+}

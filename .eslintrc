@@ -1,0 +1,13 @@
+{
+  "extends": ["airbnb-base", "prettier"],
+  "rules": {
+    "import/prefer-default-export": 0,
+    "no-param-reassign": 0,
+    "max-len": 0,
+    "no-else-return": 0,
+    "no-underscore-dangle": 0
+  },
+  "env": {
+    "browser": true
+  }
+}
