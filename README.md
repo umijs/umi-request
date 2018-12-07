@@ -34,14 +34,14 @@
 | data | 提交的数据 | any | -- | -- |
 | responseType | 如何解析返回的数据 | string | json , text , blob , formData ... | json , text |
 | getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
-| timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
+| timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
 | useCache | 是否使用缓存 | boolean | -- | false |
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
 | headers | fetch 原有参数 | object | -- | {} | 
 
-fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
+fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
 ## extend options 初始化默认参数, 支持以上所有
 | 参数 | 说明 | 类型 | 默认值 |
