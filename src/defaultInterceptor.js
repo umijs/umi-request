@@ -46,18 +46,10 @@ export default (url, originOptions = {}) => {
     }
   }
 
-  // make sure SOFA response with UTF8: https://lark.alipay.com/zhizheng.ck/me_and_world/rfaldm
-  if (url.indexOf("_output_charset") === -1) {
-    const str = url.indexOf("?") !== -1 ? "&" : "?";
-    url = `${url}${str}_output_charset=utf-8`;
-  }
-  if (url.indexOf("_input_charset") === -1) {
-    url = `${url}&_input_charset=utf-8`;
-  }
-
   // 支持类似axios 参数自动拼装, 其他method也可用, 不冲突.
   if (options.params && Object.keys(options.params).length > 0) {
-    url = `${url}&${stringify(options.params)}`;
+    const str = url.indexOf("?") !== -1 ? "&" : "?";
+    url = `${url}${str}${stringify(options.params)}`;
   }
 
   return {
