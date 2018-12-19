@@ -1,8 +1,9 @@
 {
   "name": "umi-request",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "网络请求库，基于 fetch封装, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.",
   "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:umijs/umi-request.git"
@@ -16,7 +17,9 @@
     "test:cover": "cross-env NODE_ENV=test jest --coverage",
     "lint": "eslint src",
     "ci": "npm run lint && npm run test:cover",
-    "prepublish": "rm -rf ./dist && npm run lint && npm run test && npm run build",
+    "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build",
+    "pub": "",
+    "pub": "",
     "precommit": "lint-staged"
   },
   "author": {
@@ -45,11 +48,12 @@
     "jest": "^23.5.0",
     "lint-staged": "^8.1.0",
     "prettier": "^1.15.3",
-    "rollup": "^0.65.1",
+    "rollup": "^0.68.0",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.1.6",
     "rollup-plugin-eslint": "^5.0.0",
     "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-terser": "^3.0.0",
     "rollup-plugin-uglify": "^5.0.0",
     "typescript": "^3.0.3"
   },
