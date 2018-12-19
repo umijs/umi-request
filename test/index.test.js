@@ -281,6 +281,27 @@ describe("test fetch:", () => {
     }
   }, 6000);
 
+  it("test prefix and suffix", async () => {
+    server.get("/prefix/api/hello", (req, res) => {
+      writeData({ success: true }, res);
+    });
+
+    server.get("/api/hello.json", (req, res) => {
+      writeData({ success: true }, res);
+    });
+
+    let response = await request("/hello", {
+      prefix: `${server.url}/prefix/api`
+    });
+    expect(response.success).toBe(true);
+
+    response = await request(prefix("/api/hello"), {
+      suffix: ".json",
+      params: { hello: "world" }
+    });
+    expect(response.success).toBe(true);
+  });
+
   afterAll(() => {
     server.close();
   });

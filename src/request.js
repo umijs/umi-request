@@ -19,10 +19,6 @@ const request = (initOptions = {}) => {
       // call rpc
       return new WrappedRpc(input, options, mapCache);
     } else {
-      // 前缀
-      if (options.prefix) {
-        input = `${options.prefix}${input}`;
-      }
       return new WrappedFetch(input, options, mapCache);
     }
   };

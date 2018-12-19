@@ -38,6 +38,7 @@
 | useCache | 是否使用缓存 | boolean | -- | false |
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
+| suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
 | headers | fetch 原有参数 | object | -- | {} | 
 
@@ -62,6 +63,7 @@ import request, { extend } from 'umi-request';
 const extendedRequest = extend({
   maxCache: 10, // 最大缓存个数, 超出后会自动清掉按时间最开始的一个.
   prefix: '/api/v1', // prefix
+  suffix: '.json', // suffix
   errorHandler: (error) => {
     // 集中处理错误
   },
