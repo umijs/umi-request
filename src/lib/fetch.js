@@ -1,4 +1,3 @@
-// see: http://gitlab.alipay-inc.com/bigfish/bigfish/issues/87
 import "whatwg-fetch";
 import defaultInterceptor from "../defaultInterceptor";
 
@@ -6,7 +5,7 @@ const requestInterceptors = [];
 export const responseInterceptors = [];
 
 function fetch(url, options = {}) {
-  if (typeof url !== "string") throw new Error("Bigfish: url MUST be a string");
+  if (typeof url !== "string") throw new Error("url MUST be a string");
 
   // 执行 request 的拦截器
   requestInterceptors.concat([defaultInterceptor]).forEach(handler => {
