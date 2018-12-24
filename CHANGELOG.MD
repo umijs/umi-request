@@ -1,3 +1,6 @@
+## 1.0.1
+* support url suffix
+
 ## 1.0.0
 
-* 第一版
+* first version

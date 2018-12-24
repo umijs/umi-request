@@ -6,8 +6,21 @@ export default class WrappedFetch {
     this.cache = cache;
     this.url = url;
     this.options = options;
+    this._addfix();
 
     return this._doFetch();
+  }
+
+  _addfix() {
+    const { prefix, suffix } = this.options;
+    // 前缀
+    if (prefix) {
+      this.url = `${prefix}${this.url}`;
+    }
+    // 后缀
+    if (suffix) {
+      this.url = `${this.url}${suffix}`;
+    }
   }
 
   _doFetch() {

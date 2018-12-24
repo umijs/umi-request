@@ -12,6 +12,7 @@ export type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData'
  * @param {boolean} getResponse 是否获取response源
  * @param {function} errorHandler 错误处理
  * @param {string} prefix 前缀
+ * @param {string} suffix 后缀
  * @param {string} charset 字符集, 默认utf8
  */
 export interface RequestOptionsInit extends RequestInit {
@@ -25,6 +26,7 @@ export interface RequestOptionsInit extends RequestInit {
   timeout?: number;
   errorHandler?: (error: Error) => void;
   prefix?: string;
+  suffix?: string;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
