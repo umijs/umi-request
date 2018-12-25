@@ -24,7 +24,7 @@ const request = (initOptions = {}) => {
   };
 
   // 增加语法糖如: request.get request.post
-  const methods = ["get", "post", "delete", "put", "rpc"];
+  const methods = ["get", "post", "delete", "put", "rpc", "patch"];
   methods.forEach(method => {
     instance[method] = (input, options) =>
       instance(input, { ...options, method });

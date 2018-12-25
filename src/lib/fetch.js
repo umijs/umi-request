@@ -14,6 +14,10 @@ function fetch(url, options = {}) {
     url = ret.url || url;
     options = ret.options || options;
   });
+
+  // 将 method 改为大写
+  options.method = options.method.toUpperCase();
+
   // 请求数据
   let response = window.fetch(url, options);
   // 执行 response 的拦截器
