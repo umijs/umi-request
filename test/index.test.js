@@ -403,7 +403,7 @@ describe("test fetch lib:", () => {
     try {
       request({ hello: 1 });
     } catch (error) {
-      expect(error.message).toBe("Bigfish: url MUST be a string");
+      expect(error.message).toBe("url MUST be a string");
     }
   });
 
