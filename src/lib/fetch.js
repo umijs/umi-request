@@ -15,7 +15,7 @@ function fetch(url, options = {}) {
   });
 
   // 将 method 改为大写
-  options.method = options.method.toUpperCase();
+  options.method = options.method ? options.method.toUpperCase() : "GET";
 
   // 请求数据
   let response = window.fetch(url, options);
