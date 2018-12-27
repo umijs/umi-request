@@ -17,6 +17,7 @@
     "test:cover": "cross-env NODE_ENV=test jest --coverage",
     "lint": "eslint src",
     "ci": "npm run lint && npm run test:cover",
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build",
     "pub": "npm publish",
     "pub-beta": "npm publish --tag beta",
