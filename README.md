@@ -1,5 +1,14 @@
-## umi-request
+# umi-request
+
 网络请求库，基于 fetch 封装, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
+
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+
+[npm-image]: https://img.shields.io/npm/v/umi-request.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/umi-request
+[travis-image]: https://img.shields.io/travis/umijs/umi-request.svg?style=flat-square
+[travis-url]: https://travis-ci.org/umijs/umi-request.svg?branch=master
 
 --------------------
 
