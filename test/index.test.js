@@ -309,11 +309,11 @@ describe("test fetch:", () => {
 
     let response = await request(prefix("/api/array/json"), {
       method: "post",
-      data: ["hello", { world: "one" }]
+      data: ["hello", { world: "two" }]
     });
 
     expect(response.data[0]).toBe("hello");
-    expect(response.data[1].world).toBe("one");
+    expect(response.data[1].world).toBe("two");
   });
 
   afterAll(() => {
