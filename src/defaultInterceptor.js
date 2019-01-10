@@ -19,7 +19,8 @@ export default (url, originOptions = {}) => {
     const { requestType = "json", data } = options;
     // 数据使用类axios的新字段data, 避免引用后影响旧代码, 如将body stringify多次
     if (data) {
-      if (Object.prototype.toString.call(data) === "[object Object]") {
+      const dataType = Object.prototype.toString.call(data);
+      if (dataType === "[object Object]" || dataType === "[object Array]") {
         if (requestType === "json") {
           options.headers = {
             Accept: "application/json",

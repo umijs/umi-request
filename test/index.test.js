@@ -302,6 +302,20 @@ describe("test fetch:", () => {
     expect(response.success).toBe(true);
   });
 
+  it("test array json", async () => {
+    server.post("/api/array/json", (req, res) => {
+      writeData({ data: req.body }, res);
+    });
+
+    let response = await request(prefix("/api/array/json"), {
+      method: "post",
+      data: ["hello", { world: "two" }]
+    });
+
+    expect(response.data[0]).toBe("hello");
+    expect(response.data[1].world).toBe("two");
+  });
+
   afterAll(() => {
     server.close();
   });
