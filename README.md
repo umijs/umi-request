@@ -210,6 +210,16 @@ request.interceptors.response.use((response) => {
   return response;
 });
 
+/**
+*5. 对于状态码实际是 200 的错误
+*/
+request.interceptors.response.use(async (response) => {
+  const data = await response.clone().json();
+  if(data && data.NOT_LOGIN) {
+    location.href = '登录url';
+  }
+  return response;
+})
 ```
 
 ## 开发和调试
