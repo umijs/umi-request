@@ -1,6 +1,6 @@
 # umi-request
 
-网络请求库，基于 fetch 封装, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
+网络请求库，基于 fetch 封装, 兼具 fetch 与 axios 的优点, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -22,6 +22,26 @@
 - 支持处理 gbk
 - 类 axios 的 request 和 response 拦截器(interceptors)支持
 - 统一的错误处理方式
+
+## 与 fetch, axios 异同
+
+| 特性       | umi-request    | fetch          | axios          |
+| ---------- | -------------- | -------------- | -------------- |
+| 实现       | 浏览器原生支持 | 浏览器原生支持 | XMLHttpRequest |
+| 大小       | 9k             | 4k (polyfill)  | 14k            |
+| Query 简化 | ✅              | ❎              | ✅              |
+| Post 简化  | ✅              | ❎              | ❎              |
+| 超时       | ✅              | ❎              | ✅              |
+| 缓存       | ✅              | ❎              | ❎              |
+| 错误检查   | ✅              | ❎              | ❎              |
+| 错误处理   | ✅              | ❎              | ✅              |
+| 拦截器     | ✅              | ❎              | ✅              |
+| 前缀       | ✅              | ❎              | ❎              |
+| 后缀       | ✅              | ❎              | ❎              |
+| 处理 gbk   | ✅              | ❎              | ❎              |
+| 快速支持   | ✅              | ❓              | ❓              |
+
+更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2)
 
 ## TODO 欢迎pr
 
@@ -54,7 +74,7 @@
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
 | errorChecker | 异常检查, 用于检查状态码 200 的异常 | function(data) | -- |
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
-| headers | fetch 原有参数 | object | -- | {} | 
+| headers | fetch 原有参数 | object | -- | {} |
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
