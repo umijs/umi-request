@@ -43,15 +43,6 @@
 
 更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2)
 
-## TODO 欢迎pr
-
-- [ ] rpc支持
-- [x] 测试用例覆盖85%+
-- [x] 写文档
-- [x] CI集成
-- [x] 发布配置
-- [x] typescript
-
 ## 安装
 
 `npm install umi-request --save`
