@@ -1,6 +1,17 @@
 import fetch, { responseInterceptors } from "./lib/fetch";
 import { RequestError, ResponseError, readerGBK, safeJsonParse } from "./utils";
 
+export const ERROR_TYPE = {
+  /** 超时 */
+  TIME_OUT: "TIME_OUT",
+  /** 响应类型不支持 */
+  RESPONSE_TYPE_INVALID: "RESPONSE_TYPE_INVALID",
+  /** http 状态码错误 */
+  HTTP_ERROR: "HTTP_ERROR",
+  /** 状态 200 的业务错误 */
+  BIZ_ERROR: "BIZ_ERROR"
+};
+
 export default class WrappedFetch {
   constructor(url, options, cache) {
     this.cache = cache;
@@ -64,7 +75,13 @@ export default class WrappedFetch {
       return Promise.race([
         new Promise((_, reject) =>
           setTimeout(
-            () => reject(new RequestError(`timeout of ${timeout}ms exceeded`)),
+            () =>
+              reject(
+                new RequestError(
+                  `timeout of ${timeout}ms exceeded`,
+                  ERROR_TYPE.TIME_OUT
+                )
+              ),
             timeout
           )
         ),
@@ -130,12 +147,18 @@ export default class WrappedFetch {
               // 其他如blob, arrayBuffer, formData
               return response[responseType]();
             } catch (e) {
-              throw new ResponseError(copy, "responseType not support");
+              throw new ResponseError(
+                copy,
+                "responseType not support",
+                undefined,
+                ERROR_TYPE.RESPONSE_TYPE_INVALID
+              );
             }
           }
         })
         .then(data => {
           if (copy.status >= 200 && copy.status < 300) {
+            this._checkError(data, copy);
             // 提供源response, 以便自定义处理
             if (getResponse) {
               resolve({
@@ -146,11 +169,33 @@ export default class WrappedFetch {
               resolve(data);
             }
           } else {
-            throw new ResponseError(copy, "http error", data);
+            throw new ResponseError(
+              copy,
+              "http error",
+              data,
+              ERROR_TYPE.HTTP_ERROR
+            );
           }
         })
         .catch(this._handleError.bind(this, { reject, resolve }));
     });
+  }
+
+  /**
+   * 用于检查状态码为 200 的业务错误
+   * @param {*} data
+   * @param {*} response
+   */
+  _checkError(data, response) {
+    const { errorChecker } = this.options;
+    if (typeof errorChecker === "function" && errorChecker(data)) {
+      throw new ResponseError(
+        response,
+        "biz error",
+        data,
+        ERROR_TYPE.BIZ_ERROR
+      );
+    }
   }
 
   /**

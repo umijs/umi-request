@@ -13,6 +13,7 @@
 --------------------
 
 ## 支持的功能
+
 - url 参数自动序列化
 - post 数据提交方式简化
 - response 返回处理简化
@@ -23,6 +24,7 @@
 - 统一的错误处理方式
 
 ## TODO 欢迎pr
+
 - [ ] rpc支持
 - [x] 测试用例覆盖85%+
 - [x] 写文档
@@ -31,9 +33,11 @@
 - [x] typescript
 
 ## 安装
+
 `npm install umi-request --save`
 
 ## request options 参数
+
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 | --- | --- | --- | --- | --- |
 | method | 请求方式 | string | get , post , put ... | get |
@@ -48,12 +52,14 @@
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
+| errorChecker | 异常检查, 用于检查状态码 200 的异常 | function(data) | -- |
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
 | headers | fetch 原有参数 | object | -- | {} | 
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
 ## extend options 初始化默认参数, 支持以上所有
+
 | 参数 | 说明 | 类型 | 默认值 |
 | --- | --- | --- | --- |
 | maxCache | 最大缓存数 | number | 不限 |
@@ -63,8 +69,10 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 | params | 默认带上的query参数 | object | {} |
 | ... |
 
-
 ## 使用
+
+> request 可以进行一层简单封装后再使用, 可参考 [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
+
 ```javascript
 // request 是默认实例可直接使用, extend为可配置方法, 传入一系列默认参数, 返回一个新的request实例, 用法与request一致.
 import request, { extend } from 'umi-request';
@@ -143,8 +151,9 @@ request.interceptors.response.use((response, options) => {
 ```
 
 ## 错误处理
+
 ```javascript
-import request, { extend } from 'umi-request';
+import { extend } from 'umi-request';
 /**
  * 这里介绍四种处理方式
  */
@@ -167,18 +176,40 @@ const errorHandler = (error) => {
   // return {some: 'data'}; 如果return, 将值作为返回. 不写则相当于return undefined, 在处理结果时判断response是否有值即可.
 }
 
-const extendRequest = extend({
+const request = extend({
   prefix: server.url,
   errorHandler
 });
 
-const response = await extendRequest('/some/api'); // 将自动处理错误, 不用catch. 如果throw了需要catch.
+const response = await request('/some/api'); // 将自动处理错误, 不用catch. 如果throw了需要catch.
 if (response) {
   // do something
 }
 
 /**
-* 2. 单独特殊处理
+*2. 对于状态码是 200 的错误, 不需要用拦截器
+* 通过判断数据, 返回 true 会抛出 BIZ_ERROR, 进入 errorHandler
+*/
+const errorChecker = (data) => {
+  return data.success === false || data.code === 'some_code';
+}
+
+/**
+ * 统一处理错误
+ **/
+const errorHandler = (error) => {
+  const { data, respone, code } = error;
+  // do something
+}
+
+const request = extend({
+  prefix: server.url,
+  errorChecker,
+  errorHandler
+});
+
+/**
+* 3. 单独特殊处理
 * 如果配置了统一处理, 但某个api需要特殊处理. 则在请求时, 将errorHandler作为参数传入.
 */
 const response = await extendRequest('/some/api', {
@@ -189,7 +220,7 @@ const response = await extendRequest('/some/api', {
 });
 
 /**
- *3. 不配置 errorHandler, 将reponse直接当promise处理, 自己catch.
+ *4. 不配置 errorHandler, 将reponse直接当promise处理, 自己catch.
  */
 try {
   const response = await request('/some/api');
@@ -198,7 +229,7 @@ try {
 }
 
 /**
-*4. 基于response interceptors
+*5. 基于response interceptors
 */
 request.interceptors.response.use((response) => {
   const codeMaps = {
@@ -209,20 +240,10 @@ request.interceptors.response.use((response) => {
   message.error(codeMaps[response.status]);
   return response;
 });
-
-/**
-*5. 对于状态码实际是 200 的错误
-*/
-request.interceptors.response.use(async (response) => {
-  const data = await response.clone().json();
-  if(data && data.NOT_LOGIN) {
-    location.href = '登录url';
-  }
-  return response;
-})
 ```
 
 ## 开发和调试
+
 - npm install
 - npm run dev
 - npm link
@@ -230,5 +251,7 @@ request.interceptors.response.use(async (response) => {
 - 引入并使用
 
 ## 代码贡献者
+
 - @clock157
 - @yesmeck
+- @yutingzhao1991

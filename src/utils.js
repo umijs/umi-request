@@ -49,9 +49,10 @@ export class MapCache {
  * 请求异常
  */
 export class RequestError extends Error {
-  constructor(text) {
+  constructor(text, code = "NONE") {
     super(text);
     this.name = "RequestError";
+    this.code = code;
   }
 }
 
@@ -59,11 +60,12 @@ export class RequestError extends Error {
  * 响应异常
  */
 export class ResponseError extends Error {
-  constructor(response, text, data) {
+  constructor(response, text, data, code = "NONE") {
     super(text || response.statusText);
     this.name = "ResponseError";
     this.data = data;
     this.response = response;
+    this.code = code;
   }
 }
 

@@ -229,6 +229,37 @@ describe("test fetch:", () => {
     expect(response).toBe("我是乱码?");
   }, 6000);
 
+  it("test errorChecker", async () => {
+    server.get("/test/errorChecker", (req, res) => {
+      res.setHeader("access-control-allow-origin", "*");
+      res.status(200);
+      res.send({
+        success: false,
+        errorCode: "021",
+        errorMsg: "some thing wrong"
+      });
+    });
+
+    try {
+      let response = await request(prefix("/test/errorChecker"), {
+        errorChecker: data => !data.success
+      });
+    } catch (error) {
+      expect(error.code).toBe("BIZ_ERROR");
+    }
+
+    try {
+      let response = await request(prefix("/test/errorChecker"), {
+        errorChecker: data => !data.success,
+        errorHandler: error => {
+          throw error.data;
+        }
+      });
+    } catch (error) {
+      expect(error.errorMsg).toBe("some thing wrong");
+    }
+  });
+
   // 测试错误处理方法
   it("test errorHandler", async () => {
     server.get("/test/errorHandler", (req, res) => {
