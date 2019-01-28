@@ -1,6 +1,6 @@
 # umi-request
 
-网络请求库，基于 fetch 封装, 兼具 fetch 与 axios 的优点, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
+网络请求库，基于 fetch 封装, 兼具 fetch 与 axios 的特点, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -29,8 +29,8 @@
 | ---------- | -------------- | -------------- | -------------- |
 | 实现       | 浏览器原生支持 | 浏览器原生支持 | XMLHttpRequest |
 | 大小       | 9k             | 4k (polyfill)  | 14k            |
-| Query 简化 | ✅              | ❎              | ✅              |
-| Post 简化  | ✅              | ❎              | ❎              |
+| query 简化 | ✅              | ❎              | ✅              |
+| post 简化  | ✅              | ❎              | ❎              |
 | 超时       | ✅              | ❎              | ✅              |
 | 缓存       | ✅              | ❎              | ❎              |
 | 错误检查   | ✅              | ❎              | ❎              |
@@ -41,7 +41,7 @@
 | 处理 gbk   | ✅              | ❎              | ❎              |
 | 快速支持   | ✅              | ❓              | ❓              |
 
-更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2)
+更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi-request/issues)
 
 ## 安装
 
