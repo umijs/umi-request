@@ -95,6 +95,9 @@ request('/api/v1/some/api').then(res => {
   console.log(err);
 });
 
+// 参数拼接url上
+request('/api/v1/some/api?foo=bar');
+
 // url参数序列化
 request('/api/v1/some/api', { params: {foo: 'bar'} });
 
