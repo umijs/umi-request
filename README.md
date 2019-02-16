@@ -1,6 +1,8 @@
+English | [简体中文](./README_zh-CN.md)
+
 # umi-request
 
-网络请求库，基于 fetch 封装, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
+The network request library, based on fetch encapsulation, combines the features of fetch and axios to provide developers with a unified api call method, simplifying usage, and providing common functions such as caching, timeout, character encoding processing, and error handling.
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -12,223 +14,254 @@
 
 --------------------
 
-## 支持的功能
-- url 参数自动序列化
-- post 数据提交方式简化
-- response 返回处理简化
-- api 超时支持
-- api 请求缓存支持
-- 支持处理 gbk
-- 类 axios 的 request 和 response 拦截器(interceptors)支持
-- 统一的错误处理方式
+## Supported features
 
-## TODO 欢迎pr
-- [ ] rpc支持
-- [x] 测试用例覆盖85%+
-- [x] 写文档
-- [x] CI集成
-- [x] 发布配置
+- url parameter is automatically serialized
+- post data submission method is simplified
+- response return processing simplification
+- api timeout support
+- api request cache support
+- support for processing gbk
+- request and response interceptor support for class axios
+- unified error handling
+
+## umi-request vs fetch vs axios
+
+| Features | umi-request | fetch | axios |
+| :---------- | :-------------- | :-------------- | :-------------- |
+| implementation | Browser native support | Browser native support | XMLHttpRequest |
+| size | 9k | 4k (polyfill) | 14k |
+| query simplification | ✅ | ❎ | ✅ |
+| post simplification | ✅ | ❎ | ❎ |
+| timeout | ✅ | ❎ | ✅ |
+| cache | ✅ | ❎ | ❎ |
+| error Check | ✅ | ❎ | ❎ |
+| error Handling | ✅ | ❎ | ✅ |
+| interceptor | ✅ | ❎ | ✅ |
+| prefix | ✅ | ❎ | ❎ |
+| suffix | ✅ | ❎ | ❎ |
+| processing gbk | ✅ | ❎ | ❎ |
+| quick Support | ✅ | ❓ | ❓ |
+
+For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://Github.com/umijs/umi-request/issues)
+
+## TODO Welcome pr
+
+- [ ] rpc support
+- [x] Test case coverage 85%+
+- [x] write a document
+- [x] CI integration
+- [x] release configuration
 - [x] typescript
 
-## 安装
+## Installation
+
 `npm install umi-request --save`
 
-## request options 参数
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-| --- | --- | --- | --- | --- |
-| method | 请求方式 | string | get , post , put ... | get |
-| params | url请求参数 | object | -- | -- |
-| charset | 字符集 | string | utf8 , gbk | utf8 |
-| requestType | post请求时数据类型 | string | json , form | json |
-| data | 提交的数据 | any | -- | -- |
-| responseType | 如何解析返回的数据 | string | json , text , blob , formData ... | json , text |
-| getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
-| timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
-| useCache | 是否使用缓存 | boolean | -- | false |
-| ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
-| prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
-| suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
-| errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
-| headers | fetch 原有参数 | object | -- | {} | 
+## request options
 
-fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
+| Parameter | Description | Type | Optional Value | Default |
+| :--- | :--- | :--- | :--- | :--- |
+| method | request method | string | get , post , put ... | get |
+| params | url request parameters | object | -- | -- |
+| charset | character set | string | utf8 , gbk | utf8 |
+| requestType | post request data type | string | json , form | json |
+| data | Submitted data | any | -- | -- |
+| responseType | How to parse the returned data | string | json , text , blob , formData ... | json , text |
+| getResponse | Whether to get the source response, the result will wrap a layer | boolean | -- | fasle |
+| timeout | timeout, default millisecond, write with caution | number | -- | -- |
+| useCache | Whether to use caching | boolean | -- | false |
+| ttl | Cache duration, 0 is not expired | number | -- | 60000 |
+| prefix | prefix, generally used to override the uniform settings prefix | string | -- | -- |
+| suffix | suffix, such as some scenes api need to be unified .json | string | -- |
+| errorHandler | exception handling, or override unified exception handling | function(error) | -- |
+| headers | fetch original parameters | object | -- | {} |
 
-## extend options 初始化默认参数, 支持以上所有
-| 参数 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| maxCache | 最大缓存数 | number | 不限 |
-| prefix | 默认url前缀 | string | -- |
-| errorHandler | 默认异常处理 | function(error) | -- |
-| headers | 默认headers | object | {} |
-| params | 默认带上的query参数 | object | {} |
+The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
+
+## extend options Initialize default parameters, support all of the above
+
+| Parameter | Description | Type | Default |
+| :--- | :--- | :--- | :--- |
+| maxCache | Maximum number of caches | number | Any |
+| prefix | default url prefix | string | -- |
+| errorHandler | default exception handling | function(error) | -- |
+| headers | default headers | object | {} |
+| params | default with the query parameter | object | {} |
 | ... |
 
+## Use
 
-## 使用
+> request can be used in a simple package and can be used with reference to [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
+
 ```javascript
-// request 是默认实例可直接使用, extend为可配置方法, 传入一系列默认参数, 返回一个新的request实例, 用法与request一致.
-import request, { extend } from 'umi-request';
+// request is the default instance that can be used directly, extend is a configurable method, passing a series of default parameters, returning a new request instance, usage is consistent with the request.
+import { extend } from 'umi-request';
 
-const extendedRequest = extend({
-  maxCache: 10, // 最大缓存个数, 超出后会自动清掉按时间最开始的一个.
-  prefix: '/api/v1', // prefix
-  suffix: '.json', // suffix
-  errorHandler: (error) => {
-    // 集中处理错误
-  },
-  headers: {
-    some: 'header'  // 统一的headers
-  },
-  params: {
-    hello: 'world'   // 每个请求都要带上的query参数
-  }
+const request = extend({
+  maxCache: 10, // The maximum number of caches. When it is exceeded, it will automatically clear the first one according to the time.
+  prefix: '/api/v1', // prefix
+  suffix: '.json', // suffix
+  errorHandler: (error) => {
+    // Centralized processing error
+  },
+  headers: {
+    Some: 'header' // unified headers
+  },
+  params: {
+    Hello: 'world' // the query parameter to be included with each request
+  }
 });
-extendedRequest('/some/api');
+request('/some/api');
 
-// 支持语法糖 如: request.get request.post ...
+// Support syntax sugar such as: request.get request.post ...
 request.post('/api/v1/some/api', { data: {foo: 'bar'}});
 
-// 请求一个api, 没有method参数默认为get
+// request an api, no method parameter defaults to get
 request('/api/v1/some/api').then(res => {
-  console.log(res);
+  console.log(res);
 }).catch(err => {
-  console.log(err);
+  console.log(err);
 });
 
-// url参数序列化
+// url parameter serialization
 request('/api/v1/some/api', { params: {foo: 'bar'} });
 
-// post 数据提交简化
-// 当data为object时, 默认requestType: 'json'可不写, header会自动带上 application/json
+// post data submission simplification
+// When data is object, the default requestType: 'json' can not write, header will automatically bring application / json
 request('/api/v1/some/api', { method:'post', data: {foo: 'bar'} });
 
-// requestType: 'form', header会自动带上 application/x-www-form-urlencoded
+// requestType: 'form', header will automatically bring application/x-www-form-urlencoded
 request('/api/v1/some/api', { method:'post', requestType: 'form', data: {foo: 'bar'} });
 
-// reponseType: 'blob', 如何处理返回的数据, 默认情况下 text 和 json 都不用加. 如blob 或 formData 之类需要加
+// reponseType: 'blob', how to handle the returned data, by default text and json are not added. Such as blob or formData need to add
 request('/api/v1/some/api', { reponseType: 'blob' });
 
-// 提交其他数据, 如文本, 上传文件等, requestType不填, 手动添加对应header.
+// Submit other data, such as text, upload files, etc., requestType is not filled, manually add the corresponding header.
 request('/api/v1/some/api', { method:'post', data: 'some data', headers: { 'Content-Type': 'multipart/form-data'} });
 
-// 默认返回的就是数据体, 如果需要源response来扩展, 可用getResponse参数. 返回结果会多套一层
+// The default is to return the data body, if you need the source response to expand, you can use the getResponse parameter. The result will be a set of layers
 request('/api/v1/some/api', { getResponse: true }).then({data, response} => {
-  console.log(data, response);
+  console.log(data, response);
 });
 
-// 超时 单位毫秒, 但是超时后客户端虽然返回超时, 但api请求不会断开, 写操作慎用.
+// Timeout in milliseconds, but after the timeout, although the client returns a timeout, but the api request will not be disconnected, the write operation is used with caution.
 request('/api/v1/some/api', { timeout: 3000 });
 
-// 使用缓存, 只有get时有效. 单位毫秒, 不加ttl默认60s, ttl=0不过期. cache key为url+params组合
+// Use the cache, only valid when get. Units of milliseconds, do not add ttl default 60s, ttl = 0 does not expire. cache key for url + params combination
 request('/api/v1/some/api', { params: { hello: 'world' }, useCache: true, ttl: 10000 });
 
-// 当服务端返回的是gbk时可用这个参数, 避免得到乱码
+// This parameter can be used when the server returns gbk to avoid garbled characters.
 request('/api/v1/some/api', { charset: 'gbk' });
 
-// request拦截器, 改变url 或 options.
+// request interceptor, change url or options.
 request.interceptors.request.use((url, options) => {
-  return (
-    {
-      url: `${url}&interceptors=yes`,
-      options: { ...options, interceptors: true },
-    }
-  );
+  return (
+    {
+      url: `${url}&interceptors=yes`,
+      options: { ...options, interceptors: true },
+    }
+  );
 });
 
-// response拦截器, 处理response
+// response interceptor, handling response
 request.interceptors.response.use((response, options) => {
-  response.headers.append('interceptors', 'yes yo');
-  return response;
+  response.headers.append('interceptors', 'yes yo');
+  return response;
 });
 ```
 
-## 错误处理
+## Error handling
+
 ```javascript
 import request, { extend } from 'umi-request';
 /**
- * 这里介绍四种处理方式
- */
+ * Here are four ways to deal with
+ */
 /**
- * 1. 统一处理
- * 常用于错误码较规范的项目中, 集中处理错误.
- */
+ * 1. Unified processing
+ * Commonly used in projects where the error code is more standardized, and the error is handled centrally.
+ */
 
 const codeMap = {
-  '021': '发生错误啦',
-  '022': '发生大大大大错误啦',
-  ...
+  '021': 'An error has occurred',
+  '022': 'It’s a big mistake,'
+  ...
 };
 
 const errorHandler = (error) => {
-  const { response, data } = error;
-  message.error(codeMap[data.errorCode]);
+  const { response, data } = error;
+  message.error(codeMap[data.errorCode]);
 
-  throw error;   // 如果throw. 错误将继续抛出. 
-  // return {some: 'data'}; 如果return, 将值作为返回. 不写则相当于return undefined, 在处理结果时判断response是否有值即可.
+  throw error; // If throw. The error will continue to be thrown.
+  // return {some: 'data'}; If return, return the value as a return. If you don't write it is equivalent to return undefined, you can judge whether the response has a value when processing the result.
 }
 
 const extendRequest = extend({
-  prefix: server.url,
-  errorHandler
+  prefix: server.url,
+  errorHandler
 });
 
-const response = await extendRequest('/some/api'); // 将自动处理错误, 不用catch. 如果throw了需要catch.
+const response = await extendRequest('/some/api'); // will automatically handle the error, no catch. If throw needs to catch.
 if (response) {
-  // do something
+  // do something
 }
 
 /**
-* 2. 单独特殊处理
-* 如果配置了统一处理, 但某个api需要特殊处理. 则在请求时, 将errorHandler作为参数传入.
+* 2. Separate special treatment
+* If unified processing is configured, but an api needs special handling. When requested, the errorHandler is passed as a parameter.
 */
 const response = await extendRequest('/some/api', {
-  method: 'get',
-  errorHandler: (error) => {
-    // do something
-  }
+  method: 'get',
+  errorHandler: (error) => {
+    // do something
+  }
 });
 
 /**
- *3. 不配置 errorHandler, 将reponse直接当promise处理, 自己catch.
- */
+ * 3. not configure errorHandler, the response will be directly treated as promise, and it will be caught.
+ */
 try {
-  const response = await request('/some/api');
+  const response = await request('/some/api');
 } catch (error) {
-  // do something
+  // do something
 }
 
 /**
-*4. 基于response interceptors
+* 4. Based on response interceptors
 */
 request.interceptors.response.use((response) => {
-  const codeMaps = {
-    502: '网关错误。',
-    503: '服务不可用，服务器暂时过载或维护。',
-    504: '网关超时。',
-  };
-  message.error(codeMaps[response.status]);
-  return response;
+  const codeMaps = {
+    502: 'Gateway error. ',
+    503: 'The service is unavailable, the server is temporarily overloaded or maintained. ',
+    504: 'The gateway timed out. ',
+  };
+  message.error(codeMaps[response.status]);
+  return response;
 });
 
 /**
-*5. 对于状态码实际是 200 的错误
+* 5. For the status code is actually 200 errors
 */
 request.interceptors.response.use(async (response) => {
-  const data = await response.clone().json();
-  if(data && data.NOT_LOGIN) {
-    location.href = '登录url';
-  }
-  return response;
+  const data = await response.clone().json();
+  if(data && data.NOT_LOGIN) {
+    location.href = 'login url';
+  }
+  return response;
 })
 ```
 
-## 开发和调试
+## Development and debugging
+
 - npm install
 - npm run dev
 - npm link
-- 然后到你测试的项目中执行 npm link umi-request
-- 引入并使用
+- Then go to the project you are testing to execute npm link umi-request
+- Introduced and used
 
-## 代码贡献者
+## Code Contributors
+
 - @clock157
 - @yesmeck
+- @yutingzhao1991
