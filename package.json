@@ -15,13 +15,13 @@
     "test": "umi-test",
     "test:watch": "umi-test --watch",
     "test:cover": "umi-test --coverage",
-    "lint": "eslint src",
+    "lint": "umi-lint src",
     "ci": "npm run lint && npm run test:cover",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
     "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build",
     "pub": "npm publish",
     "pub-beta": "npm publish --tag beta",
-    "precommit": "lint-staged"
+    "precommit": "umi-lint --staged --prettier --fix"
   },
   "author": {
     "name": "puwei",
@@ -31,17 +31,14 @@
   "devDependencies": {
     "create-test-server": "2.3.1",
     "debug": "^4.1.0",
-    "eslint": "^5.5.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-import": "^2.14.0",
-    "husky": "^0.14.3",
     "iconv-lite": "^0.4.24",
     "jest": "^23.5.0",
-    "lint-staged": "^8.1.0",
-    "prettier": "^1.15.3",
     "typescript": "^3.0.3",
     "umi": "^2.5.0",
+    "umi-lint": "^1.0.0-alpha.1",
     "umi-plugin-library": "^1.1.6",
     "umi-test": "^1.4.0"
   },
@@ -54,14 +51,7 @@
     "package.json",
     "README.md",
     "CHANGELOG.md",
-    "src/index.d.ts"
+    "types/index.d.ts"
   ],
-  "types": "src/index.d.ts",
-  "lint-staged": {
-    "*.js": [
-      "prettier --write --singleQuote=true --trailingComma=all --printWidth=120",
-      "eslint --fix",
-      "git add"
-    ]
-  }
+  "types": "types/index.d.ts"
 }
