@@ -1,3 +1,5 @@
+import { ResponseError } from "./utils";
+
 export type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData';
 
 /**
@@ -24,7 +26,7 @@ export interface RequestOptionsInit extends RequestInit {
   useCache?: boolean;
   ttl?: number;
   timeout?: number;
-  errorHandler?: (error: Error) => void;
+  errorHandler?: (error: ResponseError) => void;
   prefix?: string;
   suffix?: string;
 }
