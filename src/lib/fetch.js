@@ -8,8 +8,8 @@ function fetch(url, options = {}) {
   if (typeof url !== "string") throw new Error("url MUST be a string");
 
   // 执行 request 的拦截器
-  requestInterceptors.concat([defaultInterceptor]).forEach(handler => {
-    const ret = handler(url, options);
+  requestInterceptors.concat([defaultInterceptor]).forEach(async handler => {
+    const ret = await handler(url, options);
     url = ret.url || url;
     options = ret.options || options;
   });
