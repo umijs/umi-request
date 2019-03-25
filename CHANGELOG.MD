@@ -1,3 +1,9 @@
+## 1.0.5
+* feat: #32 send data for patch
+
+## 1.0.4
+* fix: #25 error type
+
 ## 1.0.3
 * fix: #7 throw error when method is undefined
 

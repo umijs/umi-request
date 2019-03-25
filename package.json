@@ -1,6 +1,6 @@
 {
   "name": "umi-request",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "A request tool based on fetch.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
