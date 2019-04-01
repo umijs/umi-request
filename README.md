@@ -76,6 +76,7 @@ For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](htt
 | suffix | suffix, such as some scenes api need to be unified .json | string | -- |
 | errorHandler | exception handling, or override unified exception handling | function(error) | -- |
 | headers | fetch original parameters | object | -- | {} |
+| credentials | fetch request with cookies | string | -- | credentials: 'include' |
 
 The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
 

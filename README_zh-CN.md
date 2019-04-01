@@ -75,7 +75,8 @@
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
-| headers | fetch 原有参数 | object | -- | {} | 
+| headers | fetch 原有参数 | object | -- | {} |
+| credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'include' |
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
@@ -193,7 +194,7 @@ const errorHandler = (error) => {
   const { response, data } = error;
   message.error(codeMap[data.errorCode]);
 
-  throw error;   // 如果throw. 错误将继续抛出. 
+  throw error;   // 如果throw. 错误将继续抛出.
   // return {some: 'data'}; 如果return, 将值作为返回. 不写则相当于return undefined, 在处理结果时判断response是否有值即可.
 }
 
