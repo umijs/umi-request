@@ -1,7 +1,9 @@
-import { ResponseError } from "./utils";
-
 export type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData';
-
+export interface ResponseError<D = any> extends Error {
+  name: string;
+  data: D;
+  response: Response;
+}
 /**
  * 增加的参数
  * @param {string} requestType post类型, 用来简化写content-Type, 默认json
