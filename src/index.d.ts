@@ -61,6 +61,7 @@ export interface RequestMethod<R = false> {
   post: RequestMethod<R>;
   delete: RequestMethod<R>;
   put: RequestMethod<R>;
+  patch: RequestMethod<R>;
   rpc: RequestMethod<R>;
   interceptors: {
     request: {
