@@ -1,5 +1,5 @@
-import fetch, { responseInterceptors } from "./lib/fetch";
-import { RequestError, ResponseError, readerGBK, safeJsonParse } from "./utils";
+import fetch, { responseInterceptors } from './lib/fetch';
+import { RequestError, ResponseError, readerGBK, safeJsonParse } from './utils';
 
 export default class WrappedFetch {
   constructor(url, options, cache) {
@@ -24,11 +24,11 @@ export default class WrappedFetch {
   }
 
   _doFetch() {
-    const useCache = this.options.method === "get" && this.options.useCache;
+    const useCache = this.options.method === 'get' && this.options.useCache;
     if (useCache) {
       let response = this.cache.get({
         url: this.url,
-        params: this.options.params
+        params: this.options.params,
       });
       if (response) {
         response = response.clone();
@@ -63,12 +63,9 @@ export default class WrappedFetch {
     if (timeout > 0) {
       return Promise.race([
         new Promise((_, reject) =>
-          setTimeout(
-            () => reject(new RequestError(`timeout of ${timeout}ms exceeded`)),
-            timeout
-          )
+          setTimeout(() => reject(new RequestError(`timeout of ${timeout}ms exceeded`)), timeout)
         ),
-        instance
+        instance,
       ]);
     } else {
       return instance;
@@ -103,18 +100,14 @@ export default class WrappedFetch {
    * @param {boolean} useCache 返回类型, 默认json
    */
   _parseResponse(instance, useCache = false) {
-    const {
-      responseType = "json",
-      charset = "utf8",
-      getResponse = false
-    } = this.options;
+    const { responseType = 'json', charset = 'utf8', getResponse = false } = this.options;
     return new Promise((resolve, reject) => {
       let copy;
       instance
         .then(response => {
           copy = response.clone();
           copy.useCache = useCache;
-          if (charset === "gbk") {
+          if (charset === 'gbk') {
             try {
               return response
                 .blob()
@@ -123,14 +116,14 @@ export default class WrappedFetch {
             } catch (e) {
               throw new ResponseError(copy, e.message);
             }
-          } else if (responseType === "json" || responseType === "text") {
+          } else if (responseType === 'json' || responseType === 'text') {
             return response.text().then(safeJsonParse);
           } else {
             try {
               // 其他如blob, arrayBuffer, formData
               return response[responseType]();
             } catch (e) {
-              throw new ResponseError(copy, "responseType not support");
+              throw new ResponseError(copy, 'responseType not support');
             }
           }
         })
@@ -140,13 +133,13 @@ export default class WrappedFetch {
             if (getResponse) {
               resolve({
                 data,
-                response: copy
+                response: copy,
               });
             } else {
               resolve(data);
             }
           } else {
-            throw new ResponseError(copy, "http error", data);
+            throw new ResponseError(copy, 'http error', data);
           }
         })
         .catch(this._handleError.bind(this, { reject, resolve }));

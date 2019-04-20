@@ -2,6 +2,7 @@ import createTestServer from 'create-test-server';
 import iconv from 'iconv-lite';
 import request, { extend } from '../src/index';
 import { MapCache } from '../src/utils';
+
 const debug = require('debug')('afx-request:test');
 
 const writeData = (data, res) => {
@@ -109,7 +110,7 @@ describe('test fetch:', () => {
       writeData(req.query, res);
     });
 
-    let response = await request(prefix('/test/queryParams'), {
+    const response = await request(prefix('/test/queryParams'), {
       params: {
         hello: 'world3',
         wang: 'hou',
@@ -205,7 +206,7 @@ describe('test fetch:', () => {
     });
     // 测试访问一个不存在的网址
     try {
-      let response = await request(prefix('/test/exception'), {
+      const response = await request(prefix('/test/exception'), {
         params: {
           hello: 'world3',
           wang: 'hou',
@@ -225,7 +226,7 @@ describe('test fetch:', () => {
       writeData(iconv.encode('我是乱码?', 'gbk'), res);
     });
 
-    let response = await request(prefix('/test/charset'), { charset: 'gbk' });
+    const response = await request(prefix('/test/charset'), { charset: 'gbk' });
     expect(response).toBe('我是乱码?');
   }, 6000);
 
@@ -258,16 +259,14 @@ describe('test fetch:', () => {
     });
 
     try {
-      let response = await extendRequest.get('/test/errorHandler');
+      const response = await extendRequest.get('/test/errorHandler');
     } catch (error) {
       expect(error).toBe('发生错误啦');
     }
 
     try {
       let response = await extendRequest.get('/test/errorHandler', {
-        errorHandler: error => {
-          return '返回数据';
-        },
+        errorHandler: error => '返回数据',
       });
       expect(response).toBe('返回数据');
       response = await extendRequest.get('/test/errorHandler', {
@@ -307,7 +306,7 @@ describe('test fetch:', () => {
       writeData({ data: req.body }, res);
     });
 
-    //server.delete throw error: Cross origin http://localhost forbidden
+    // server.delete throw error: Cross origin http://localhost forbidden
     server.all('/api/array/json/delete', (req, res) => {
       writeData({ data: req.body }, res);
     });
@@ -395,13 +394,9 @@ describe('test fetch lib:', () => {
     });
 
     // 测试啥也不返回
-    request.interceptors.request.use(() => {
-      return {};
-    });
+    request.interceptors.request.use(() => ({}));
 
-    request.interceptors.response.use(res => {
-      return res;
-    });
+    request.interceptors.response.use(res => res);
 
     // request拦截器, 加个参数
     request.interceptors.request.use((url, options) => {
@@ -418,7 +413,7 @@ describe('test fetch lib:', () => {
       return res;
     });
 
-    let response = await request(prefix('/test/interceptors'), {
+    const response = await request(prefix('/test/interceptors'), {
       timeout: 1200,
       getResponse: true,
     });
@@ -447,7 +442,7 @@ describe('test fetch lib:', () => {
       return { url, options };
     });
 
-    let data = await request(prefix('/test/post/interceptors'), {
+    const data = await request(prefix('/test/post/interceptors'), {
       method: 'post',
       data: { bar: 'bar' },
     });
