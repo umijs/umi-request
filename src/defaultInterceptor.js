@@ -14,7 +14,7 @@ export default (url, originOptions = {}) => {
   // 默认get, 兼容method大小写
   let method = options.method || "get";
   method = method.toLowerCase();
-  if (method === "post" || method === "put") {
+  if (method === "post" || method === "put" || method === "patch" || method === 'delete') {
     // requestType 简写默认值为 json
     const { requestType = "json", data } = options;
     // 数据使用类axios的新字段data, 避免引用后影响旧代码, 如将body stringify多次

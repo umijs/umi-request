@@ -1,5 +1,9 @@
 export type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData';
-
+export interface ResponseError<D = any> extends Error {
+  name: string;
+  data: D;
+  response: Response;
+}
 /**
  * 增加的参数
  * @param {string} requestType post类型, 用来简化写content-Type, 默认json
@@ -24,7 +28,7 @@ export interface RequestOptionsInit extends RequestInit {
   useCache?: boolean;
   ttl?: number;
   timeout?: number;
-  errorHandler?: (error: Error) => void;
+  errorHandler?: (error: ResponseError) => void;
   prefix?: string;
   suffix?: string;
 }
@@ -60,6 +64,7 @@ export interface RequestMethod<R = false> {
   post: RequestMethod<R>;
   delete: RequestMethod<R>;
   put: RequestMethod<R>;
+  patch: RequestMethod<R>;
   rpc: RequestMethod<R>;
   interceptors: {
     request: {
