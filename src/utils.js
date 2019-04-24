@@ -51,7 +51,7 @@ export class MapCache {
 export class RequestError extends Error {
   constructor(text) {
     super(text);
-    this.name = "RequestError";
+    this.name = 'RequestError';
   }
 }
 
@@ -61,7 +61,7 @@ export class RequestError extends Error {
 export class ResponseError extends Error {
   constructor(response, text, data) {
     super(text || response.statusText);
-    this.name = "ResponseError";
+    this.name = 'ResponseError';
     this.data = data;
     this.response = response;
   }
@@ -78,7 +78,7 @@ export function readerGBK(file) {
       resolve(reader.result);
     };
     reader.onerror = reject;
-    reader.readAsText(file, "GBK"); // setup GBK decoding
+    reader.readAsText(file, 'GBK'); // setup GBK decoding
   });
 }
 

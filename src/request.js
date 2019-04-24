@@ -1,7 +1,7 @@
-import fetch from "./lib/fetch";
-import { MapCache } from "./utils";
-import WrappedFetch from "./wrapped-fetch";
-import WrappedRpc from "./wrapped-rpc";
+import fetch from './lib/fetch';
+import { MapCache } from './utils';
+import WrappedFetch from './wrapped-fetch';
+import WrappedRpc from './wrapped-rpc';
 
 /**
  * 获取request实例 调用参数可以覆盖初始化的参数. 用于一些情况的特殊处理.
@@ -13,9 +13,9 @@ const request = (initOptions = {}) => {
     options.headers = { ...initOptions.headers, ...options.headers };
     options.params = { ...initOptions.params, ...options.params };
     options = { ...initOptions, ...options };
-    const method = options.method || "get";
+    const method = options.method || 'get';
     options.method = method.toLowerCase();
-    if (method === "rpc") {
+    if (method === 'rpc') {
       // call rpc
       return new WrappedRpc(input, options, mapCache);
     } else {
@@ -24,10 +24,9 @@ const request = (initOptions = {}) => {
   };
 
   // 增加语法糖如: request.get request.post
-  const methods = ["get", "post", "delete", "put", "rpc", "patch"];
+  const methods = ['get', 'post', 'delete', 'put', 'rpc', 'patch'];
   methods.forEach(method => {
-    instance[method] = (input, options) =>
-      instance(input, { ...options, method });
+    instance[method] = (input, options) => instance(input, { ...options, method });
   });
 
   // 给request 也增加一个interceptors引用;

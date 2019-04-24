@@ -46,9 +46,12 @@ export type RequestResponse<T = any> = {
   response: Response;
 };
 
-export type RequestInterceptor = (url: string, options: RequestOptionsInit) => {
-  url?: string,
-  options?: RequestOptionsInit,
+export type RequestInterceptor = (
+  url: string,
+  options: RequestOptionsInit
+) => {
+  url?: string;
+  options?: RequestOptionsInit;
 };
 
 export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response;
@@ -69,8 +72,8 @@ export interface RequestMethod<R = false> {
     };
     response: {
       use: (handler: ResponseInterceptor) => void;
-    }
-  }
+    };
+  };
 }
 
 export interface ExtendOnlyOptions {
