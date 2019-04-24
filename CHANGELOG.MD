@@ -1,3 +1,7 @@
+## 1.0.7 
+* feat: Send data using delete
+* feat: use umi-lint
+
 ## 1.0.6 
 * fix: index.d.ts 缺少 patch 方法定义 @handycode
 
