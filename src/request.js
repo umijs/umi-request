@@ -3,6 +3,9 @@ import { MapCache } from './utils';
 import WrappedFetch from './wrapped-fetch';
 import WrappedRpc from './wrapped-rpc';
 
+
+export const methods = ['get', 'post', 'delete', 'put', 'rpc', 'patch'];
+
 /**
  * 获取request实例 调用参数可以覆盖初始化的参数. 用于一些情况的特殊处理.
  * @param {*} initOptions 初始化参数
@@ -24,7 +27,6 @@ const request = (initOptions = {}) => {
   };
 
   // 增加语法糖如: request.get request.post
-  const methods = ['get', 'post', 'delete', 'put', 'rpc', 'patch'];
   methods.forEach(method => {
     instance[method] = (input, options) => instance(input, { ...options, method });
   });
