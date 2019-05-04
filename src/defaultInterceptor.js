@@ -1,4 +1,5 @@
 import { stringify } from 'query-string';
+import { methods } from './request'
 /**
  * 注册request拦截器
  * get 和 post 参数简化
@@ -12,8 +13,7 @@ import { stringify } from 'query-string';
 export default (url, originOptions = {}) => {
   const options = { ...originOptions };
   // 默认get, 兼容method大小写
-  let method = options.method || 'get';
-  method = method.toLowerCase();
+  const method = methods.includes(options.method) ? options.method.toLowerCase() : 'get';
   if (method === 'post' || method === 'put' || method === 'patch' || method === 'delete') {
     // requestType 简写默认值为 json
     const { requestType = 'json', data } = options;
