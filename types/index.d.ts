@@ -54,7 +54,9 @@ export type RequestInterceptor = (
   options?: RequestOptionsInit;
 };
 
-export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response;
+// use async ()=> Response equal  ()=> Response
+
+export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
