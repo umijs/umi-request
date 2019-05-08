@@ -4,13 +4,9 @@ English | [简体中文](./README_zh-CN.md)
 
 The network request library, based on fetch encapsulation, combines the features of fetch and axios to provide developers with a unified api call method, simplifying usage, and providing common functions such as caching, timeout, character encoding processing, and error handling.
 
-[![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
-
-[npm-image]: https://img.shields.io/npm/v/umi-request.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/umi-request
-[travis-image]: https://img.shields.io/travis/umijs/umi-request.svg?style=flat-square
-[travis-url]: https://travis-ci.org/umijs/umi-request.svg?branch=master
+[![NPM version](https://img.shields.io/npm/v/umi-request.svg?style=flat)](https://npmjs.org/package/umi-request)
+[![Build Status](https://img.shields.io/travis/umijs/umi-request.svg?style=flat)](https://travis-ci.org/umijs/umi-request)
+[![NPM downloads](http://img.shields.io/npm/dm/umi-request.svg?style=flat)](https://npmjs.org/package/umi-request)
 
 --------------------
 
@@ -261,8 +257,16 @@ request.interceptors.response.use(async (response) => {
 - Then go to the project you are testing to execute npm link umi-request
 - Introduced and used
 
+## Questions & Suggestions
+
+Please open an issue [here](https://github.com/umijs/umi/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc).
+
 ## Code Contributors
 
 - @clock157
 - @yesmeck
 - @yutingzhao1991
+
+## LICENSE
+
+MIT
