@@ -43,7 +43,7 @@
 | 处理 gbk   | ✅              | ❎              | ❎              |
 | 快速支持   | ✅              | ❓              | ❓              |
 
-更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi-request/issues)
+更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi/issues)
 
 ## TODO 欢迎pr
 
