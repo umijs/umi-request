@@ -39,7 +39,7 @@ The network request library, based on fetch encapsulation, combines the features
 | processing gbk | ✅ | ❎ | ❎ |
 | quick Support | ✅ | ❓ | ❓ |
 
-For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://Github.com/umijs/umi-request/issues)
+For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://github.com/umijs/umi/issues)
 
 ## TODO Welcome pr
 
