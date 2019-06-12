@@ -1,6 +1,6 @@
 {
   "name": "umi-request",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "A request tool based on fetch.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -34,12 +34,12 @@
     "eslint-plugin-import": "^2.14.0",
     "iconv-lite": "^0.4.24",
     "jest": "^23.5.0",
+    "np": "5.0.2",
     "typescript": "^3.0.3",
     "umi": "^2.5.0",
     "umi-lint": "^1.0.0-alpha.1",
     "umi-plugin-library": "^1.1.6",
-    "umi-test": "^1.4.0",
-    "np": "5.0.2"
+    "umi-test": "^1.4.0"
   },
   "dependencies": {
     "query-string": "^6.0.0",
