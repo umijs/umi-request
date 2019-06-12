@@ -4,3 +4,5 @@ coverage
 .git
 .vscode
 .DS_Store
+/yarn.lock
+

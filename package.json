@@ -18,9 +18,7 @@
     "lint": "umi-lint src",
     "ci": "npm run lint && npm run test:cover",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build",
-    "pub": "npm publish",
-    "pub-beta": "npm publish --tag beta",
+    "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build && np --no-cleanup --yolo --no-publish",
     "precommit": "umi-lint --staged --prettier --fix"
   },
   "author": {
@@ -40,7 +38,8 @@
     "umi": "^2.5.0",
     "umi-lint": "^1.0.0-alpha.1",
     "umi-plugin-library": "^1.1.6",
-    "umi-test": "^1.4.0"
+    "umi-test": "^1.4.0",
+    "np": "5.0.2"
   },
   "dependencies": {
     "query-string": "^6.0.0",
