@@ -41,7 +41,6 @@
 | 前缀       | ✅              | ❎              | ❎              |
 | 后缀       | ✅              | ❎              | ❎              |
 | 处理 gbk   | ✅              | ❎              | ❎              |
-| 快速支持   | ✅              | ❓              | ❓              |
 
 更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi/issues)
 
@@ -138,8 +137,13 @@ request('/api/v1/some/api', { method:'post', requestType: 'form', data: {foo: 'b
 // reponseType: 'blob', 如何处理返回的数据, 默认情况下 text 和 json 都不用加. 如blob 或 formData 之类需要加
 request('/api/v1/some/api', { reponseType: 'blob' });
 
-// 提交其他数据, 如文本, 上传文件等, requestType不填, 手动添加对应header.
+// 提交其他数据, requestType不填, 手动添加对应header.
 request('/api/v1/some/api', { method:'post', data: 'some data', headers: { 'Content-Type': 'multipart/form-data'} });
+
+// 文件上传, 不要自己设置 Content-Type !
+const formData = new FormData();
+formData.append('file', file);
+request('/api/v1/some/api', { method:'post', data: formData });
 
 // 默认返回的就是数据体, 如果需要源response来扩展, 可用getResponse参数. 返回结果会多套一层
 request('/api/v1/some/api', { getResponse: true }).then({data, response} => {
