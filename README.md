@@ -37,7 +37,6 @@ The network request library, based on fetch encapsulation, combines the features
 | prefix | ✅ | ❎ | ❎ |
 | suffix | ✅ | ❎ | ❎ |
 | processing gbk | ✅ | ❎ | ❎ |
-| quick Support | ✅ | ❓ | ❓ |
 
 For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://github.com/umijs/umi/issues)
 
@@ -134,8 +133,13 @@ request('/api/v1/some/api', { method:'post', requestType: 'form', data: {foo: 'b
 // reponseType: 'blob', how to handle the returned data, by default text and json are not added. Such as blob or formData need to add
 request('/api/v1/some/api', { reponseType: 'blob' });
 
-// Submit other data, such as text, upload files, etc., requestType is not filled, manually add the corresponding header.
+// Submit other data, such as text, requestType is not filled, manually add the corresponding header.
 request('/api/v1/some/api', { method:'post', data: 'some data', headers: { 'Content-Type': 'multipart/form-data'} });
+
+// upload file
+const formData = new FormData();
+formData.append('file', file);
+request('/api/v1/some/api', { method:'post', data: formData });
 
 // The default is to return the data body, if you need the source response to expand, you can use the getResponse parameter. The result will be a set of layers
 request('/api/v1/some/api', { getResponse: true }).then({data, response} => {
