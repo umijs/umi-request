@@ -29,6 +29,7 @@ export interface RequestOptionsInit extends RequestInit {
   ttl?: number;
   timeout?: number;
   errorHandler?: (error: ResponseError) => void;
+  responseFilter?: (response: any) => any;
   prefix?: string;
   suffix?: string;
 }

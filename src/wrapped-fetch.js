@@ -100,7 +100,7 @@ export default class WrappedFetch {
    * @param {boolean} useCache 返回类型, 默认json
    */
   _parseResponse(instance, useCache = false) {
-    const { responseType = 'json', charset = 'utf8', getResponse = false } = this.options;
+    const { responseType = 'json', charset = 'utf8', getResponse = false, responseFilter } = this.options;
     return new Promise((resolve, reject) => {
       let copy;
       instance
@@ -135,6 +135,8 @@ export default class WrappedFetch {
                 data,
                 response: copy,
               });
+            } else if (typeof responseFilter === 'function') {
+              resolve(responseFilter(data));
             } else {
               resolve(data);
             }

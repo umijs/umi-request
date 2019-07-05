@@ -327,6 +327,32 @@ describe('test fetch:', () => {
     expect(response.data[1]).toBe('2');
   });
 
+  it('test response filter', async () => {
+    server.get('/api/test-response-filter/success', (req, res) => {
+      writeData({ success: true, data: 123 }, res);
+    });
+
+    server.get('/api/test-response-filter/error', (req, res) => {
+      writeData({ success: false, errorCode: 321 }, res);
+    });
+
+    const responseFilter = data => {
+      if (data.success) {
+        return data.data;
+      }
+      return data.errorCode;
+    };
+
+    const extendRequest = extend({
+      responseFilter,
+    });
+    const successResponse = await extendRequest(prefix('/api/test-response-filter/success'));
+    const errorResponse = await extendRequest(prefix('/api/test-response-filter/error'));
+    console.log('successResponse', successResponse);
+    expect(successResponse).toBe(123);
+    expect(errorResponse).toBe(321);
+  });
+
   afterAll(() => {
     server.close();
   });
