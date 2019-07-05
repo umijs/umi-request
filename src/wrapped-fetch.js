@@ -107,6 +107,7 @@ export default class WrappedFetch {
         .then(response => {
           copy = response.clone();
           copy.useCache = useCache;
+
           if (charset === 'gbk') {
             try {
               return response
@@ -116,15 +117,17 @@ export default class WrappedFetch {
             } catch (e) {
               throw new ResponseError(copy, e.message);
             }
-          } else if (responseType === 'json' || responseType === 'text') {
+          }
+
+          if (responseType === 'json') {
             return response.text().then(safeJsonParse);
-          } else {
-            try {
-              // 其他如blob, arrayBuffer, formData
-              return response[responseType]();
-            } catch (e) {
-              throw new ResponseError(copy, 'responseType not support');
-            }
+          }
+
+          try {
+            // 其他如 text, blob, arrayBuffer, formData
+            return response[responseType]();
+          } catch (e) {
+            throw new ResponseError(copy, 'responseType not support');
           }
         })
         .then(data => {
