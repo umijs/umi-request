@@ -94,6 +94,27 @@ describe('test fetch:', () => {
     });
     expect(response.a).toBe(11);
 
+    response = await request(prefix('/test/responseType'), {
+      method: 'post',
+      responseType: 'text',
+      data: { a: 12 },
+    });
+    expect(typeof response === 'string').toBe(true);
+
+    response = await request(prefix('/test/responseType'), {
+      method: 'post',
+      responseType: 'formData',
+      data: { a: 13 },
+    });
+    expect(response instanceof FormData).toBe(true);
+
+    response = await request(prefix('/test/responseType'), {
+      method: 'post',
+      responseType: 'arrayBuffer',
+      data: { a: 14 },
+    });
+    expect(response instanceof ArrayBuffer).toBe(true);
+
     try {
       response = await request(prefix('/test/responseType'), {
         responseType: 'other',
