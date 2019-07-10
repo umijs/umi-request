@@ -1,3 +1,7 @@
+## 1.1.0
+* refactor: #55 revise response data processing @atzcl
+* feat: #57 support promised request interceptor @clock157
+
 ## 1.0.7 
 * feat: Send data using delete
 * feat: use umi-lint
