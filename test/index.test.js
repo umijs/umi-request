@@ -470,6 +470,33 @@ describe('test fetch lib:', () => {
     expect(data.foo).toBe('foo');
   });
 
+  // 使用上边修改数据的用例, 测试 promise 化的 interceptors
+  it('test promise interceptors', async () => {
+    server.post('/test/promiseInterceptors', (req, res) => {
+      writeData(req.body, res);
+    });
+
+    request.interceptors.request.use((url, options) => {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          if (options.method.toLowerCase() === 'post') {
+            options.data = {
+              ...options.data,
+              foo: 'foo',
+            };
+          }
+          resolve({ url, options });
+        }, 1000);
+      });
+    });
+
+    const data = await request(prefix('/test/promiseInterceptors'), {
+      method: 'post',
+      data: { bar: 'bar' },
+    });
+    expect(data.foo).toBe('foo');
+  });
+
   afterAll(() => {
     server.close();
   });
