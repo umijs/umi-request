@@ -24,6 +24,7 @@
 - 支持处理 gbk
 - 类 axios 的 request 和 response 拦截器(interceptors)支持
 - 统一的错误处理方式
+- 类 koa 洋葱机制的 use 中间件机制支持
 
 ## 与 fetch, axios 异同
 
@@ -41,6 +42,7 @@
 | 前缀       | ✅              | ❎              | ❎              |
 | 后缀       | ✅              | ❎              | ❎              |
 | 处理 gbk   | ✅              | ❎              | ❎              |
+| 中间件     | ✅              | ❎              | ❎              |
 
 更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi/issues)
 
@@ -89,6 +91,8 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 | headers | 默认headers | object | {} |
 | params | 默认带上的query参数 | object | {} |
 | ... |
+
+
 
 ## 使用
 
@@ -174,7 +178,27 @@ request.interceptors.response.use((response, options) => {
   response.headers.append('interceptors', 'yes yo');
   return response;
 });
+
+// 中间件，对请求前、响应后做处理
+request.use(async (ctx, next) => {
+  const { req } = ctx;
+  const { url, options } = req;
+  // 添加前缀、后缀
+  ctx.req.url = `/api/v1/${url}`;
+  ctx.req.options = {
+    ...options,
+    foo: 'foo'
+  };
+  await next();
+
+  const { res } = ctx;
+  const { success = false } = res;
+  if (!success) {
+    // Handle fail request here
+  }
+})
 ```
+
 
 ## 错误处理
 
@@ -255,7 +279,39 @@ request.interceptors.response.use(async (response) => {
   }
   return response;
 })
+
 ```
+
+
+## 中间件
+request.use(fn)
+
+### 参数
+* ctx(Object)：上下文对象，包括req和res对象
+* next(Function)：调用下一个中间件的函数
+
+### 例子
+``` javascript
+import request, { extend } from 'umi-request';
+request.use(async (ctx, next) => {
+  console.log('a1');
+  await next();
+  console.log('a2');
+})
+request.use(async (ctx, next) => {
+  console.log('b1');
+  await next();
+  console.log('b2');
+})
+
+const data = await request('/api/v1/a');
+```
+
+执行顺序如下：
+```
+a1 -> b1 -> response -> b2 -> a2
+```
+
 
 ## 开发和调试
 

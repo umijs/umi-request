@@ -1,47 +1,46 @@
-import fetch from './lib/fetch';
-import { MapCache } from './utils';
-import WrappedFetch from './wrapped-fetch';
-import WrappedRpc from './wrapped-rpc';
+import Core from './core';
+// 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
 
-/**
- * 获取request实例 调用参数可以覆盖初始化的参数. 用于一些情况的特殊处理.
- * @param {*} initOptions 初始化参数
- */
 const request = (initOptions = {}) => {
-  const mapCache = new MapCache(initOptions);
-  const instance = (input, options = {}) => {
-    options.headers = { ...initOptions.headers, ...options.headers };
-    options.params = { ...initOptions.params, ...options.params };
-    options = { ...initOptions, ...options };
-    const method = options.method || 'get';
-    options.method = method.toLowerCase();
-    if (method === 'rpc') {
-      // call rpc
-      return new WrappedRpc(input, options, mapCache);
-    } else {
-      return new WrappedFetch(input, options, mapCache);
-    }
+  const coreInstance = new Core(initOptions);
+  const umiInstance = (url, options = {}) => {
+    const mergeOptions = {
+      ...initOptions,
+      ...options,
+      headers: {
+        ...initOptions.headers,
+        ...options.headers,
+      },
+      params: {
+        ...initOptions.headers,
+        ...options.params,
+      },
+      method: (options.method || 'get').toLowerCase(),
+    };
+    return coreInstance.request(url, mergeOptions);
   };
 
-  // 增加语法糖如: request.get request.post
-  const methods = ['get', 'post', 'delete', 'put', 'rpc', 'patch'];
-  methods.forEach(method => {
-    instance[method] = (input, options) => instance(input, { ...options, method });
+  // 中间件
+  umiInstance.use = coreInstance.use.bind(coreInstance);
+
+  // 拦截器
+  umiInstance.interceptors = {
+    request: {
+      use: coreInstance.requestUse.bind(coreInstance),
+    },
+    response: {
+      use: coreInstance.responseUse.bind(coreInstance),
+    },
+  };
+
+  // 请求语法糖： reguest.get request.post ……
+  const METHODS = ['get', 'post', 'put', 'rpc', 'patch'];
+  METHODS.forEach(method => {
+    umiInstance[method] = (url, options) => umiInstance(url, { ...options, method });
   });
 
-  // 给request 也增加一个interceptors引用;
-  instance.interceptors = fetch.interceptors;
-
-  return instance;
+  return umiInstance;
 };
 
-/**
- * extend 方法参考了ky, 让用户可以定制配置.
- * initOpions 初始化参数
- * @param {number} maxCache 最大缓存数
- * @param {string} prefix url前缀
- * @param {function} errorHandler 统一错误处理方法
- * @param {object} headers 统一的headers
- */
 export const extend = initOptions => request(initOptions);
 export default request();

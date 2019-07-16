@@ -354,11 +354,11 @@ describe('test fetch:', () => {
 });
 
 // 测试rpc #TODO
-describe('test rpc:', () => {
-  it('test hello', () => {
-    expect(request.rpc('wang').hello).toBe('wang');
-  });
-});
+// describe('test rpc:', () => {
+//   it('test hello', () => {
+//     expect(request.rpc('wang').hello).toBe('wang');
+//   });
+// });
 
 // 测试工具函数
 describe('test utils:', () => {
@@ -495,6 +495,49 @@ describe('test fetch lib:', () => {
       data: { bar: 'bar' },
     });
     expect(data.foo).toBe('foo');
+  });
+
+  afterAll(() => {
+    server.close();
+  });
+});
+
+// 测试中间件机制
+describe('test fetch lib:', () => {
+  let server;
+
+  beforeAll(async () => {
+    server = await createTestServer();
+  });
+
+  const prefix = api => `${server.url}${api}`;
+
+  // 使用上边修改数据的用例, 测试 promise 化的 interceptors
+  it('test middlewares', async () => {
+    server.post('/test/promiseInterceptors/a/b', (req, res) => {
+      writeData(req.body, res);
+    });
+    request.use(async (ctx, next) => {
+      ctx.req.options = {
+        ...ctx.req.options,
+        data: {
+          ...ctx.req.options.data,
+          foo: 'foo',
+        },
+      };
+      await next();
+    });
+    request.use(async (ctx, next) => {
+      await next();
+      ctx.res.hello = 'hello';
+    });
+    const data = await request(prefix('/test/promiseInterceptors/a/b'), {
+      method: 'post',
+      data: { bar: 'bar' },
+    });
+    expect(data.bar).toBe('bar');
+    expect(data.foo).toBe('foo');
+    expect(data.hello).toBe('hello');
   });
 
   afterAll(() => {

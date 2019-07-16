@@ -88,6 +88,14 @@ export function readerGBK(file) {
 export function safeJsonParse(data) {
   try {
     return JSON.parse(data);
-  } catch (e) {} // eslint-disable-line
+  } catch (e) {} // eslint-disable-line no-empty
   return data;
+}
+
+export function timeout2Throw(msec) {
+  return new Promise((_, reject) => {
+    setTimeout(() => {
+      reject(new RequestError(`timeout of ${msec}ms exceeded`));
+    }, msec);
+  });
 }
