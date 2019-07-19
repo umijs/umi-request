@@ -22,12 +22,12 @@ class Core {
   }
 
   requestUse(handler) {
-    if (typeof handler !== 'function') throw new TypeError('Middleware must be an array!');
+    if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
     this.requestInterceptors.push(handler);
   }
 
   responseUse(handler) {
-    if (typeof handler !== 'function') throw new TypeError('Middleware must be an array!');
+    if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
     this.responseInterceptors.push(handler);
   }
 

@@ -6,6 +6,9 @@ export default function parseResponseMiddleware(ctx, next) {
     options: { responseType = 'json', charset = 'utf8', getResponse = false },
   } = req || {};
 
+  if (!res || !res.clone) {
+    return next();
+  }
   const copy = res.clone();
   copy.useCache = res.useCache || false;
 

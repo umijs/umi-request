@@ -1,6 +1,6 @@
 import createTestServer from 'create-test-server';
 import iconv from 'iconv-lite';
-import request, { extend } from '../src/index';
+import request, { extend, Onion } from '../src/index';
 import { MapCache } from '../src/utils';
 
 const debug = require('debug')('afx-request:test');
@@ -42,6 +42,32 @@ describe('test fetch:', () => {
     }
   }, 5000);
 
+  // 测试请求方法
+  it('test methodType', async () => {
+    server.get('/test/requestType', (req, res) => {
+      writeData(req.query, res);
+    });
+
+    let response = await request(prefix('/test/requestType'), {
+      method: 'get',
+      params: {
+        foo: 'foo',
+      },
+    });
+    expect(response.foo).toBe('foo');
+
+    response = await request(prefix('/test/requestType'), {
+      method: null,
+      params: {
+        foo: 'foo',
+      },
+    });
+    expect(response.foo).toBe('foo');
+
+    response = await request(prefix('/test/requestType'));
+    expect(response).toStrictEqual({});
+  }, 5000);
+
   // 测试请求类型
   it('test requestType', async () => {
     server.post('/test/requestType', (req, res) => {
@@ -49,6 +75,12 @@ describe('test fetch:', () => {
     });
 
     let response = await request(prefix('/test/requestType'), {
+      method: 'post',
+      requestType: 'json',
+    });
+    expect(response).toStrictEqual({});
+
+    response = await request(prefix('/test/requestType'), {
       method: 'post',
       requestType: 'form',
       data: {
@@ -71,6 +103,31 @@ describe('test fetch:', () => {
       data: 'hehe',
     });
     expect(response).toBe('hehe');
+
+    response = await request(prefix('/test/requestType'), {
+      method: 'post',
+      data: 'hehe',
+      type: 'mini',
+    });
+    expect(response).toBe(null);
+  }, 5000);
+
+  // 测试非 web 环境无 fetch 情况
+  it('test requestType', async () => {
+    server.post('/test/requestType', (req, res) => {
+      writeData(req.body, res);
+    });
+    const oldFetch = window.fetch;
+    window.fetch = null;
+    try {
+      let response = await request(prefix('/test/requestType'), {
+        method: 'post',
+        requestType: 'json',
+      });
+    } catch (error) {
+      expect(error.message).toBe('window or window.fetch not exist!');
+    }
+    window.fetch = oldFetch;
   }, 5000);
 
   // 测试返回类型 #TODO 更多类型
@@ -353,12 +410,12 @@ describe('test fetch:', () => {
   });
 });
 
-// 测试rpc #TODO
-// describe('test rpc:', () => {
-//   it('test hello', () => {
-//     expect(request.rpc('wang').hello).toBe('wang');
-//   });
-// });
+// 测试rpc
+xdescribe('test rpc:', () => {
+  it('test hello', () => {
+    expect(request.rpc('wang').hello).toBe('wang');
+  });
+});
 
 // 测试工具函数
 describe('test utils:', () => {
@@ -446,6 +503,19 @@ describe('test fetch lib:', () => {
       request({ hello: 1 });
     } catch (error) {
       expect(error.message).toBe('url MUST be a string');
+    }
+  });
+
+  it('test invalid interceptors', async () => {
+    try {
+      request.interceptors.request.use('invalid interceptor');
+    } catch (error) {
+      expect(error.message).toBe('Interceptor must be function!');
+    }
+    try {
+      request.interceptors.response.use('invalid interceptor');
+    } catch (error) {
+      expect(error.message).toBe('Interceptor must be function!');
     }
   });
 
@@ -542,5 +612,51 @@ describe('test fetch lib:', () => {
 
   afterAll(() => {
     server.close();
+  });
+});
+
+describe('test onion', () => {
+  it('test constructor', async () => {
+    try {
+      const onion = new Onion();
+      onion.use(async () => {});
+    } catch (error) {
+      expect(error.message).toBe('Default middlewares must be an array!');
+    }
+  });
+  it('test not function middleware', async () => {
+    try {
+      const onion = new Onion([]);
+      onion.use('not a function');
+      onion.execute();
+    } catch (error) {
+      expect(error.message).toBe('Middleware must be componsed of function');
+    }
+  });
+  it('test multiple use next', async () => {
+    try {
+      const onion = new Onion([]);
+      onion.use(async (ctx, next) => {
+        await next();
+        await next();
+      });
+      await onion.execute();
+    } catch (error) {
+      expect(error.message).toBe('next() should not be called multiple times in one middleware!');
+    }
+  });
+  it('test middleware throw error', async () => {
+    try {
+      const onion = new Onion([]);
+      onion.use(async (ctx, next) => {
+        await next();
+      });
+      onion.use(async () => {
+        throw new Error('error in middleware');
+      });
+      await onion.execute();
+    } catch (error) {
+      expect(error.message).toBe('error in middleware');
+    }
   });
 });
