@@ -54,9 +54,19 @@ export type RequestInterceptor = (
   options?: RequestOptionsInit;
 };
 
+export interface Context {
+  req: {
+    url: string;
+    options: RequestOptionsInit;
+  };
+  res: any;
+}
+
 // use async ()=> Response equal  ()=> Response
 
 export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
+
+export type OnionMiddleware = (ctx: Context, next: NextCallback) => void;
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
@@ -76,6 +86,7 @@ export interface RequestMethod<R = false> {
       use: (handler: ResponseInterceptor) => void;
     };
   };
+  use: (handler: OnionMiddleware) => void;
 }
 
 export interface ExtendOnlyOptions {

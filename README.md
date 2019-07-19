@@ -20,6 +20,7 @@ The network request library, based on fetch encapsulation, combines the features
 - support for processing gbk
 - request and response interceptor support for class axios
 - unified error handling
+- middleware support
 
 ## umi-request vs fetch vs axios
 
@@ -37,6 +38,7 @@ The network request library, based on fetch encapsulation, combines the features
 | prefix | ✅ | ❎ | ❎ |
 | suffix | ✅ | ❎ | ❎ |
 | processing gbk | ✅ | ❎ | ❎ |
+| middleware | ✅ | ❎ | ❎ |
 
 For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://github.com/umijs/umi/issues)
 
@@ -170,6 +172,27 @@ request.interceptors.response.use((response, options) => {
   response.headers.append('interceptors', 'yes yo');
   return response;
 });
+
+
+// use middleware, handling request and response
+request.use(async (ctx, next) => {
+  const { req } = ctx;
+  const { url, options } = req;
+  // add prefix
+  ctx.req.url = `/api/v1/${url}`;
+  ctx.req.options = {
+    ...options,
+    foo: 'foo'
+  };
+  await next();
+
+  const { res } = ctx;
+  const { success = false } = res;
+  if (!success) {
+    // Handle fail request here
+  }
+})
+
 ```
 
 ## Error handling
@@ -251,6 +274,36 @@ request.interceptors.response.use(async (response) => {
   }
   return response;
 })
+```
+
+
+## Middleware
+request.use(fn)
+
+### params
+* ctx(Object)：context, content request and response
+* next(Function)：function to call the next middleware
+
+### example
+``` javascript
+import request, { extend } from 'umi-request';
+request.use(async (ctx, next) => {
+  console.log('a1');
+  await next();
+  console.log('a2');
+})
+request.use(async (ctx, next) => {
+  console.log('b1');
+  await next();
+  console.log('b2');
+})
+
+const data = await request('/api/v1/a');
+```
+
+order of middlewares be called:
+```
+a1 -> b1 -> response -> b2 -> a2
 ```
 
 ## Development and debugging
