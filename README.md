@@ -141,7 +141,7 @@ request('/api/v1/some/api', { method:'post', data: 'some data', headers: { 'Cont
 // upload file
 const formData = new FormData();
 formData.append('file', file);
-request('/api/v1/some/api', { method:'post', data: formData });
+request('/api/v1/some/api', { method:'post', body: formData, requestType: 'form' });
 
 // The default is to return the data body, if you need the source response to expand, you can use the getResponse parameter. The result will be a set of layers
 request('/api/v1/some/api', { getResponse: true }).then({data, response} => {
