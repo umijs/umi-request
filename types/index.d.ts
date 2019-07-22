@@ -31,6 +31,7 @@ export interface RequestOptionsInit extends RequestInit {
   errorHandler?: (error: ResponseError) => void;
   prefix?: string;
   suffix?: string;
+  credentials?: string;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
