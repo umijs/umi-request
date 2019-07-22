@@ -1,15 +1,8 @@
 import Onion from './onion/onion';
 import { MapCache } from './utils';
-import fetchMiddleware from './middleware/fetch';
-import addfixMiddleware from './middleware/addfix';
-import parseResponseMiddleware from './middleware/parseResponse';
-import simplePost from './middleware/simplePost';
-import simpleGet from './middleware/simpleGet';
-
-const defaultMiddlewares = [addfixMiddleware, simplePost, simpleGet, fetchMiddleware, parseResponseMiddleware];
 
 class Core {
-  constructor(initOptions) {
+  constructor(initOptions, defaultMiddlewares) {
     this.onion = new Onion(defaultMiddlewares);
     this.mapCache = new MapCache(initOptions);
     this.requestInterceptors = [];

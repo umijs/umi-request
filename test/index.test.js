@@ -1,6 +1,6 @@
 import createTestServer from 'create-test-server';
 import iconv from 'iconv-lite';
-import request, { extend, Onion } from '../src/index';
+import request, { extend, Onion, fetch } from '../src/index';
 import { MapCache } from '../src/utils';
 
 const debug = require('debug')('afx-request:test');
@@ -504,7 +504,7 @@ describe('test fetch lib:', () => {
     } catch (error) {
       expect(error.message).toBe('url MUST be a string');
     }
-  });
+  }, 3000);
 
   it('test invalid interceptors', async () => {
     try {
@@ -538,7 +538,7 @@ describe('test fetch lib:', () => {
       data: { bar: 'bar' },
     });
     expect(data.foo).toBe('foo');
-  });
+  }, 3000);
 
   // 使用上边修改数据的用例, 测试 promise 化的 interceptors
   it('test promise interceptors', async () => {
@@ -565,7 +565,7 @@ describe('test fetch lib:', () => {
       data: { bar: 'bar' },
     });
     expect(data.foo).toBe('foo');
-  });
+  }, 3000);
 
   afterAll(() => {
     server.close();
@@ -658,5 +658,80 @@ describe('test onion', () => {
     } catch (error) {
       expect(error.message).toBe('error in middleware');
     }
+  });
+});
+
+describe('test fetch middleware:', () => {
+  let server;
+
+  beforeAll(async () => {
+    server = await createTestServer();
+  });
+
+  const prefix = api => `${server.url}${api}`;
+
+  // 测试请求
+  it('test normal and unnormal fetch', async () => {
+    server.get('/test/fetch', (req, res) => {
+      setTimeout(() => {
+        writeData('ok', res);
+      }, 1000);
+    });
+
+    // 正常请求
+    let response = await fetch(prefix('/test/fetch'));
+    expect(response.ok).toBe(true);
+
+    // 非法 url
+    try {
+      response = await fetch({ hello: 'hello' });
+    } catch (error) {
+      expect(error.message).toBe('url MUST be a string');
+    }
+  }, 5000);
+
+  it('test interceptors', async () => {
+    server.get('/test/interceptors', (req, res) => {
+      writeData(req.query, res);
+    });
+    // 测试啥也不返回
+    fetch.interceptors.request.use(() => ({}));
+
+    fetch.interceptors.response.use(res => res);
+
+    // request拦截器, 加个参数
+    fetch.interceptors.request.use((url, options) => {
+      debug(url, options);
+      return {
+        url: `${url}?interceptors=yes`,
+        options: { ...options, interceptors: true },
+      };
+    });
+
+    // response拦截器, 修改一个header
+    fetch.interceptors.response.use((res, options) => {
+      res.headers.append('interceptors', 'yes yo');
+      return res;
+    });
+
+    let response = await fetch(prefix('/test/interceptors'));
+    expect(response.headers.get('interceptors')).toBe('yes yo');
+    const resText = await response.text();
+
+    expect(JSON.parse(resText).interceptors).toBe('yes');
+    request.interceptors = fetch.interceptors;
+    response = await request(prefix('/test/interceptors'));
+    request.interceptors.request.use((url, options) => {
+      return {
+        url: `${url}&foo=foo`,
+        options,
+      };
+    });
+    expect(response.interceptors).toBe('yes');
+    expect(response.foo).toBe('foo');
+  }, 3000);
+
+  afterAll(() => {
+    server.close();
   });
 });
