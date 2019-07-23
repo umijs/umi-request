@@ -701,9 +701,8 @@ describe('test fetch middleware:', () => {
 
     // request拦截器, 加个参数
     fetch.interceptors.request.use((url, options) => {
-      debug(url, options);
       return {
-        url: `${url}?interceptors=yes`,
+        url: `${url}&fetch=fetch`,
         options: { ...options, interceptors: true },
       };
     });
@@ -715,19 +714,20 @@ describe('test fetch middleware:', () => {
     });
 
     let response = await fetch(prefix('/test/interceptors'));
-    expect(response.headers.get('interceptors')).toBe('yes yo');
+    expect(response.headers.get('interceptors')).toBe('yes yo,yes yo');
     const resText = await response.text();
+    expect(JSON.parse(resText).fetch).toBe('fetch');
 
-    expect(JSON.parse(resText).interceptors).toBe('yes');
     request.interceptors = fetch.interceptors;
-    response = await request(prefix('/test/interceptors'));
     request.interceptors.request.use((url, options) => {
       return {
         url: `${url}&foo=foo`,
         options,
       };
     });
-    expect(response.interceptors).toBe('yes');
+
+    response = await request(prefix('/test/interceptors'));
+    expect(response.fetch).toBe('fetch');
     expect(response.foo).toBe('foo');
   }, 3000);
 

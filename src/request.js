@@ -31,10 +31,10 @@ const request = (initOptions = {}, middleware = []) => {
   // 拦截器
   umiInstance.interceptors = {
     request: {
-      use: coreInstance.requestUse.bind(coreInstance),
+      use: Core.requestUse,
     },
     response: {
-      use: coreInstance.responseUse.bind(coreInstance),
+      use: Core.responseUse,
     },
   };
 
