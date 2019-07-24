@@ -17,7 +17,7 @@ const request = (initOptions = {}, middleware = []) => {
         ...options.headers,
       },
       params: {
-        ...initOptions.headers,
+        ...initOptions.params,
         ...options.params,
       },
       method: (options.method || 'get').toLowerCase(),

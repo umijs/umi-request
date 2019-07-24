@@ -213,6 +213,7 @@ describe('test fetch:', () => {
       maxCache: 2,
       prefix: server.url,
       headers: { Connection: 'keep-alive' },
+      params: { defaultParams: true },
     });
 
     // 第一次写入缓存
@@ -273,6 +274,7 @@ describe('test fetch:', () => {
     });
 
     expect(response.response.useCache).toBe(false);
+    expect(response.data.defaultParams).toBe('true');
   }, 10000);
 
   // 测试异常捕获
