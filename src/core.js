@@ -1,8 +1,9 @@
 import Onion from './onion/onion';
 import { MapCache } from './utils';
+import addfixInterceptor from './interceptor/addfix';
 
 // 旧版拦截器为共享
-const requestInterceptors = [];
+const requestInterceptors = [addfixInterceptor];
 const responseInterceptors = [];
 
 class Core {
@@ -26,7 +27,8 @@ class Core {
     responseInterceptors.push(handler);
   }
 
-  static beforeRequest(ctx) {
+  // 执行请求前拦截器
+  static dealRequestInterceptors(ctx) {
     const reducer = (p1, p2) =>
       p1.then((ret = {}) => {
         ctx.req.url = ret.url || ctx.req.url;
@@ -53,7 +55,7 @@ class Core {
     }
 
     return new Promise((resolve, reject) => {
-      Core.beforeRequest(obj)
+      Core.dealRequestInterceptors(obj)
         .then(() => onion.execute(obj))
         .then(() => {
           resolve(obj.res);

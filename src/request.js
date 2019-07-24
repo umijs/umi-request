@@ -1,6 +1,5 @@
 import Core from './core';
 import fetchMiddleware from './middleware/fetch';
-import addfixMiddleware from './middleware/addfix';
 import parseResponseMiddleware from './middleware/parseResponse';
 import simplePost from './middleware/simplePost';
 import simpleGet from './middleware/simpleGet';
@@ -55,7 +54,7 @@ const request = (initOptions = {}, middleware = []) => {
  * @param {function} errorHandler 统一错误处理方法
  * @param {object} headers 统一的headers
  */
-const _extendMiddlewares = [addfixMiddleware, simplePost, simpleGet, fetchMiddleware, parseResponseMiddleware];
+const _extendMiddlewares = [simplePost, simpleGet, fetchMiddleware, parseResponseMiddleware];
 export const extend = initOptions => request(initOptions, _extendMiddlewares);
 
 /**
