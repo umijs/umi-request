@@ -36,7 +36,7 @@
     "jest": "^23.5.0",
     "np": "5.0.2",
     "typescript": "^3.0.3",
-    "umi": "^2.5.0",
+    "umi": "^2.8.15",
     "umi-lint": "^1.0.0-alpha.1",
     "umi-plugin-library": "^1.1.6",
     "umi-test": "^1.4.0"
