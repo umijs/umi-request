@@ -1,19 +1,15 @@
 import Onion from './onion/onion';
 import { MapCache } from './utils';
-import fetchMiddleware from './middleware/fetch';
-import addfixMiddleware from './middleware/addfix';
-import parseResponseMiddleware from './middleware/parseResponse';
-import simplePost from './middleware/simplePost';
-import simpleGet from './middleware/simpleGet';
+import addfixInterceptor from './interceptor/addfix';
 
-const defaultMiddlewares = [addfixMiddleware, simplePost, simpleGet, fetchMiddleware, parseResponseMiddleware];
+// 旧版拦截器为共享
+const requestInterceptors = [addfixInterceptor];
+const responseInterceptors = [];
 
 class Core {
-  constructor(initOptions) {
+  constructor(initOptions, defaultMiddlewares) {
     this.onion = new Onion(defaultMiddlewares);
     this.mapCache = new MapCache(initOptions);
-    this.requestInterceptors = [];
-    this.responseInterceptors = [];
   }
 
   use(newMiddleware) {
@@ -21,24 +17,25 @@ class Core {
     return this;
   }
 
-  requestUse(handler) {
+  static requestUse(handler) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    this.requestInterceptors.push(handler);
+    requestInterceptors.push(handler);
   }
 
-  responseUse(handler) {
+  static responseUse(handler) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    this.responseInterceptors.push(handler);
+    responseInterceptors.push(handler);
   }
 
-  beforeRequest(ctx) {
+  // 执行请求前拦截器
+  static dealRequestInterceptors(ctx) {
     const reducer = (p1, p2) =>
       p1.then((ret = {}) => {
         ctx.req.url = ret.url || ctx.req.url;
         ctx.req.options = ret.options || ctx.req.options;
         return p2(ctx.req.url, ctx.req.options);
       });
-    return this.requestInterceptors.reduce(reducer, Promise.resolve()).then((ret = {}) => {
+    return requestInterceptors.reduce(reducer, Promise.resolve()).then((ret = {}) => {
       ctx.req.url = ret.url || ctx.req.url;
       ctx.req.options = ret.options || ctx.req.options;
       return Promise.resolve();
@@ -46,7 +43,7 @@ class Core {
   }
 
   request(url, options) {
-    const { onion, responseInterceptors } = this;
+    const { onion } = this;
     const obj = {
       req: { url, options },
       res: null,
@@ -58,7 +55,7 @@ class Core {
     }
 
     return new Promise((resolve, reject) => {
-      this.beforeRequest(obj)
+      Core.dealRequestInterceptors(obj)
         .then(() => onion.execute(obj))
         .then(() => {
           resolve(obj.res);
