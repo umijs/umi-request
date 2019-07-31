@@ -66,7 +66,7 @@ export interface Context {
 
 export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
 
-export type OnionMiddleware = (ctx: Context, next: NextCallback) => void;
+export type OnionMiddleware = (ctx: Context, next: () => void) => void;
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
