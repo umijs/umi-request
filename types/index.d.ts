@@ -62,8 +62,6 @@ export interface Context {
   res: any;
 }
 
-// use async ()=> Response equal  ()=> Response
-
 export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
 
 export type OnionMiddleware = (ctx: Context, next: () => void) => void;
@@ -87,6 +85,9 @@ export interface RequestMethod<R = false> {
     };
   };
   use: (handler: OnionMiddleware) => void;
+  Cancel: CancelStatic;
+  CancelToken: CancelTokenStatic;
+  isCancel(value: any): boolean;
 }
 
 export interface ExtendOnlyOptions {
@@ -106,6 +107,34 @@ export interface Extend {
 }
 
 export declare var extend: Extend;
+
+export interface CancelStatic {
+  new (message?: string): Cancel;
+}
+
+export interface Cancel {
+  message: string;
+}
+
+export interface Canceler {
+  (message?: string): void;
+}
+
+export interface CancelTokenStatic {
+  new (executor: (cancel: Canceler) => void): CancelToken;
+  source(): CancelTokenSource;
+}
+
+export interface CancelToken {
+  promise: Promise<Cancel>;
+  reason?: Cancel;
+  throwIfRequested(): void;
+}
+
+export interface CancelTokenSource {
+  token: CancelToken;
+  cancel: Canceler;
+}
 
 declare var request: RequestMethod;
 

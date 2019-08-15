@@ -1,5 +1,5 @@
-// 前后缀拦截器
-export default (url, options = {}) => {
+// 前后缀拦截
+const addfix = (url, options = {}) => {
   const { prefix, suffix } = options;
   if (prefix) {
     url = `${prefix}${url}`;
@@ -12,3 +12,5 @@ export default (url, options = {}) => {
     options,
   };
 };
+
+export default addfix;

@@ -3,6 +3,9 @@ import fetchMiddleware from './middleware/fetch';
 import parseResponseMiddleware from './middleware/parseResponse';
 import simplePost from './middleware/simplePost';
 import simpleGet from './middleware/simpleGet';
+import Cancel from './cancel/cancel';
+import CancelToken from './cancel/cancelToken';
+import isCancel from './cancel/isCancel';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
 const request = (initOptions = {}, middleware = []) => {
@@ -42,6 +45,10 @@ const request = (initOptions = {}, middleware = []) => {
   METHODS.forEach(method => {
     umiInstance[method] = (url, options) => umiInstance(url, { ...options, method });
   });
+
+  umiInstance.Cancel = Cancel;
+  umiInstance.CancelToken = CancelToken;
+  umiInstance.isCancel = isCancel;
 
   return umiInstance;
 };
