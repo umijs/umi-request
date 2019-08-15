@@ -76,7 +76,11 @@ For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](htt
 | errorHandler | exception handling, or override unified exception handling | function(error) | -- |
 | headers | fetch original parameters | object | -- | {} |
 | credentials | fetch request with cookies | string | -- | credentials: 'include' |
+| parseResponse | response processing simplification | boolean | -- | true |
+| throwErrIfParseFail | throw error when JSON parse fail and responseType is 'json' | boolean | -- | false |
 | cancelToken | Token to cancel request | CancelToken.token | -- | -- |
+| type | request type，type 'normal' would use fetch | string | -- | normal | 
+
 
 The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
 

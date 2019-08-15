@@ -3,8 +3,18 @@ import { safeJsonParse, readerGBK, ResponseError } from '../utils';
 export default function parseResponseMiddleware(ctx, next) {
   const { res, req } = ctx;
   const {
-    options: { responseType = 'json', charset = 'utf8', getResponse = false },
+    options: {
+      responseType = 'json',
+      charset = 'utf8',
+      getResponse = false,
+      throwErrIfParseFail = false,
+      parseResponse = true,
+    },
   } = req || {};
+
+  if (!parseResponse) {
+    return next();
+  }
 
   if (!res || !res.clone) {
     return next();
@@ -25,7 +35,7 @@ export default function parseResponseMiddleware(ctx, next) {
           throw new ResponseError(copy, e.message);
         }
       } else if (responseType === 'json') {
-        return res.text().then(safeJsonParse);
+        return res.text().then(d => safeJsonParse(d, throwErrIfParseFail, copy));
       }
       try {
         // 其他如text, blob, arrayBuffer, formData

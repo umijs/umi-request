@@ -80,7 +80,11 @@
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
 | headers | fetch 原有参数 | object | -- | {} |
 | credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'include' |
+| parseResponse | 是否对 response 做处理简化 | boolean | -- | true |
+| throwErrIfParseFail | 当 responseType 为 'json', 对请求结果做 JSON.parse 出错时是否抛出异常 | boolean | -- | false |
 | cancelToken | 取消请求的 Token | CancelToken.token | -- | -- |
+| type | 请求类型，normal 为 fetch | string | -- | normal | 
+
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 

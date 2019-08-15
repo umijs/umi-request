@@ -1,15 +1,5 @@
 import 'whatwg-fetch';
-import { timeout2Throw } from '../utils';
-
-function cancel2Throw(opt, ctx) {
-  return new Promise((_, reject) => {
-    if (opt.cancelToken) {
-      return opt.cancelToken.promise.then(cancel => {
-        reject(cancel);
-      });
-    }
-  });
-}
+import { timeout2Throw, cancel2Throw } from '../utils';
 
 export default function fetchMiddleware(ctx, next) {
   const {
@@ -41,15 +31,15 @@ export default function fetchMiddleware(ctx, next) {
     }
   }
 
-  // 超时处理
   let response;
+  // 超时处理、取消请求处理
   if (timeout > 0) {
     response = Promise.race([cancel2Throw(options, ctx), window.fetch(url, options), timeout2Throw(timeout)]);
   } else {
     response = Promise.race([cancel2Throw(options, ctx), window.fetch(url, options)]);
   }
 
-  // 执行 response 的拦截器
+  // 兼容老版本 response.interceptor
   responseInterceptors.forEach(handler => {
     response = response.then(res => handler(res, options));
   });

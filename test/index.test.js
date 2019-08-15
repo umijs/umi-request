@@ -112,6 +112,24 @@ describe('test fetch:', () => {
   }, 5000);
 
   // 测试返回类型 #TODO 更多类型
+  it('test invalid responseType', async () => {
+    expect.assertions(2);
+    server.post('/test/invalid/response', (req, res) => {
+      writeData('hello world', res);
+    });
+    try {
+      let response = await request(prefix('/test/invalid/response'), {
+        method: 'post',
+        responseType: 'json',
+        data: { a: 1 },
+        throwErrIfParseFail: true,
+      });
+      console.log('response:');
+    } catch (error) {
+      expect(error.message).toBe('JSON.parse fail');
+      expect(error.data).toBe('hello world');
+    }
+  });
   it('test responseType', async () => {
     server.post('/test/responseType', (req, res) => {
       writeData(req.body, res);

@@ -31,6 +31,9 @@ export interface RequestOptionsInit extends RequestInit {
   errorHandler?: (error: ResponseError) => void;
   prefix?: string;
   suffix?: string;
+  throwErrIfParseFail?: boolean;
+  parseResponse?: boolean;
+  cancelToken?: CancelToken;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
@@ -84,7 +87,8 @@ export interface RequestMethod<R = false> {
       use: (handler: ResponseInterceptor) => void;
     };
   };
-  use: (handler: OnionMiddleware) => void;
+  use: (handler: OnionMiddleware, index?: number) => void;
+  fetchIndex: number;
   Cancel: CancelStatic;
   CancelToken: CancelTokenStatic;
   isCancel(value: any): boolean;

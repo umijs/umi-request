@@ -9,8 +9,8 @@ class Onion {
     this.defaultMiddlewaresLen = defaultMiddlewares.length;
   }
 
-  use(newMiddleware) {
-    this.middlewares.splice(this.middlewares.length - this.defaultMiddlewaresLen, 0, newMiddleware);
+  use(newMiddleware, index = 0) {
+    this.middlewares.splice(this.middlewares.length - this.defaultMiddlewaresLen + index, 0, newMiddleware);
   }
 
   execute(params = null) {
