@@ -276,6 +276,24 @@ describe('test fetch:', () => {
     expect(response.data.defaultParams).toBe('true');
   }, 10000);
 
+  it('test extends', async () => {
+    server.get('/test/method', (req, res) => {
+      writeData({ method: req.method }, res);
+    });
+
+    server.post('/test/method', (req, res) => {
+      writeData({ method: req.method }, res);
+    });
+
+    const extendRequest = extend({ method: 'POST' });
+
+    let response = await extendRequest(prefix('/test/method'));
+    expect(response.method).toBe('POST');
+
+    const extendRequest2 = extend();
+    let response2 = await extendRequest2(prefix('/test/method'));
+    expect(response2.method).toBe('GET');
+  });
   // 测试异常捕获
   it('test exception', async () => {
     server.get('/test/exception', (req, res) => {
