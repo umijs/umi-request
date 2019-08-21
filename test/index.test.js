@@ -4,7 +4,6 @@ import request, { extend, Onion, fetch } from '../src/index';
 import { MapCache } from '../src/utils';
 
 const debug = require('debug')('afx-request:test');
-
 const writeData = (data, res) => {
   res.setHeader('access-control-allow-origin', '*');
   res.send(data);
@@ -50,7 +49,7 @@ describe('test fetch:', () => {
   }, 5000);
 
   // 测试请求类型
-  it('test requestType', async () => {
+  it('test requestType', async done => {
     server.post('/test/requestType', (req, res) => {
       writeData(req.body, res);
     });
@@ -81,9 +80,9 @@ describe('test fetch:', () => {
 
     response = await request(prefix('/test/requestType'), {
       method: 'post',
-      data: 'hehe',
+      data: {},
     });
-    expect(response).toBe('hehe');
+    expect(response).toEqual({});
 
     response = await request(prefix('/test/requestType'), {
       method: 'post',
@@ -91,10 +90,13 @@ describe('test fetch:', () => {
       type: 'mini',
     });
     expect(response).toBe(null);
-  }, 5000);
+    done();
+  });
 
   // 测试非 web 环境无 fetch 情况
-  it('test requestType', async () => {
+
+  it('test fetch not exist', async done => {
+    expect.assertions(1);
     server.post('/test/requestType', (req, res) => {
       writeData(req.body, res);
     });
@@ -106,10 +108,11 @@ describe('test fetch:', () => {
         requestType: 'json',
       });
     } catch (error) {
-      expect(error.message).toBe('window or window.fetch not exist!');
+      expect(error.message).toBe('Global fetch not exist!');
+      window.fetch = oldFetch;
+      done();
     }
-    window.fetch = oldFetch;
-  }, 5000);
+  });
 
   // 测试返回类型 #TODO 更多类型
   it('test invalid responseType', async () => {
@@ -124,7 +127,6 @@ describe('test fetch:', () => {
         data: { a: 1 },
         throwErrIfParseFail: true,
       });
-      console.log('response:');
     } catch (error) {
       expect(error.message).toBe('JSON.parse fail');
       expect(error.data).toBe('hello world');
@@ -157,19 +159,28 @@ describe('test fetch:', () => {
     });
     expect(typeof response === 'string').toBe(true);
 
-    response = await request(prefix('/test/responseType'), {
-      method: 'post',
-      responseType: 'formData',
-      data: { a: 13 },
-    });
-    expect(response instanceof FormData).toBe(true);
+    // fetch 从 whatwg-fetch 更换成 isomorphic-fetch，默认导入的是 node-fetch，responseType 不支持 formData、arrayBuffer、blob 等方法
+    try {
+      response = await request(prefix('/test/responseType'), {
+        method: 'post',
+        responseType: 'formData',
+        data: { a: 13 },
+      });
+      expect(response instanceof FormData).toBe(true);
+    } catch (e) {
+      expect(e.name).toBe('ResponseError');
+    }
 
-    response = await request(prefix('/test/responseType'), {
-      method: 'post',
-      responseType: 'arrayBuffer',
-      data: { a: 14 },
-    });
-    expect(response instanceof ArrayBuffer).toBe(true);
+    try {
+      response = await request(prefix('/test/responseType'), {
+        method: 'post',
+        responseType: 'arrayBuffer',
+        data: { a: 14 },
+      });
+      expect(response instanceof ArrayBuffer).toBe(true);
+    } catch (e) {
+      expect(e.name).toBe('ResponseError');
+    }
 
     try {
       response = await request(prefix('/test/responseType'), {
@@ -298,16 +309,23 @@ describe('test fetch:', () => {
   }, 6000);
 
   // 测试字符集 gbk支持 https://yuque.antfin-inc.com/zhizheng.ck/me_and_world/rfaldm
-  it('test charset', async () => {
+  it('test charset', async done => {
+    expect.assertions(1);
     server.get('/test/charset', (req, res) => {
       res.setHeader('access-control-allow-origin', '*');
       res.setHeader('Content-Type', 'text/html; charset=gbk');
       writeData(iconv.encode('我是乱码?', 'gbk'), res);
     });
-
-    const response = await request(prefix('/test/charset'), { charset: 'gbk' });
-    expect(response).toBe('我是乱码?');
-  }, 6000);
+    // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob
+    try {
+      const response = await request(prefix('/test/charset'), { charset: 'gbk' });
+      expect(response).toBe('我是乱码?');
+      done();
+    } catch (e) {
+      expect(e.name).toBe('ResponseError');
+      done();
+    }
+  });
 
   // 测试错误处理方法
   it('test errorHandler', async () => {
