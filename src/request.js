@@ -1,12 +1,11 @@
 import Core from './core';
-import fetchMiddleware from './middleware/fetch';
-import parseResponseMiddleware from './middleware/parseResponse';
-import simplePost from './middleware/simplePost';
-import simpleGet from './middleware/simpleGet';
+import Cancel from './cancel/cancel';
+import CancelToken from './cancel/cancelToken';
+import isCancel from './cancel/isCancel';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
-const request = (initOptions = {}, middleware = []) => {
-  const coreInstance = new Core(initOptions, middleware);
+const request = (initOptions = {}) => {
+  const coreInstance = new Core(initOptions);
   const umiInstance = (url, options = {}) => {
     const mergeOptions = {
       ...initOptions,
@@ -19,13 +18,14 @@ const request = (initOptions = {}, middleware = []) => {
         ...initOptions.params,
         ...options.params,
       },
-      method: (options.method || 'get').toLowerCase(),
+      method: (options.method || initOptions.method || 'get').toLowerCase(),
     };
     return coreInstance.request(url, mergeOptions);
   };
 
   // 中间件
   umiInstance.use = coreInstance.use.bind(coreInstance);
+  umiInstance.fetchIndex = coreInstance.fetchIndex;
 
   // 拦截器
   umiInstance.interceptors = {
@@ -43,6 +43,10 @@ const request = (initOptions = {}, middleware = []) => {
     umiInstance[method] = (url, options) => umiInstance(url, { ...options, method });
   });
 
+  umiInstance.Cancel = Cancel;
+  umiInstance.CancelToken = CancelToken;
+  umiInstance.isCancel = isCancel;
+
   return umiInstance;
 };
 
@@ -54,13 +58,11 @@ const request = (initOptions = {}, middleware = []) => {
  * @param {function} errorHandler 统一错误处理方法
  * @param {object} headers 统一的headers
  */
-const _extendMiddlewares = [simplePost, simpleGet, fetchMiddleware, parseResponseMiddleware];
-export const extend = initOptions => request(initOptions, _extendMiddlewares);
+export const extend = initOptions => request(initOptions);
 
 /**
- * 暴露 fetch 中间件，去除响应处理的中间件和前后缀处理的中间件，保障依旧可以使用
+ * 暴露 fetch 中间件，保障依旧可以使用
  */
-const _fetchMiddlewares = [simplePost, simpleGet, fetchMiddleware];
-export const fetch = request({}, _fetchMiddlewares);
+export const fetch = request({ parseResponse: false });
 
-export default request({}, _extendMiddlewares);
+export default request({});

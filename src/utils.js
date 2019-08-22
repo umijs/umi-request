@@ -85,10 +85,14 @@ export function readerGBK(file) {
 /**
  * 安全的JSON.parse
  */
-export function safeJsonParse(data) {
+export function safeJsonParse(data, throwErrIfParseFail = false, response = null) {
   try {
     return JSON.parse(data);
-  } catch (e) {} // eslint-disable-line no-empty
+  } catch (e) {
+    if (throwErrIfParseFail) {
+      throw new ResponseError(response, 'JSON.parse fail', data);
+    }
+  } // eslint-disable-line no-empty
   return data;
 }
 
@@ -97,5 +101,16 @@ export function timeout2Throw(msec) {
     setTimeout(() => {
       reject(new RequestError(`timeout of ${msec}ms exceeded`));
     }, msec);
+  });
+}
+
+// If request options contain 'cancelToken', reject request when token has been canceled
+export function cancel2Throw(opt) {
+  return new Promise((_, reject) => {
+    if (opt.cancelToken) {
+      opt.cancelToken.promise.then(cancel => {
+        reject(cancel);
+      });
+    }
   });
 }

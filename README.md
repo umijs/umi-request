@@ -18,9 +18,10 @@ The network request library, based on fetch encapsulation, combines the features
 - api timeout support
 - api request cache support
 - support for processing gbk
-- request and response interceptor support for class axios
+- request and response interceptor support like axios
 - unified error handling
 - middleware support
+- cancel request support like axios
 
 ## umi-request vs fetch vs axios
 
@@ -39,6 +40,7 @@ The network request library, based on fetch encapsulation, combines the features
 | suffix | ✅ | ❎ | ❎ |
 | processing gbk | ✅ | ❎ | ❎ |
 | middleware | ✅ | ❎ | ❎ |
+| cancel request | ✅ | ❎ | ✅ |
 
 For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://github.com/umijs/umi/issues)
 
@@ -74,6 +76,11 @@ For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](htt
 | errorHandler | exception handling, or override unified exception handling | function(error) | -- |
 | headers | fetch original parameters | object | -- | {} |
 | credentials | fetch request with cookies | string | -- | credentials: 'include' |
+| parseResponse | response processing simplification | boolean | -- | true |
+| throwErrIfParseFail | throw error when JSON parse fail and responseType is 'json' | boolean | -- | false |
+| cancelToken | Token to cancel request | CancelToken.token | -- | -- |
+| type | request type，type 'normal' would use fetch | string | -- | normal | 
+
 
 The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
 
@@ -304,6 +311,52 @@ const data = await request('/api/v1/a');
 order of middlewares be called:
 ```
 a1 -> b1 -> response -> b2 -> a2
+```
+
+## Cancel request
+1. You can cancel a request using a cancel token.
+```javascript
+import Request from 'umi-request';
+
+const CancelToken = Request.CancelToken;
+const { token, cancel } = CancelToken.source();
+ 
+Request.get('/api/cancel', {
+  cancelToken: token
+}).catch(function(thrown) {
+  if (Request.isCancel(thrown)) {
+    console.log('Request canceled', thrown.message);
+  } else {
+    // handle error
+  }
+});
+
+Request.post('/api/cancel', {
+  name: 'hello world'
+}, {
+  cancelToken: token
+})
+ 
+// cancel request (the message parameter is optional)
+cancel('Operation canceled by the user.');
+```
+
+
+2. You can also create a cancel token by passing an executor function to the CancelToken constructor:
+```javascript
+import Request from 'umi-request';
+
+const CancelToken = Request.CancelToken;
+let cancel;
+ 
+Request.get('/api/cancel', {
+  cancelToken: new CancelToken(function executor(c) {
+    cancel = c;
+  })
+});
+ 
+// cancel request
+cancel();
 ```
 
 ## Development and debugging

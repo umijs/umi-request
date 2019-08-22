@@ -25,6 +25,7 @@
 - 类 axios 的 request 和 response 拦截器(interceptors)支持
 - 统一的错误处理方式
 - 类 koa 洋葱机制的 use 中间件机制支持
+- 类 axios 的取消请求
 
 ## 与 fetch, axios 异同
 
@@ -43,6 +44,7 @@
 | 后缀       | ✅              | ❎              | ❎              |
 | 处理 gbk   | ✅              | ❎              | ❎              |
 | 中间件     | ✅              | ❎              | ❎              |
+| 取消请求   | ✅              | ❎              | ✅              |
 
 更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi/issues)
 
@@ -78,6 +80,11 @@
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
 | headers | fetch 原有参数 | object | -- | {} |
 | credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'include' |
+| parseResponse | 是否对 response 做处理简化 | boolean | -- | true |
+| throwErrIfParseFail | 当 responseType 为 'json', 对请求结果做 JSON.parse 出错时是否抛出异常 | boolean | -- | false |
+| cancelToken | 取消请求的 Token | CancelToken.token | -- | -- |
+| type | 请求类型，normal 为 fetch | string | -- | normal | 
+
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
@@ -192,13 +199,12 @@ request.use(async (ctx, next) => {
   await next();
 
   const { res } = ctx;
-  const { success = false } = res;
+  const { success = false } = res; // 假设返回结果为 : { success: false, errorCode: 'B001' }
   if (!success) {
-    // Handle fail request here
+    // 对异常情况做对应处理
   }
 })
 ```
-
 
 ## 错误处理
 
@@ -312,6 +318,53 @@ const data = await request('/api/v1/a');
 a1 -> b1 -> response -> b2 -> a2
 ```
 
+## 取消请求
+你可以通过 **cancel token** 来取消一个请求
+> cancel token API 是基于已被撤销的 [cancelable-promises 方案](https://github.com/tc39/proposal-cancelable-promises)
+
+1. 你可以通过 **CancelToken.source** 来创建一个 cancel token，如下所示:
+```javascript
+import Request from 'umi-request';
+
+const CancelToken = Request.CancelToken;
+const { token, cancel } = CancelToken.source();
+ 
+Request.get('/api/cancel', {
+  cancelToken: token
+}).catch(function(thrown) {
+  if (Request.isCancel(thrown)) {
+    console.log('Request canceled', thrown.message);
+  } else {
+    // 处理异常
+  }
+});
+
+Request.post('/api/cancel', {
+  name: 'hello world'
+}, {
+  cancelToken: token
+})
+ 
+// 取消请求(参数为非必填)
+cancel('Operation canceled by the user.');
+
+```
+
+2. 你也可以通过实例化 CancelToken 来创建一个 token，同时通过传入函数来获取取消方法：
+```javascript
+import Request from 'umi-request';
+
+const CancelToken = Request.CancelToken;
+let cancel;
+ 
+Request.get('/api/cancel', {
+  cancelToken: new CancelToken(function executor(c) {
+    cancel = c;
+  })
+});
+// 取消请求
+cancel();
+```
 
 ## 开发和调试
 
