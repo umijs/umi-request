@@ -7,7 +7,7 @@ export default function fetchMiddleware(ctx, next) {
     cache,
     responseInterceptors,
   } = ctx;
-  const { timeout = 0, type = 'normal', useCache = false, method = 'get', params, ttl } = options;
+  const { timeout = 0, type = 'normal', useCache = false, method = 'get', params, ttl, cancelToken } = options;
 
   if (type !== 'normal') {
     return next();

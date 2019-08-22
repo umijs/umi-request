@@ -18,7 +18,7 @@ const request = (initOptions = {}) => {
         ...initOptions.params,
         ...options.params,
       },
-      method: (options.method || 'get').toLowerCase(),
+      method: (options.method || initOptions.method || 'get').toLowerCase(),
     };
     return coreInstance.request(url, mergeOptions);
   };
