@@ -22,6 +22,7 @@ The network request library, based on fetch encapsulation, combines the features
 - unified error handling
 - middleware support
 - cancel request support like axios
+- make http request from node.js
 
 ## umi-request vs fetch vs axios
 
@@ -69,7 +70,7 @@ For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](htt
 | responseType | How to parse the returned data | string | json , text , blob , formData ... | json , text |
 | getResponse | Whether to get the source response, the result will wrap a layer | boolean | -- | fasle |
 | timeout | timeout, default millisecond, write with caution | number | -- | -- |
-| useCache | Whether to use caching | boolean | -- | false |
+| useCache | Whether to use caching (only support browser environment) | boolean | -- | false |
 | ttl | Cache duration, 0 is not expired | number | -- | 60000 |
 | prefix | prefix, generally used to override the uniform settings prefix | string | -- | -- |
 | suffix | suffix, such as some scenes api need to be unified .json | string | -- |
@@ -201,6 +202,22 @@ request.use(async (ctx, next) => {
 })
 
 ```
+
+## node request
+```javascript
+const umi = require('umi-request');
+const extendRequest = umi.extend({ timeout: 10000 })
+
+extendRequest('/api/user')
+  .then(res => {
+    console.log(res);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+```
+
+
 
 ## Error handling
 

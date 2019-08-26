@@ -114,3 +114,17 @@ export function cancel2Throw(opt) {
     }
   });
 }
+
+// Check env is browser or node
+export function getEnv() {
+  let env;
+  // Only Node.JS has a process variable that is of [[Class]] process
+  if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+    // For node use HTTP adapter
+    env = 'NODE';
+  }
+  if (typeof XMLHttpRequest !== 'undefined') {
+    env = 'BROWSER';
+  }
+  return env;
+}

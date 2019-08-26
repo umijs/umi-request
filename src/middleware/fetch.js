@@ -1,5 +1,5 @@
 import 'isomorphic-fetch';
-import { timeout2Throw, cancel2Throw } from '../utils';
+import { timeout2Throw, cancel2Throw, getEnv } from '../utils';
 
 export default function fetchMiddleware(ctx, next) {
   const {
@@ -7,9 +7,12 @@ export default function fetchMiddleware(ctx, next) {
     cache,
     responseInterceptors,
   } = ctx;
-  const { timeout = 0, type = 'normal', useCache = false, method = 'get', params, ttl, cancelToken } = options;
+  const { timeout = 0, __umiRequestCoreType__ = 'normal', useCache = false, method = 'get', params, ttl } = options;
 
-  if (type !== 'normal') {
+  if (__umiRequestCoreType__ !== 'normal') {
+    console.warn(
+      '__umiRequestCoreType__ is a internal params that use in umi-request, change its value would affect the behavior of request! It only use when you want to extend the request core'
+    );
     return next();
   }
 
@@ -20,7 +23,8 @@ export default function fetchMiddleware(ctx, next) {
   }
 
   // 从缓存池检查是否有缓存数据
-  const needCache = method.toLowerCase() === 'get' && useCache;
+  const isBrowser = getEnv() === 'BROWSER';
+  const needCache = method.toLowerCase() === 'get' && useCache && isBrowser;
   if (needCache) {
     let responseCache = cache.get({
       url,

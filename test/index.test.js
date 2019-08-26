@@ -1,5 +1,6 @@
 import createTestServer from 'create-test-server';
 import iconv from 'iconv-lite';
+import { fetch as whatwgFetch } from 'whatwg-fetch';
 import request, { extend, Onion, fetch } from '../src/index';
 import { MapCache } from '../src/utils';
 
@@ -87,7 +88,7 @@ describe('test fetch:', () => {
     response = await request(prefix('/test/requestType'), {
       method: 'post',
       data: 'hehe',
-      type: 'mini',
+      __umiRequestCoreType__: 'mini',
     });
     expect(response).toBe(null);
     done();
@@ -334,15 +335,21 @@ describe('test fetch:', () => {
       res.setHeader('Content-Type', 'text/html; charset=gbk');
       writeData(iconv.encode('我是乱码?', 'gbk'), res);
     });
-    // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob
-    try {
-      const response = await request(prefix('/test/charset'), { charset: 'gbk' });
-      expect(response).toBe('我是乱码?');
-      done();
-    } catch (e) {
-      expect(e.name).toBe('ResponseError');
-      done();
-    }
+    // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob，通过中间件拓展请求内核来覆盖
+    const extendRequest = extend({ __umiRequestCoreType__: 'browser' });
+    extendRequest.use(async (ctx, next) => {
+      const {
+        req: { options = {}, url = '' },
+      } = ctx;
+      const { timeout = 0, __umiRequestCoreType__ = 'browser' } = options;
+      const res = await whatwgFetch(url, options);
+      ctx.res = res;
+      return next();
+    }, request.fetchIndex);
+
+    const response = await extendRequest(prefix('/test/charset'), { charset: 'gbk' });
+    expect(response).toBe('我是乱码?');
+    done();
   });
 
   // 测试错误处理方法

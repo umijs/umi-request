@@ -87,7 +87,7 @@ describe('middleware', () => {
       }, request.fetchIndex);
 
       const data = await request('/test/rpc', {
-        type: 'rpc',
+        __umiRequestCoreType__: 'rpc',
         method: 'rpc',
         parseResponse: false,
       });
@@ -112,7 +112,7 @@ describe('middleware', () => {
       });
 
       const r2 = request('/test/rpc', {
-        type: 'rpc',
+        __umiRequestCoreType__: 'rpc',
         method: 'rpc',
         parseResponse: false,
       });
