@@ -1,5 +1,6 @@
 import createTestServer from 'create-test-server';
 import iconv from 'iconv-lite';
+import { fetch as whatwgFetch } from 'whatwg-fetch';
 import request, { extend, Onion, fetch } from '../src/index';
 import { MapCache } from '../src/utils';
 
@@ -8,6 +9,17 @@ const writeData = (data, res) => {
   res.setHeader('access-control-allow-origin', '*');
   res.send(data);
 };
+
+// 拓展浏览器请求内核
+async function browserFetchMiddleware(ctx, next) {
+  const {
+    req: { options = {}, url = '' },
+  } = ctx;
+  const { timeout = 0, __umiRequestCoreType__ = 'browser' } = options;
+  const res = await whatwgFetch(url, options);
+  ctx.res = res;
+  return next();
+}
 
 describe('test fetch:', () => {
   let server;
@@ -87,7 +99,7 @@ describe('test fetch:', () => {
     response = await request(prefix('/test/requestType'), {
       method: 'post',
       data: 'hehe',
-      type: 'mini',
+      __umiRequestCoreType__: 'mini',
     });
     expect(response).toBe(null);
     done();
@@ -132,7 +144,8 @@ describe('test fetch:', () => {
       expect(error.data).toBe('hello world');
     }
   });
-  it('test responseType', async () => {
+  it('test responseType', async done => {
+    expect.assertions(5);
     server.post('/test/responseType', (req, res) => {
       writeData(req.body, res);
     });
@@ -145,14 +158,17 @@ describe('test fetch:', () => {
       }
     });
 
-    let response = await request(prefix('/test/responseType'), {
+    const extendRequest = extend({});
+    extendRequest.use(browserFetchMiddleware, request.fetchIndex);
+
+    let response = await extendRequest(prefix('/test/responseType'), {
       method: 'post',
       responseType: 'json',
       data: { a: 11 },
     });
     expect(response.a).toBe(11);
 
-    response = await request(prefix('/test/responseType'), {
+    response = await extendRequest(prefix('/test/responseType'), {
       method: 'post',
       responseType: 'text',
       data: { a: 12 },
@@ -160,27 +176,19 @@ describe('test fetch:', () => {
     expect(typeof response === 'string').toBe(true);
 
     // fetch 从 whatwg-fetch 更换成 isomorphic-fetch，默认导入的是 node-fetch，responseType 不支持 formData、arrayBuffer、blob 等方法
-    try {
-      response = await request(prefix('/test/responseType'), {
-        method: 'post',
-        responseType: 'formData',
-        data: { a: 13 },
-      });
-      expect(response instanceof FormData).toBe(true);
-    } catch (e) {
-      expect(e.name).toBe('ResponseError');
-    }
+    response = await extendRequest(prefix('/test/responseType'), {
+      method: 'post',
+      responseType: 'formData',
+      data: { a: 13 },
+    });
+    expect(response instanceof FormData).toBe(true);
 
-    try {
-      response = await request(prefix('/test/responseType'), {
-        method: 'post',
-        responseType: 'arrayBuffer',
-        data: { a: 14 },
-      });
-      expect(response instanceof ArrayBuffer).toBe(true);
-    } catch (e) {
-      expect(e.name).toBe('ResponseError');
-    }
+    response = await request(prefix('/test/responseType'), {
+      method: 'post',
+      responseType: 'arrayBuffer',
+      data: { a: 14 },
+    });
+    expect(response instanceof ArrayBuffer).toBe(true);
 
     try {
       response = await request(prefix('/test/responseType'), {
@@ -189,8 +197,9 @@ describe('test fetch:', () => {
       });
     } catch (error) {
       expect(error.message).toBe('responseType not support');
+      done();
     }
-  }, 5000);
+  });
 
   // 测试拼接参数
   it('test queryParams', async () => {
@@ -334,19 +343,18 @@ describe('test fetch:', () => {
       res.setHeader('Content-Type', 'text/html; charset=gbk');
       writeData(iconv.encode('我是乱码?', 'gbk'), res);
     });
-    // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob
-    try {
-      const response = await request(prefix('/test/charset'), { charset: 'gbk' });
-      expect(response).toBe('我是乱码?');
-      done();
-    } catch (e) {
-      expect(e.name).toBe('ResponseError');
-      done();
-    }
+    // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob，通过中间件拓展请求内核来覆盖
+    const extendRequest = extend({ __umiRequestCoreType__: 'browser' });
+    extendRequest.use(browserFetchMiddleware, request.fetchIndex);
+
+    const response = await extendRequest(prefix('/test/charset'), { charset: 'gbk' });
+    expect(response).toBe('我是乱码?');
+    done();
   });
 
   // 测试错误处理方法
-  it('test errorHandler', async () => {
+  it('test errorHandler', async done => {
+    expect.assertions(3);
     server.get('/test/errorHandler', (req, res) => {
       res.setHeader('access-control-allow-origin', '*');
       res.status(401);
@@ -392,8 +400,9 @@ describe('test fetch:', () => {
       // throw response;
     } catch (error) {
       expect(error).toBe('统一错误处理被覆盖啦');
+      done();
     }
-  }, 6000);
+  });
 
   it('test prefix and suffix', async () => {
     server.get('/prefix/api/hello', (req, res) => {

@@ -1,4 +1,4 @@
-import { safeJsonParse, readerGBK, ResponseError } from '../utils';
+import { safeJsonParse, readerGBK, ResponseError, getEnv } from '../utils';
 
 export default function parseResponseMiddleware(ctx, next) {
   const { res, req } = ctx;
@@ -19,7 +19,9 @@ export default function parseResponseMiddleware(ctx, next) {
   if (!res || !res.clone) {
     return next();
   }
-  const copy = res.clone();
+
+  // 只在浏览器环境对 response 做克隆， node 环境如果对 response 克隆会有问题：https://github.com/bitinn/node-fetch/issues/553
+  const copy = getEnv() === 'BROWSER' ? res.clone() : res;
   copy.useCache = res.useCache || false;
 
   return next()

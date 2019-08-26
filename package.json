@@ -42,11 +42,8 @@
     "umi-test": "^1.4.0"
   },
   "dependencies": {
-    "es6-promise": "^4.2.8",
     "isomorphic-fetch": "^2.2.1",
-    "node-fetch": "^2.6.0",
-    "query-string": "^6.0.0",
-    "whatwg-fetch": "^3.0.0"
+    "query-string": "^6.0.0"
   },
   "files": [
     "dist/",
