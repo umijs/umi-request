@@ -26,6 +26,7 @@
 - 统一的错误处理方式
 - 类 koa 洋葱机制的 use 中间件机制支持
 - 类 axios 的取消请求
+- 支持在 node 环境发送 http 请求
 
 ## 与 fetch, axios 异同
 
@@ -73,7 +74,7 @@
 | responseType | 如何解析返回的数据 | string | json , text , blob , formData ... | json , text |
 | getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
 | timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
-| useCache | 是否使用缓存 | boolean | -- | false |
+| useCache | 是否使用缓存（仅支持浏览器客户端） | boolean | -- | false |
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
@@ -83,7 +84,7 @@
 | parseResponse | 是否对 response 做处理简化 | boolean | -- | true |
 | throwErrIfParseFail | 当 responseType 为 'json', 对请求结果做 JSON.parse 出错时是否抛出异常 | boolean | -- | false |
 | cancelToken | 取消请求的 Token | CancelToken.token | -- | -- |
-| type | 请求类型，normal 为 fetch | string | -- | normal | 
+| type | 请求类型，normal 为 fetch | string | -- | normal |
 
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
@@ -204,6 +205,20 @@ request.use(async (ctx, next) => {
     // 对异常情况做对应处理
   }
 })
+```
+
+## node 环境
+```javascript
+const umi = require('umi-request');
+const extendRequest = umi.extend({ timeout: 10000 })
+
+extendRequest('/api/user')
+  .then(res => {
+    console.log(res);
+  })
+  .catch(err => {
+    console.log(err);
+  });
 ```
 
 ## 错误处理

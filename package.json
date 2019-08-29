@@ -42,8 +42,8 @@
     "umi-test": "^1.4.0"
   },
   "dependencies": {
-    "query-string": "^6.0.0",
-    "whatwg-fetch": "^2.0.0"
+    "isomorphic-fetch": "^2.2.1",
+    "query-string": "^6.0.0"
   },
   "files": [
     "dist/",

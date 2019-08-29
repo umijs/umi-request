@@ -1,4 +1,3 @@
-import createTestServer from 'create-test-server';
 import { Onion } from '../../src/index';
 
 describe('Onion', () => {

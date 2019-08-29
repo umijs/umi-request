@@ -1,14 +1,25 @@
 import createTestServer from 'create-test-server';
 import iconv from 'iconv-lite';
+import { fetch as whatwgFetch } from 'whatwg-fetch';
 import request, { extend, Onion, fetch } from '../src/index';
 import { MapCache } from '../src/utils';
 
 const debug = require('debug')('afx-request:test');
-
 const writeData = (data, res) => {
   res.setHeader('access-control-allow-origin', '*');
   res.send(data);
 };
+
+// 拓展浏览器请求内核
+async function browserFetchMiddleware(ctx, next) {
+  const {
+    req: { options = {}, url = '' },
+  } = ctx;
+  const { timeout = 0, __umiRequestCoreType__ = 'browser' } = options;
+  const res = await whatwgFetch(url, options);
+  ctx.res = res;
+  return next();
+}
 
 describe('test fetch:', () => {
   let server;
@@ -50,7 +61,7 @@ describe('test fetch:', () => {
   }, 5000);
 
   // 测试请求类型
-  it('test requestType', async () => {
+  it('test requestType', async done => {
     server.post('/test/requestType', (req, res) => {
       writeData(req.body, res);
     });
@@ -81,20 +92,23 @@ describe('test fetch:', () => {
 
     response = await request(prefix('/test/requestType'), {
       method: 'post',
-      data: 'hehe',
+      data: {},
     });
-    expect(response).toBe('hehe');
+    expect(response).toEqual({});
 
     response = await request(prefix('/test/requestType'), {
       method: 'post',
       data: 'hehe',
-      type: 'mini',
+      __umiRequestCoreType__: 'mini',
     });
     expect(response).toBe(null);
-  }, 5000);
+    done();
+  });
 
   // 测试非 web 环境无 fetch 情况
-  it('test requestType', async () => {
+
+  it('test fetch not exist', async done => {
+    expect.assertions(1);
     server.post('/test/requestType', (req, res) => {
       writeData(req.body, res);
     });
@@ -106,10 +120,11 @@ describe('test fetch:', () => {
         requestType: 'json',
       });
     } catch (error) {
-      expect(error.message).toBe('window or window.fetch not exist!');
+      expect(error.message).toBe('Global fetch not exist!');
+      window.fetch = oldFetch;
+      done();
     }
-    window.fetch = oldFetch;
-  }, 5000);
+  });
 
   // 测试返回类型 #TODO 更多类型
   it('test invalid responseType', async () => {
@@ -124,13 +139,13 @@ describe('test fetch:', () => {
         data: { a: 1 },
         throwErrIfParseFail: true,
       });
-      console.log('response:');
     } catch (error) {
       expect(error.message).toBe('JSON.parse fail');
       expect(error.data).toBe('hello world');
     }
   });
-  it('test responseType', async () => {
+  it('test responseType', async done => {
+    expect.assertions(5);
     server.post('/test/responseType', (req, res) => {
       writeData(req.body, res);
     });
@@ -143,21 +158,25 @@ describe('test fetch:', () => {
       }
     });
 
-    let response = await request(prefix('/test/responseType'), {
+    const extendRequest = extend({});
+    extendRequest.use(browserFetchMiddleware, request.fetchIndex);
+
+    let response = await extendRequest(prefix('/test/responseType'), {
       method: 'post',
       responseType: 'json',
       data: { a: 11 },
     });
     expect(response.a).toBe(11);
 
-    response = await request(prefix('/test/responseType'), {
+    response = await extendRequest(prefix('/test/responseType'), {
       method: 'post',
       responseType: 'text',
       data: { a: 12 },
     });
     expect(typeof response === 'string').toBe(true);
 
-    response = await request(prefix('/test/responseType'), {
+    // fetch 从 whatwg-fetch 更换成 isomorphic-fetch，默认导入的是 node-fetch，responseType 不支持 formData、arrayBuffer、blob 等方法
+    response = await extendRequest(prefix('/test/responseType'), {
       method: 'post',
       responseType: 'formData',
       data: { a: 13 },
@@ -178,8 +197,9 @@ describe('test fetch:', () => {
       });
     } catch (error) {
       expect(error.message).toBe('responseType not support');
+      done();
     }
-  }, 5000);
+  });
 
   // 测试拼接参数
   it('test queryParams', async () => {
@@ -316,19 +336,25 @@ describe('test fetch:', () => {
   }, 6000);
 
   // 测试字符集 gbk支持 https://yuque.antfin-inc.com/zhizheng.ck/me_and_world/rfaldm
-  it('test charset', async () => {
+  it('test charset', async done => {
+    expect.assertions(1);
     server.get('/test/charset', (req, res) => {
       res.setHeader('access-control-allow-origin', '*');
       res.setHeader('Content-Type', 'text/html; charset=gbk');
       writeData(iconv.encode('我是乱码?', 'gbk'), res);
     });
+    // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob，通过中间件拓展请求内核来覆盖
+    const extendRequest = extend({ __umiRequestCoreType__: 'browser' });
+    extendRequest.use(browserFetchMiddleware, request.fetchIndex);
 
-    const response = await request(prefix('/test/charset'), { charset: 'gbk' });
+    const response = await extendRequest(prefix('/test/charset'), { charset: 'gbk' });
     expect(response).toBe('我是乱码?');
-  }, 6000);
+    done();
+  });
 
   // 测试错误处理方法
-  it('test errorHandler', async () => {
+  it('test errorHandler', async done => {
+    expect.assertions(3);
     server.get('/test/errorHandler', (req, res) => {
       res.setHeader('access-control-allow-origin', '*');
       res.status(401);
@@ -374,8 +400,9 @@ describe('test fetch:', () => {
       // throw response;
     } catch (error) {
       expect(error).toBe('统一错误处理被覆盖啦');
+      done();
     }
-  }, 6000);
+  });
 
   it('test prefix and suffix', async () => {
     server.get('/prefix/api/hello', (req, res) => {

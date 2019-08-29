@@ -1,4 +1,4 @@
-import { MapCache } from '../src/utils';
+import { MapCache, getEnv } from '../src/utils';
 
 // 测试工具函数
 describe('test utils:', () => {
@@ -47,6 +47,13 @@ describe('test utils:', () => {
       expect(mapCache.get('max1')).toBe(undefined);
       mapCache.set('max5', { what: 'ok5' });
       mapCache.set('max6', { what: 'ok6' }, 0);
+    });
+  });
+  describe('test getEnv', () => {
+    it('should return BROWSER', done => {
+      const env = getEnv();
+      expect(env).toBe('BROWSER');
+      done();
     });
   });
 });

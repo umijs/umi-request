@@ -40,7 +40,6 @@ export default function simplePostMiddleware(ctx, next) {
       options.body = data;
     }
   }
-
   ctx.req.options = options;
 
   return next();
