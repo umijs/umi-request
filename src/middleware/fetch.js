@@ -2,11 +2,8 @@ import 'isomorphic-fetch';
 import { timeout2Throw, cancel2Throw, getEnv } from '../utils';
 
 export default function fetchMiddleware(ctx, next) {
-  const {
-    req: { options = {}, url = '' },
-    cache,
-    responseInterceptors,
-  } = ctx;
+  if (!ctx) return next();
+  const { req: { options = {}, url = '' } = {}, cache, responseInterceptors } = ctx;
   const { timeout = 0, __umiRequestCoreType__ = 'normal', useCache = false, method = 'get', params, ttl } = options;
 
   if (__umiRequestCoreType__ !== 'normal') {

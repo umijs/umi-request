@@ -15,7 +15,8 @@ async function browserFetchMiddleware(ctx, next) {
   const {
     req: { options = {}, url = '' },
   } = ctx;
-  const { timeout = 0, __umiRequestCoreType__ = 'browser' } = options;
+  const { timeout = 0, __umiRequestCoreType__ = 'normal' } = options;
+  if (__umiRequestCoreType__ !== 'browser') return next();
   const res = await whatwgFetch(url, options);
   ctx.res = res;
   return next();
@@ -159,7 +160,7 @@ describe('test fetch:', () => {
     });
 
     const extendRequest = extend({});
-    extendRequest.use(browserFetchMiddleware, request.fetchIndex);
+    extendRequest.use(browserFetchMiddleware, { core: true });
 
     let response = await extendRequest(prefix('/test/responseType'), {
       method: 'post',
@@ -345,7 +346,7 @@ describe('test fetch:', () => {
     });
     // fetch 请求库更换成 isomorphic-fetch 后，默认导入为 node-fetch，response 不支持 blob，通过中间件拓展请求内核来覆盖
     const extendRequest = extend({ __umiRequestCoreType__: 'browser' });
-    extendRequest.use(browserFetchMiddleware, request.fetchIndex);
+    // extendRequest.use(browserFetchMiddleware, request.fetchIndex);
 
     const response = await extendRequest(prefix('/test/charset'), { charset: 'gbk' });
     expect(response).toBe('我是乱码?');

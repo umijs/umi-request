@@ -34,6 +34,7 @@ export interface RequestOptionsInit extends RequestInit {
   throwErrIfParseFail?: boolean;
   parseResponse?: boolean;
   cancelToken?: CancelToken;
+  getResponse?: boolean;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
@@ -68,6 +69,7 @@ export interface Context {
 export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
 
 export type OnionMiddleware = (ctx: Context, next: () => void) => void;
+export type OnionOptions = { global?: boolean; core?: boolean };
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
@@ -87,7 +89,7 @@ export interface RequestMethod<R = false> {
       use: (handler: ResponseInterceptor) => void;
     };
   };
-  use: (handler: OnionMiddleware, index?: number) => void;
+  use: (handler: OnionMiddleware, options?: OnionOptions) => void;
   fetchIndex: number;
   Cancel: CancelStatic;
   CancelToken: CancelTokenStatic;

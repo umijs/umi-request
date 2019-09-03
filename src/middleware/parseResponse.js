@@ -1,31 +1,34 @@
 import { safeJsonParse, readerGBK, ResponseError, getEnv } from '../utils';
 
 export default function parseResponseMiddleware(ctx, next) {
-  const { res, req } = ctx;
-  const {
-    options: {
-      responseType = 'json',
-      charset = 'utf8',
-      getResponse = false,
-      throwErrIfParseFail = false,
-      parseResponse = true,
-    },
-  } = req || {};
-
-  if (!parseResponse) {
-    return next();
-  }
-
-  if (!res || !res.clone) {
-    return next();
-  }
-
-  // 只在浏览器环境对 response 做克隆， node 环境如果对 response 克隆会有问题：https://github.com/bitinn/node-fetch/issues/553
-  const copy = getEnv() === 'BROWSER' ? res.clone() : res;
-  copy.useCache = res.useCache || false;
+  let copy;
 
   return next()
     .then(() => {
+      if (!ctx) return;
+      const { res = {}, req = {} } = ctx;
+      const {
+        options: {
+          responseType = 'json',
+          charset = 'utf8',
+          getResponse = false,
+          throwErrIfParseFail = false,
+          parseResponse = true,
+        } = {},
+      } = req || {};
+
+      if (!parseResponse) {
+        return;
+      }
+
+      if (!res || !res.clone) {
+        return;
+      }
+
+      // 只在浏览器环境对 response 做克隆， node 环境如果对 response 克隆会有问题：https://github.com/bitinn/node-fetch/issues/553
+      copy = getEnv() === 'BROWSER' ? res.clone() : res;
+      copy.useCache = res.useCache || false;
+
       // 解析数据
       if (charset === 'gbk') {
         try {
@@ -47,6 +50,13 @@ export default function parseResponseMiddleware(ctx, next) {
       }
     })
     .then(body => {
+      if (!ctx) return;
+      const { res = {}, req = {} } = ctx;
+      const { options: { getResponse = false } = {} } = req || {};
+
+      if (!copy) {
+        return;
+      }
       if (copy.status >= 200 && copy.status < 300) {
         // 提供源response, 以便自定义处理
         if (getResponse) {
