@@ -39,7 +39,8 @@
     "umi": "^2.8.15",
     "umi-lint": "^1.0.0-alpha.1",
     "umi-plugin-library": "^1.1.6",
-    "umi-test": "^1.4.0"
+    "umi-test": "^1.4.0",
+    "whatwg-fetch": "^3.0.0"
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",

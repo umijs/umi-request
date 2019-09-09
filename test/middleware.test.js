@@ -72,18 +72,20 @@ describe('middleware', () => {
       server.post('/test/rpc', (req, res) => {
         writeData(req.body, res);
       });
-      request.use((ctx, next) => {
+      request.use(async (ctx, next) => {
         const { req } = ctx;
         const { url, options } = req;
         const { method } = options;
         if (method.toLowerCase() !== 'rpc') {
-          return next();
+          await next();
+          return;
         }
         ctx.res = {
           success: true,
           data: 'rpc response',
         };
-        return next();
+        await next();
+        return;
       }, request.fetchIndex);
 
       const data = await request('/test/rpc', {

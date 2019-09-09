@@ -1,4 +1,4 @@
-import Onion from './onion/onion';
+import Onion from './onion';
 import { MapCache } from './utils';
 import addfixInterceptor from './interceptor/addfix';
 import fetchMiddleware from './middleware/fetch';
@@ -9,17 +9,25 @@ import simpleGet from './middleware/simpleGet';
 // 旧版拦截器为共享
 const requestInterceptors = [addfixInterceptor];
 const responseInterceptors = [];
-const defaultMiddlewares = [simplePost, simpleGet, fetchMiddleware, parseResponseMiddleware];
+
+// 初始化全局和内核中间件
+const globalMiddlewares = [simplePost, simpleGet, parseResponseMiddleware];
+const coreMiddlewares = [fetchMiddleware];
+
+Onion.globalMiddlewares = globalMiddlewares;
+Onion.defaultGlobalMiddlewaresLength = globalMiddlewares.length;
+Onion.coreMiddlewares = coreMiddlewares;
+Onion.defaultCoreMiddlewaresLength = coreMiddlewares.length;
 
 class Core {
   constructor(initOptions) {
-    this.onion = new Onion(defaultMiddlewares);
-    this.fetchIndex = 2; // 请求中间件位置
+    this.onion = new Onion([]);
+    this.fetchIndex = 0; // 【即将废弃】请求中间件位置
     this.mapCache = new MapCache(initOptions);
   }
 
-  use(newMiddleware, index = 0) {
-    this.onion.use(newMiddleware, index);
+  use(newMiddleware, opt = { global: false, core: false }) {
+    this.onion.use(newMiddleware, opt);
     return this;
   }
 

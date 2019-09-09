@@ -5,7 +5,9 @@ export default function compose(middlewares) {
 
   const middlewaresLen = middlewares.length;
   for (let i = 0; i < middlewaresLen; i++) {
-    if (typeof middlewares[i] !== 'function') throw new TypeError('Middleware must be componsed of function');
+    if (typeof middlewares[i] !== 'function') {
+      throw new TypeError('Middleware must be componsed of function');
+    }
   }
 
   return function wrapMiddlewares(params, next) {

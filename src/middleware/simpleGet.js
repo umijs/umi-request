@@ -2,13 +2,9 @@ import { stringify } from 'query-string';
 
 // 对请求参数做处理，实现 query 简化、 post 简化
 export default function simpleGetMiddleware(ctx, next) {
-  const {
-    req: { options = {} },
-  } = ctx;
-  let {
-    req: { url = '' },
-  } = ctx;
-
+  if (!ctx) return next();
+  const { req: { options = {} } = {} } = ctx;
+  let { req: { url = '' } = {} } = ctx;
   // 将 method 改为大写
   options.method = options.method ? options.method.toUpperCase() : 'GET';
 
