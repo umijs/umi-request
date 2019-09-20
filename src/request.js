@@ -38,7 +38,7 @@ const request = (initOptions = {}) => {
   };
 
   // 请求语法糖： reguest.get request.post ……
-  const METHODS = ['get', 'post', 'delete', 'put', 'rpc', 'patch'];
+  const METHODS = ['get', 'post', 'delete', 'put', 'patch', 'head', 'options', 'rpc'];
   METHODS.forEach(method => {
     umiInstance[method] = (url, options) => umiInstance(url, { ...options, method });
   });

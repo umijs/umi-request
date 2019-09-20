@@ -38,7 +38,7 @@ describe('timeout', () => {
   });
 
   it('should throw Request Error when timeout', async done => {
-    expect.assertions(1);
+    expect.assertions(3);
     server.get('/test/timeout', (req, res) => {
       setTimeout(() => {
         writeData('ok', res);
@@ -50,6 +50,8 @@ describe('timeout', () => {
       response = await request(prefix('/test/timeout'), { timeout: 800 });
     } catch (error) {
       expect(error.name).toBe('RequestError');
+      expect(error.message).toBe('timeout of 800ms exceeded');
+      expect(error.request.options.timeout).toBe(800);
       done();
     }
   });

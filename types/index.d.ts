@@ -3,6 +3,10 @@ export interface ResponseError<D = any> extends Error {
   name: string;
   data: D;
   response: Response;
+  request: {
+    url: string;
+    options: RequestOptionsInit;
+  };
 }
 /**
  * 增加的参数
@@ -80,6 +84,8 @@ export interface RequestMethod<R = false> {
   delete: RequestMethod<R>;
   put: RequestMethod<R>;
   patch: RequestMethod<R>;
+  head: RequestMethod<R>;
+  options: RequestMethod<R>;
   rpc: RequestMethod<R>;
   interceptors: {
     request: {

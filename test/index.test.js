@@ -453,6 +453,37 @@ describe('test fetch:', () => {
   });
 });
 
+describe('test http error', () => {
+  let server;
+
+  beforeAll(async () => {
+    server = await createTestServer();
+  });
+
+  afterAll(() => {
+    server.close();
+  });
+
+  it('error handler should return request in error object', async done => {
+    expect.assertions(3);
+    server.get('/api/error', (req, res) => {
+      res.setHeader('access-control-allow-origin', '*');
+      res.status(500);
+      res.send({ errorMessage: 'server error' });
+    });
+
+    try {
+      let response = await request(`${server.url}/api/error`, { hello: 'world' });
+    } catch (e) {
+      const { response, message, data, request } = e;
+      expect(response.status).toBe(500);
+      expect(request.url).toBe(`${server.url}/api/error`);
+      expect(request.options.hello).toBe('world');
+      done();
+    }
+  });
+});
+
 // 测试rpc
 xdescribe('test rpc:', () => {
   it('test hello', () => {

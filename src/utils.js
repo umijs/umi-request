@@ -49,9 +49,10 @@ export class MapCache {
  * 请求异常
  */
 export class RequestError extends Error {
-  constructor(text) {
+  constructor(text, request) {
     super(text);
     this.name = 'RequestError';
+    this.request = request;
   }
 }
 
@@ -59,11 +60,12 @@ export class RequestError extends Error {
  * 响应异常
  */
 export class ResponseError extends Error {
-  constructor(response, text, data) {
+  constructor(response, text, data, request) {
     super(text || response.statusText);
     this.name = 'ResponseError';
     this.data = data;
     this.response = response;
+    this.request = request;
   }
 }
 
@@ -85,21 +87,21 @@ export function readerGBK(file) {
 /**
  * 安全的JSON.parse
  */
-export function safeJsonParse(data, throwErrIfParseFail = false, response = null) {
+export function safeJsonParse(data, throwErrIfParseFail = false, response = null, request = null) {
   try {
     return JSON.parse(data);
   } catch (e) {
     if (throwErrIfParseFail) {
-      throw new ResponseError(response, 'JSON.parse fail', data);
+      throw new ResponseError(response, 'JSON.parse fail', data, request);
     }
   } // eslint-disable-line no-empty
   return data;
 }
 
-export function timeout2Throw(msec) {
+export function timeout2Throw(msec, request) {
   return new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new RequestError(`timeout of ${msec}ms exceeded`));
+      reject(new RequestError(`timeout of ${msec}ms exceeded`, request));
     }, msec);
   });
 }

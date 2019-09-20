@@ -7,9 +7,11 @@ export default function fetchMiddleware(ctx, next) {
   const { timeout = 0, __umiRequestCoreType__ = 'normal', useCache = false, method = 'get', params, ttl } = options;
 
   if (__umiRequestCoreType__ !== 'normal') {
-    console.warn(
-      '__umiRequestCoreType__ is a internal params that use in umi-request, change its value would affect the behavior of request! It only use when you want to extend the request core'
-    );
+    if (process && process.env && process.env.NODE_ENV === 'development') {
+      console.warn(
+        '__umiRequestCoreType__ is a internal property that use in umi-request, change its value would affect the behavior of request! It only use when you want to extend the request core.'
+      );
+    }
     return next();
   }
 
@@ -38,7 +40,7 @@ export default function fetchMiddleware(ctx, next) {
   let response;
   // 超时处理、取消请求处理
   if (timeout > 0) {
-    response = Promise.race([cancel2Throw(options, ctx), adapter(url, options), timeout2Throw(timeout)]);
+    response = Promise.race([cancel2Throw(options, ctx), adapter(url, options), timeout2Throw(timeout, ctx.req)]);
   } else {
     response = Promise.race([cancel2Throw(options, ctx), adapter(url, options)]);
   }
