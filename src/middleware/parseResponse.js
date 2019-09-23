@@ -35,18 +35,18 @@ export default function parseResponseMiddleware(ctx, next) {
           return res
             .blob()
             .then(readerGBK)
-            .then(safeJsonParse);
+            .then(d => safeJsonParse(d, false, copy, req));
         } catch (e) {
-          throw new ResponseError(copy, e.message);
+          throw new ResponseError(copy, e.message, null, req);
         }
       } else if (responseType === 'json') {
-        return res.text().then(d => safeJsonParse(d, throwErrIfParseFail, copy));
+        return res.text().then(d => safeJsonParse(d, throwErrIfParseFail, copy, req));
       }
       try {
         // 其他如text, blob, arrayBuffer, formData
         return res[responseType]();
       } catch (e) {
-        throw new ResponseError(copy, 'responseType not support');
+        throw new ResponseError(copy, 'responseType not support', null, req);
       }
     })
     .then(body => {
@@ -66,6 +66,6 @@ export default function parseResponseMiddleware(ctx, next) {
         ctx.res = body;
         return;
       }
-      throw new ResponseError(copy, 'http error', body);
+      throw new ResponseError(copy, 'http error', body, req);
     });
 }

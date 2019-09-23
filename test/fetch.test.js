@@ -87,4 +87,19 @@ describe('timeout', () => {
       }
     });
   });
+
+  describe('test __umiRequestCoreType__', () => {
+    it('should warn when __umiRequestCoreType__ not "normal"', async done => {
+      jest.spyOn(console, 'warn');
+      process.env.NODE_ENV = 'development';
+      expect(console.warn.mock.calls.length).toBe(0);
+      await fetch('/api/test', { __umiRequestCoreType__: 'other' });
+      expect(console.warn.mock.calls.length).toBe(1);
+      expect(console.warn.mock.calls[0][0]).toBe(
+        '__umiRequestCoreType__ is a internal property that use in umi-request, change its value would affect the behavior of request! It only use when you want to extend the request core.'
+      );
+      process.env.NODE_ENV = 'test';
+      done();
+    });
+  });
 });

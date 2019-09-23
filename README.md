@@ -47,7 +47,6 @@ For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](htt
 
 ## TODO Welcome pr
 
-- [ ] rpc support
 - [x] Test case coverage 85%+
 - [x] write a document
 - [x] CI integration
@@ -56,152 +55,131 @@ For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](htt
 
 ## Installation
 
-`npm install umi-request --save`
+```
+npm install --save umi-request
+```
 
-## request options
+## Example
+Performing a ```GET``` request
 
-| Parameter | Description | Type | Optional Value | Default |
-| :--- | :--- | :--- | :--- | :--- |
-| method | request method | string | get , post , put ... | get |
-| params | url request parameters | object | -- | -- |
-| charset | character set | string | utf8 , gbk | utf8 |
-| requestType | post request data type | string | json , form | json |
-| data | Submitted data | any | -- | -- |
-| responseType | How to parse the returned data | string | json , text , blob , formData ... | json , text |
-| getResponse | Whether to get the source response, the result will wrap a layer | boolean | -- | fasle |
-| timeout | timeout, default millisecond, write with caution | number | -- | -- |
-| useCache | Whether to use caching (only support browser environment) | boolean | -- | false |
-| ttl | Cache duration, 0 is not expired | number | -- | 60000 |
-| prefix | prefix, generally used to override the uniform settings prefix | string | -- | -- |
-| suffix | suffix, such as some scenes api need to be unified .json | string | -- |
-| errorHandler | exception handling, or override unified exception handling | function(error) | -- |
-| headers | fetch original parameters | object | -- | {} |
-| credentials | fetch request with cookies | string | -- | credentials: 'include' |
-| parseResponse | response processing simplification | boolean | -- | true |
-| throwErrIfParseFail | throw error when JSON parse fail and responseType is 'json' | boolean | -- | false |
-| cancelToken | Token to cancel request | CancelToken.token | -- | -- |
+``` javascript
+import request from 'umi-request';
 
-The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
+request.get('/api/v1/xxx?id=1')
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
-## extend options Initialize default parameters, support all of the above
+// use options.params
+request.get('/api/v1/xxx', {
+    params: {
+      id: 1
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
 
-| Parameter | Description | Type | Default |
-| :--- | :--- | :--- | :--- |
-| maxCache | Maximum number of caches | number | Any |
-| prefix | default url prefix | string | -- |
-| errorHandler | default exception handling | function(error) | -- |
-| headers | default headers | object | {} |
-| params | default with the query parameter | object | {} |
-| ... |
+Performing a ```POST``` request
+``` javascript
+request.post('/api/v1/user', {
+    data: {
+      name: 'Mike'
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
 
-## Use
+## umi-request API
+Requests can be made by passing relevant options to ```umi-request```
 
-> request can be used in a simple package and can be used with reference to [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
-
+**umi-request(url[, options])**
 ```javascript
-// request is the default instance that can be used directly, extend is a configurable method, passing a series of default parameters, returning a new request instance, usage is consistent with the request.
-import { extend } from 'umi-request';
+import request from 'umi-request';
 
-const request = extend({
-  maxCache: 10, // The maximum number of caches. When it is exceeded, it will automatically clear the first one according to the time.
-  prefix: '/api/v1', // prefix
-  suffix: '.json', // suffix
-  errorHandler: (error) => {
-    // Centralized processing error
-  },
-  headers: {
-    Some: 'header' // unified headers
-  },
-  params: {
-    Hello: 'world' // the query parameter to be included with each request
-  }
-});
-request('/some/api');
+request('/api/v1/xxx', {
+    method: 'get',
+    params: { id: 1 }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
-// Support syntax sugar such as: request.get request.post ...
-request.post('/api/v1/some/api', { data: {foo: 'bar'}});
-
-// request an api, no method parameter defaults to get
-request('/api/v1/some/api').then(res => {
-  console.log(res);
-}).catch(err => {
-  console.log(err);
-});
-
-// url parameter serialization
-request('/api/v1/some/api', { params: {foo: 'bar'} });
-
-// post data submission simplification
-// When data is object, the default requestType: 'json' can not write, header will automatically bring application / json
-request('/api/v1/some/api', { method:'post', data: {foo: 'bar'} });
-
-// requestType: 'form', header will automatically bring application/x-www-form-urlencoded
-request('/api/v1/some/api', { method:'post', requestType: 'form', data: {foo: 'bar'} });
-
-// reponseType: 'blob', how to handle the returned data, by default text and json are not added. Such as blob or formData need to add
-request('/api/v1/some/api', { reponseType: 'blob' });
-
-// Submit other data, such as text, requestType is not filled, manually add the corresponding header.
-request('/api/v1/some/api', { method:'post', data: 'some data', headers: { 'Content-Type': 'multipart/form-data'} });
-
-// upload file
-const formData = new FormData();
-formData.append('file', file);
-request('/api/v1/some/api', { method:'post', body: formData, requestType: 'form' });
-
-// The default is to return the data body, if you need the source response to expand, you can use the getResponse parameter. The result will be a set of layers
-request('/api/v1/some/api', { getResponse: true }).then({data, response} => {
-  console.log(data, response);
-});
-
-// Timeout in milliseconds, but after the timeout, although the client returns a timeout, but the api request will not be disconnected, the write operation is used with caution.
-request('/api/v1/some/api', { timeout: 3000 });
-
-// Use the cache, only valid when get. Units of milliseconds, do not add ttl default 60s, ttl = 0 does not expire. cache key for url + params combination
-request('/api/v1/some/api', { params: { hello: 'world' }, useCache: true, ttl: 10000 });
-
-// This parameter can be used when the server returns gbk to avoid garbled characters.
-request('/api/v1/some/api', { charset: 'gbk' });
-
-// request interceptor, change url or options.
-request.interceptors.request.use((url, options) => {
-  return (
-    {
-      url: `${url}&interceptors=yes`,
-      options: { ...options, interceptors: true },
-    }
-  );
-});
-
-// response interceptor, handling response
-request.interceptors.response.use((response, options) => {
-  response.headers.append('interceptors', 'yes yo');
-  return response;
-});
-
-
-// use middleware, handling request and response
-request.use(async (ctx, next) => {
-  const { req } = ctx;
-  const { url, options } = req;
-  // add prefix
-  ctx.req.url = `/api/v1/${url}`;
-  ctx.req.options = {
-    ...options,
-    foo: 'foo'
-  };
-  await next();
-
-  const { res } = ctx;
-  const { success = false } = res;
-  if (!success) {
-    // Handle fail request here
-  }
-})
+request('/api/v1/user', {
+    method: 'post',
+    data: {
+      name: 'Mike'
+    }
+  })
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
 
 ```
 
-## node request
+## Request method aliases
+For convenience umi-request have been provided for all supported methods.
+
+**request.get(url[, options])**
+
+**request.post(url[, options])**
+
+**request.delete(url[, options])**
+
+**request.put(url[, options])**
+
+**request.patch(url[, options])**
+
+**request.head(url[, options])**
+
+**request.options(url[, options])**
+
+
+## Creating an instance
+You can use ```extend({[options]})``` to create a new instance of umi-request.
+
+**extend([options])**
+
+``` javascript
+import { extend } from 'umi-request';
+
+const request = extend({
+  prefix: '/api/v1',
+  timeout: 1000,
+  headers: {
+    'Content-Type': 'multipart/form-data'
+  }
+});
+
+request.get('/user')
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+```
+
+Create an instance of umi-request in NodeJS enviroment
+
 ```javascript
 const umi = require('umi-request');
 const extendRequest = umi.extend({ timeout: 10000 })
@@ -215,98 +193,283 @@ extendRequest('/api/user')
   });
 ```
 
+The available instance methods are list below. The specified options will be merge with the instance options.
+
+**request.get(url[, options])**
+
+**request.post(url[, options])**
+
+**request.delete(url[, options])**
+
+**request.put(url[, options])**
+
+**request.patch(url[, options])**
+
+**request.head(url[, options])**
+
+**request.options(url[, options])**
+
+More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
+
+
+## request options
+
+| Parameter | Description | Type | Optional Value | Default |
+| :--- | :--- | :--- | :--- | :--- |
+| method | request method | string | get , post , put ... | get |
+| params | url request parameters | object | -- | -- |
+| data | Submitted data | any | -- | -- |
+| headers | fetch original parameters | object | -- | {} |
+| timeout | timeout, default millisecond, write with caution | number | -- | -- |
+| prefix | prefix, generally used to override the uniform settings prefix | string | -- | -- |
+| suffix | suffix, such as some scenes api need to be unified .json | string | -- |
+| credentials | fetch request with cookies | string | -- | credentials: 'include' |
+| useCache | Whether to use caching (only support browser environment) | boolean | -- | false |
+| ttl | Cache duration, 0 is not expired | number | -- | 60000 |
+| maxCache | Maximum number of caches | number | -- | 0(Infinity) |
+| requestType | post request data type | string | json , form | json |
+| parseResponse | response processing simplification | boolean | -- | true |
+| charset | character set | string | utf8 , gbk | utf8 |
+| responseType | How to parse the returned data | string | json , text , blob , formData ... | json , text |
+| throwErrIfParseFail | throw error when JSON parse fail and responseType is 'json' | boolean | -- | false |
+| getResponse | Whether to get the source response, the result will wrap a layer | boolean | -- | fasle |
+| errorHandler | exception handling, or override unified exception handling | function(error) | -- |
+| cancelToken | Token to cancel request | CancelToken.token | -- | -- |
+
+The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
+
+## extend options Initialize default parameters, support all of the above
+
+| Parameter | Description | Type | Optional Value | Default |
+| :--- | :--- | :--- | :--- | :--- |
+| method | request method | string | get , post , put ... | get |
+| params | url request parameters | object | -- | -- |
+| data | Submitted data | any | -- | -- |
+| ... |
+
+
+``` javascript
+{
+  // 'method' is the request method to be used when making the request
+  method: 'get', // default
+
+  // 'params' are the URL parameters to be sent with request
+  params: { id: 1 },
+
+  // 'data' 作为请求主体被发送的数据
+  // 适用于这些请求方法 'PUT', 'POST', 和 'PATCH'
+  // 必须是以下类型之一：
+  // - string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
+  // - 浏览器专属：FormData, File, Blob
+  // - Node 专属： Stream
+
+  // 'data' is the data to be sent as the request body
+  // Only applicable for request methods 'PUT', 'POST', and 'PATCH'
+  // Must be of one of the following types:
+  // 1. string, plain object, ArrayBuffer, ArrayBufferView, URLSearchParams
+  // 2. Browser only: FormData, File, Blob
+  // 3. Node only: Stream
+  data: { name: 'Mike' },
+
+  // 'headers' are custom headers to be sent
+  headers: { 'Content-Type': 'multipart/form-data' },
+
+  // 'timeout' specifies the number of milliseconds before the request times out.
+  // If the request takes longer than 'timeout', request will be aborted and throw RequestError.
+  timeout: 1000,
+
+  // ’prefix‘ used to set URL's prefix
+  // ( e.g. request('/user/save', { prefix: '/api/v1' }) => request('/api/v1/user/save') )
+  prefix: '',
+
+  // ’suffix‘ used to set URL's suffix
+  // ( e.g. request('/api/v1/user/save', { suffix: '.json'}) => request('/api/v1/user/save.json') )
+  suffix: '',
+
+  // 'credentials' indicates whether the user agent should send cookies from the other domain in the case of cross-origin requests.
+  // omit: Never send or receive cookies.
+  // same-origin: Send user credentials (cookies, basic http auth, etc..) if the URL is on the same origin as the calling script. This is the default value.
+  // include: Always send user credentials (cookies, basic http auth, etc..), even for cross-origin calls.
+  credentials: 'include',
+
+  // ’useCache‘ The GET request would be cache in ttl milliseconds when 'useCache' is true.
+  // The cache key would be 'url + params'.
+  useCache: false, // default
+
+  // 'ttl' cache duration（milliseconds），0 is infinity
+  ttl: 60000,
+
+  // 'maxCache' are the max number of requests to be cached, 0 means infinity.
+  maxCache: 0,
+
+  // 'requestType' umi-request will add headers and body according to the 'requestType' when the type of data is object or array.
+  // 1. requestType === 'json' :(default )
+  // options.headers = {
+  //   Accept: 'application/json',
+  //   'Content-Type': 'application/json;charset=UTF-8',
+  //   ...options.headers,
+  // }
+  // options.body = JSON.stringify(data)
+  // 
+  // 2. requestType === 'form':
+  // options.headers = {
+  //   Accept: 'application/json',
+  //   'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+  //   ...options.headers,
+  // };
+  // options.body = query-string.stringify(data);
+  // 
+  // 3. other requestType
+  // options.headers = {
+  //   Accept: 'application/json',
+  //   ...options.headers,
+  // };
+  // options.body = data;
+  requestType: 'json', // default
+
+  // 'parseResponse' whether processing response 
+  parseResponse: true, // default
+
+  // 'charset' This parameter can be used when the server returns gbk to avoid garbled characters.(parseResponse should set to true)
+  charset: 'gbk',
+
+  // 'responseType': how to processing response.(parseResponse should be true)
+  // The default value is 'json', would processing response by Response.text().then( d => JSON.parse(d) )
+  // Other responseType (text, blob, arrayBuffer, formData), would processing response by Response[responseType]()
+  responseType: 'json', // default
+
+  // 'throwErrIfParseFail': whether throw error or not when JSON parse data fail and responseType is 'json'.
+  throwErrIfParseFail: false, // default
+
+  // 'getResponse': if you need the origin Response, set true and will return { data, response }.
+  getResponse: false,// default
+
+  // 'errorHandler' error handle entry.
+  errorHandler: function(error) { /* 异常处理 */ },
+
+  // 'cancelToken' the token of cancel request.
+  cancelToken: null,
+}
+```
+
+
+
+## Response Schema
+
+The response for a request contains the following information.
+``` javascript
+{
+  // 'data' is the response that was provided by the server
+  data: {},
+
+  // 'status' is the HTTP status code from the server response
+  status: 200,
+
+  // 'statusText' is the HTTP status message from the server response
+  statusText: 'OK',
+
+  // 'headers' the headers that the server responded with
+  // All header names are lower cased
+  headers: {},
+}
+```
+
+When options.getResponse === false, the response schema would be 'data'
+
+``` javascript
+request.get('/api/v1/xxx', { getResponse: false })
+  .then(function(data) {
+    console.log(data);
+  })
+```
+
+When options.getResponse === true ，the response schema would be { data, response }
+
+``` javascript
+request.get('/api/v1/xxx', { getResponse: true })
+  .then(function({ data, response }) {
+    console.log(data);
+    console.log(response.status);
+    console.log(response.statusText);
+    console.log(response.headers);
+  })
+
+```
+
+You can get Response from ```error``` object in errorHandler or request.catch.
 
 
 ## Error handling
 
 ```javascript
 import request, { extend } from 'umi-request';
-/**
- * Here are four ways to deal with
- */
-/**
- * 1. Unified processing
- * Commonly used in projects where the error code is more standardized, and the error is handled centrally.
- */
 
-const codeMap = {
-  '021': 'An error has occurred',
-  '022': 'It’s a big mistake,'
-  ...
-};
+const errorHandler = function (error) {
+  const codeMap = {
+    '021': 'An error has occurred'',
+    '022': 'It’s a big mistake,',
+    // ....
+  };
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    // that falls out of the range of 2xx
+    console.log(error.response.status);
+    console.log(error.response.headers);
+    console.log(error.data);
+    console.log(error.request);
+    console.log(codeMap[error.data.status])
+    
+  } else {
+    // The request was made but no response was received or error occurs when setting up the request.
+    console.log(error.message);
+  }
 
-const errorHandler = (error) => {
-  const { response, data } = error;
-  message.error(codeMap[data.errorCode]);
-
-  throw error; // If throw. The error will continue to be thrown.
-  // return {some: 'data'}; If return, return the value as a return. If you don't write it is equivalent to return undefined, you can judge whether the response has a value when processing the result.
+  throw error; // If throw. The error will continue to be thrown.
+  
+  // return {some: 'data'}; If return, return the value as a return. If you don't write it is equivalent to return undefined, you can judge whether the response has a value when processing the result.
+  // return {some: 'data'}; 
 }
 
-const extendRequest = extend({
-  prefix: server.url,
-  errorHandler
-});
+// 1. Unified processing
+const extendRequest = extend({ errorHandler });
 
-const response = await extendRequest('/some/api'); // will automatically handle the error, no catch. If throw needs to catch.
-if (response) {
-  // do something
-}
+// 2. Separate special treatment
+// If unified processing is configured, but an api needs special handling. When requested, the errorHandler is passed as a parameter.
+request('/api/v1/xxx', { errorHandler });
 
-/**
-* 2. Separate special treatment
-* If unified processing is configured, but an api needs special handling. When requested, the errorHandler is passed as a parameter.
-*/
-const response = await extendRequest('/some/api', {
-  method: 'get',
-  errorHandler: (error) => {
-    // do something
-  }
-});
 
-/**
- * 3. not configure errorHandler, the response will be directly treated as promise, and it will be caught.
- */
-try {
-  const response = await request('/some/api');
-} catch (error) {
-  // do something
-}
-
-/**
-* 4. Based on response interceptors
-*/
-request.interceptors.response.use((response) => {
-  const codeMaps = {
-    502: 'Gateway error. ',
-    503: 'The service is unavailable, the server is temporarily overloaded or maintained. ',
-    504: 'The gateway timed out. ',
-  };
-  message.error(codeMaps[response.status]);
-  return response;
-});
-
-/**
-* 5. For the status code is actually 200 errors
-*/
-request.interceptors.response.use(async (response) => {
-  const data = await response.clone().json();
-  if(data && data.NOT_LOGIN) {
-    location.href = 'login url';
-  }
-  return response;
+// 3. not configure errorHandler, the response will be directly treated as promise, and it will be caught.
+request('/api/v1/xxx')
+.then(function (response) {
+  console.log(response);
+})
+.catch(function (error) {
+  return errorHandler(error);
 })
 ```
 
 
 ## Middleware
-request.use(fn)
+Expressive HTTP middleware framework for node.js. For development to enhance before and after request. Support create instance, global, core middlewares.
+
+**Instance Middleware (default)** request.use(fn) Different instances's instance middleware are independence.
+**Global Middleware** request.use(fn, { global: true }) Different instances share global middlewares.
+**Core Middleware** request.use(fn, { core: true }) Used to expand request core.
+
+request.use(fn[, options])
 
 ### params
+fn params
 * ctx(Object)：context, content request and response
 * next(Function)：function to call the next middleware
 
+options params
+* global(boolean): whether global， higher priority than core
+* core(boolean): whether core
+
+
 ### example
+1. same type of middlewares
 ``` javascript
 import request, { extend } from 'umi-request';
 request.use(async (ctx, next) => {
@@ -326,6 +489,141 @@ const data = await request('/api/v1/a');
 order of middlewares be called:
 ```
 a1 -> b1 -> response -> b2 -> a2
+```
+
+
+2. Defferent type of middlewares
+``` javascript
+request.use( async (ctx, next) => {
+  console.log('instanceA1');
+  await next();
+  console.log('instanceA2');
+})
+request.use( async (ctx, next) => {
+  console.log('instanceB1');
+  await next();
+  console.log('instanceB2');
+})
+request.use( async (ctx, next) => {
+  console.log('globalA1');
+  await next();
+  console.log('globalA2');
+}, { global: true })
+request.use( async (ctx, next) => {
+  console.log('coreA1');
+  await next();
+  console.log('coreA2');
+}, { core: true })
+```
+
+order of middlewares be called:
+```
+instanceA1 -> instanceB1 -> globalA1 -> coreA1 -> coreA2 -> globalA2 -> instanceB2 -> instanceA2
+```
+
+3. Enhance request
+``` javascript
+request.use(async (ctx, next) => {
+  const { req } = ctx;
+  const { url, options } = req;
+
+  if ( url.indexOf('/api') !== 0 ) {
+    ctx.req.url = `/api/v1/${url}`;
+  }
+  ctx.req.options = {
+    ...options,
+    foo: 'foo'
+  };
+
+  await next();
+
+  const { res } = ctx;
+  const { success = false } = res; 
+  if (!success) {
+    // ...
+  }
+})
+
+```
+
+4. Use core middleware to expand request core.
+``` javascript
+
+request.use(async (ctx, next) => {
+  const { req } = ctx;
+  const { url, options } = req;
+  const { __umiRequestCoreType__ = 'normal' } = options;
+  
+  // __umiRequestCoreType__ use to identificat request core
+  // when value is 'normal' , use umi-request 's fetch request core
+  if ( __umiRequestCoreType__ === 'normal') {
+    await next();
+    return;
+  }
+
+  // when value is not normal, use your request func. 
+  const response = getResponseByOtherWay();
+
+  ctx.res = response;
+
+  await next();
+  return;
+}, { core: true });
+
+
+request('/api/v1/rpc', {
+  __umiRequestCoreType__: 'rpc',
+  parseResponse: false,
+})
+  .then(function (response) {
+    console.log(response);
+  })
+  .catch(function (error) {
+    console.log(error);
+  })
+
+```
+
+
+## Interceptor
+You can intercept requests or responses before they are handled by then or catch.
+
+``` javascript
+// request interceptor, change url or options.
+request.interceptors.request.use((url, options) => {
+  return (
+    {
+      url: `${url}&interceptors=yes`,
+      options: { ...options, interceptors: true },
+    }
+  );
+});
+
+// response interceptor, chagne response
+request.interceptors.response.use((response, options) => {
+  response.headers.append('interceptors', 'yes yo');
+  return response;
+});
+
+// handling error in response interceptor
+request.interceptors.response.use((response) => {
+  const codeMaps = {
+    502: '网关错误。',
+    503: '服务不可用，服务器暂时过载或维护。',
+    504: '网关超时。',
+  };
+  message.error(codeMaps[response.status]);
+  return response;
+});
+
+// clone response in response interceptor
+request.interceptors.response.use(async (response) => {
+  const data = await response.clone().json();
+  if(data && data.NOT_LOGIN) {
+    location.href = '登录url';
+  }
+  return response;
+})
 ```
 
 ## Cancel request
@@ -373,6 +671,44 @@ Request.get('/api/cancel', {
 // cancel request
 cancel();
 ```
+
+## FAQ
+### How to get Response Headers
+use **Headers.get()** to get information from Response Headers. ( more detail see [MDN doc](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
+
+``` javascript
+request('/api/v1/some/api', { getResponse: true })
+.then(({ data, response}) => {
+  response.headers.get('Content-Type');
+})
+```
+
+If want to get a custem header, you need to set [Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers) on server.
+
+
+
+## Cases
+### How to get Response Headers
+
+Use **Headers.get()** (more detail see [MDN 文档](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
+``` javascript
+request('/api/v1/some/api', { getResponse: true })
+.then(({ data, response}) => {
+  response.headers.get('Content-Type');
+})
+```
+
+### File upload
+Use FormData() contructor，the browser will add rerequest header  ```"Content-Type: multipart/form-data"``` automatically, developer don't need to add request header **Content-Type**
+``` javascript
+const formData = new FormData();
+formData.append('file', file);
+request('/api/v1/some/api', { method:'post', data: formData });
+```
+
+
+The Access-Control-Expose-Headers response header indicates which headers can be exposed as part of the response by listing their names.[Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers)
+
 
 ## Development and debugging
 

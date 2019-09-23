@@ -17,20 +17,20 @@ class Onion {
     let core = false;
     let global = false;
     if (typeof opts === 'number') {
-      console.warn(
-        'use() options should be object, number property would be deprecated in future，please update use() options to "{ core: true }".'
-      );
+      if (process && process.env && process.env.NODE_ENV === 'development') {
+        console.warn(
+          'use() options should be object, number property would be deprecated in future，please update use() options to "{ core: true }".'
+        );
+      }
       core = true;
       global = false;
     } else if (typeof opts === 'object' && opts) {
-      // index = opts.index || 0;
       global = opts.global || false;
       core = opts.core || false;
     }
 
     // 全局中间件
     if (global) {
-      // Onion.globalMiddlewares.push(newMiddleware);
       Onion.globalMiddlewares.splice(
         Onion.globalMiddlewares.length - Onion.defaultGlobalMiddlewaresLength,
         0,
