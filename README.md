@@ -223,7 +223,7 @@ More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pr
 | timeout | timeout, default millisecond, write with caution | number | -- | -- |
 | prefix | prefix, generally used to override the uniform settings prefix | string | -- | -- |
 | suffix | suffix, such as some scenes api need to be unified .json | string | -- |
-| credentials | fetch request with cookies | string | -- | credentials: 'include' |
+| credentials | fetch request with cookies | string | -- | credentials: 'same-origin' |
 | useCache | Whether to use caching (only support browser environment) | boolean | -- | false |
 | ttl | Cache duration, 0 is not expired | number | -- | 60000 |
 | maxCache | Maximum number of caches | number | -- | 0(Infinity) |
@@ -290,7 +290,7 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
   // omit: Never send or receive cookies.
   // same-origin: Send user credentials (cookies, basic http auth, etc..) if the URL is on the same origin as the calling script. This is the default value.
   // include: Always send user credentials (cookies, basic http auth, etc..), even for cross-origin calls.
-  credentials: 'include',
+  credentials: 'same-origin', // default
 
   // ’useCache‘ The GET request would be cache in ttl milliseconds when 'useCache' is true.
   // The cache key would be 'url + params'.

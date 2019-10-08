@@ -231,7 +231,7 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
-| credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'include' |
+| credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'same-origin' |
 | useCache | 是否使用缓存（仅支持浏览器客户端） | boolean | -- | false |
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | maxCache | 最大缓存数 | number | -- | 无限 |
@@ -291,7 +291,7 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
   // 为了让浏览器发送包含凭据的请求（即使是跨域源），需要设置 credentials: 'include'
   // 如果只想在请求URL与调用脚本位于同一起源处时发送凭据，请添加credentials: 'same-origin'
   // 要改为确保浏览器不在请求中包含凭据，请使用credentials: 'omit'
-  credentials: 'include',
+  credentials: 'same-origin', // default
 
   // ’useCache‘ 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params 组合
   useCache: false, // default
