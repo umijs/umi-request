@@ -225,7 +225,7 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 | :---  | :---  | :---  | :---  | :---  |
 | method | 请求方式 | string | get , post , put ... | get |
-| params | url请求参数 | object | -- | -- |
+| params | url请求参数 | object 或 URLSearchParams 对象 | -- | -- |
 | data | 提交的数据 | any | -- | -- |
 | headers | fetch 原有参数 | object | -- | {} |
 | timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
@@ -262,7 +262,13 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
   method: 'get', // default
 
   // 'params' 是即将于请求一起发送的 URL 参数，参数会自动 encode 后添加到 URL 中
+  // 类型需为 Object 对象或者 URLSearchParams 对象
   params: { id: 1 },
+
+  // 'paramsSerializer' 开发者可通过该函数对 params 做序列化（注意：此时传入的 params 为合并了 extends 中 params 参数的对象，如果传入的是 URLSearchParams 对象会转化为 Object 对象
+  paramsSerializer: function (params) {
+    return Qs.stringify(params, { arrayFormat: 'brackets' })
+  },
 
   // 'data' 作为请求主体被发送的数据
   // 适用于这些请求方法 'PUT', 'POST', 和 'PATCH'

@@ -2,6 +2,7 @@
  * 实现一个简单的Map cache, 稍后可以挪到 utils中, 提供session local map三种前端cache方式.
  * 1. 可直接存储对象   2. 内存无5M限制   3.缺点是刷新就没了, 看反馈后期完善.
  */
+import { parse } from 'query-string';
 
 export class MapCache {
   constructor(options) {
@@ -129,4 +130,50 @@ export function getEnv() {
     env = 'BROWSER';
   }
   return env;
+}
+
+export function isArray(val) {
+  return toString.call(val) === '[object Array]';
+}
+
+export function isURLSearchParams(val) {
+  return typeof URLSearchParams !== 'undefined' && val instanceof URLSearchParams;
+}
+
+export function isDate(val) {
+  return toString.call(val) === '[object Date]';
+}
+
+export function isObject(val) {
+  return val !== null && typeof val === 'object';
+}
+
+export function forEach2ObjArr(target, callback) {
+  if (!target) return;
+
+  if (typeof target !== 'object') {
+    target = [target];
+  }
+
+  if (isArray(target)) {
+    for (let i = 0; i < target.length; i++) {
+      callback.call(null, target[i], i, target);
+    }
+  } else {
+    for (let key in target) {
+      if (Object.prototype.hasOwnProperty.call(target, key)) {
+        callback.call(null, target[key], key, target);
+      }
+    }
+  }
+}
+
+export function getParamObject(val) {
+  if (isURLSearchParams(val)) {
+    return parse(val.toString());
+  }
+  if (typeof val === 'string') {
+    return [val];
+  }
+  return val;
 }

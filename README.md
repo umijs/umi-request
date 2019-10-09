@@ -217,7 +217,7 @@ More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pr
 | Parameter | Description | Type | Optional Value | Default |
 | :--- | :--- | :--- | :--- | :--- |
 | method | request method | string | get , post , put ... | get |
-| params | url request parameters | object | -- | -- |
+| params | url request parameters | object or URLSearchParams | -- | -- |
 | data | Submitted data | any | -- | -- |
 | headers | fetch original parameters | object | -- | {} |
 | timeout | timeout, default millisecond, write with caution | number | -- | -- |
@@ -254,7 +254,13 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
   method: 'get', // default
 
   // 'params' are the URL parameters to be sent with request
+  // Must be a plain object or a URLSearchParams object
   params: { id: 1 },
+
+  // 'paramSerializer' is a function in charge of serializing 'params'. ( be aware of 'params' was merged by extends's 'params' and request's 'params' and URLSearchParams will be transform to plain object. )
+  paramsSerializer: function (params) {
+    return Qs.stringify(params, { arrayFormat: 'brackets' })
+  },
 
   // 'data' 作为请求主体被发送的数据
   // 适用于这些请求方法 'PUT', 'POST', 和 'PATCH'

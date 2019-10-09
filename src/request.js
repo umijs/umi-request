@@ -2,6 +2,7 @@ import Core from './core';
 import Cancel from './cancel/cancel';
 import CancelToken from './cancel/cancelToken';
 import isCancel from './cancel/isCancel';
+import { getParamObject } from './utils';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
 const request = (initOptions = {}) => {
@@ -15,8 +16,8 @@ const request = (initOptions = {}) => {
         ...options.headers,
       },
       params: {
-        ...initOptions.params,
-        ...options.params,
+        ...getParamObject(initOptions.params),
+        ...getParamObject(options.params),
       },
       method: (options.method || initOptions.method || 'get').toLowerCase(),
     };
