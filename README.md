@@ -412,7 +412,7 @@ import request, { extend } from 'umi-request';
 
 const errorHandler = function (error) {
   const codeMap = {
-    '021': 'An error has occurred'',
+    '021': 'An error has occurred',
     '022': 'It’s a big mistake,',
     // ....
   };
