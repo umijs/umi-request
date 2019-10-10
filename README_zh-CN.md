@@ -225,13 +225,13 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 | :---  | :---  | :---  | :---  | :---  |
 | method | 请求方式 | string | get , post , put ... | get |
-| params | url请求参数 | object | -- | -- |
+| params | url请求参数 | object 或 URLSearchParams 对象 | -- | -- |
 | data | 提交的数据 | any | -- | -- |
 | headers | fetch 原有参数 | object | -- | {} |
 | timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
-| credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'include' |
+| credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'same-origin' |
 | useCache | 是否使用缓存（仅支持浏览器客户端） | boolean | -- | false |
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | maxCache | 最大缓存数 | number | -- | 无限 |
@@ -262,7 +262,13 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
   method: 'get', // default
 
   // 'params' 是即将于请求一起发送的 URL 参数，参数会自动 encode 后添加到 URL 中
+  // 类型需为 Object 对象或者 URLSearchParams 对象
   params: { id: 1 },
+
+  // 'paramsSerializer' 开发者可通过该函数对 params 做序列化（注意：此时传入的 params 为合并了 extends 中 params 参数的对象，如果传入的是 URLSearchParams 对象会转化为 Object 对象
+  paramsSerializer: function (params) {
+    return Qs.stringify(params, { arrayFormat: 'brackets' })
+  },
 
   // 'data' 作为请求主体被发送的数据
   // 适用于这些请求方法 'PUT', 'POST', 和 'PATCH'
@@ -291,7 +297,7 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
   // 为了让浏览器发送包含凭据的请求（即使是跨域源），需要设置 credentials: 'include'
   // 如果只想在请求URL与调用脚本位于同一起源处时发送凭据，请添加credentials: 'same-origin'
   // 要改为确保浏览器不在请求中包含凭据，请使用credentials: 'omit'
-  credentials: 'include',
+  credentials: 'same-origin', // default
 
   // ’useCache‘ 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params 组合
   useCache: false, // default

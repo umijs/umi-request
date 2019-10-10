@@ -27,7 +27,8 @@ export interface RequestOptionsInit extends RequestInit {
   charset?: 'utf8' | 'gbk';
   requestType?: 'json' | 'form';
   data?: any;
-  params?: object;
+  params?: object | URLSearchParams;
+  paramsSerializer?: (params: object) => string;
   responseType?: ResponseType;
   useCache?: boolean;
   ttl?: number;

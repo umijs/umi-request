@@ -215,6 +215,27 @@ describe('test fetch:', () => {
       },
     });
     expect(response.wang).toBe('hou');
+    expect(response.hello).toBe('world3');
+
+    const reponse1 = await request(prefix('/test/queryParams'), {
+      params: new URLSearchParams('foo=hello'),
+    });
+
+    expect(reponse1.foo).toBe('hello');
+
+    const response2 = await request(prefix('/test/queryParams'), {
+      params: {
+        bar: 'woo',
+      },
+      paramsSerializer: params => `bar=${params.bar}&car=pengpeng`,
+    });
+    expect(response2.bar).toBe('woo');
+    expect(response2.car).toBe('pengpeng');
+
+    const response3 = await request(prefix('/test/queryParams'), {
+      params: 'stringparams',
+    });
+    expect(response3[0]).toBe('stringparams');
   }, 5000);
 
   // 测试缓存
