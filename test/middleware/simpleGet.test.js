@@ -51,7 +51,7 @@ describe('test paramsSerialize', () => {
   });
 
   it('should support nesting Date params', () => {
-    expect(paramsSerialize({ a: new Date(2019, 9, 9) })).toBe('a=2019-10-08T16%3A00%3A00.000Z');
+    expect(paramsSerialize({ a: new Date('05 October 2011 14:48 UTC') })).toBe('a=2011-10-05T14%3A48%3A00.000Z');
   });
 
   it('should support nesting array params', () => {
