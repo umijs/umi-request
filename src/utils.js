@@ -118,11 +118,13 @@ export function cancel2Throw(opt) {
   });
 }
 
+const toString = Object.prototype.toString;
+
 // Check env is browser or node
 export function getEnv() {
   let env;
   // Only Node.JS has a process variable that is of [[Class]] process
-  if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+  if (typeof process !== 'undefined' && toString.call(process) === '[object process]') {
     // For node use HTTP adapter
     env = 'NODE';
   }
