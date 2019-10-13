@@ -15,17 +15,19 @@ export function paramsSerialize(params, paramsSerializer) {
         jsonStringifiedParams = [];
         forEach2ObjArr(params, function(item) {
           if (item === null || typeof item === 'undefined') {
-            return;
+            jsonStringifiedParams.push(item);
+          } else {
+            jsonStringifiedParams.push(isObject(item) ? JSON.stringify(item) : item);
           }
-          jsonStringifiedParams.push(isObject(item) ? JSON.stringify(item) : item);
         });
         serializedParams = stringify(jsonStringifiedParams);
       } else {
         jsonStringifiedParams = {};
         forEach2ObjArr(params, function(value, key) {
           let jsonStringifiedValue = value;
-          if (value === null || typeof value === 'undefined') return;
-          if (isDate(value)) {
+          if (value === null || typeof value === 'undefined') {
+            jsonStringifiedParams[key] = value;
+          } else if (isDate(value)) {
             jsonStringifiedValue = value.toISOString();
           } else if (isArray(value)) {
             jsonStringifiedValue = value;
@@ -34,7 +36,8 @@ export function paramsSerialize(params, paramsSerializer) {
           }
           jsonStringifiedParams[key] = jsonStringifiedValue;
         });
-        serializedParams = stringify(jsonStringifiedParams);
+        const tmp = stringify(jsonStringifiedParams);
+        serializedParams = tmp;
       }
     }
   }

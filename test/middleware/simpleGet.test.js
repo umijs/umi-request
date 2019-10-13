@@ -39,7 +39,8 @@ describe('test simpleGet middleware', () => {
 
 describe('test paramsSerialize', () => {
   it('should support object params', () => {
-    expect(paramsSerialize({ a: 1 })).toBe('a=1');
+    expect(paramsSerialize({ a: null, b: undefined, c: 1, d: 'asdf' })).toBe('a&c=1&d=asdf');
+    expect(paramsSerialize([null, undefined, 1, 2])).toBe('0&2=1&3=2');
   });
 
   it('should support array params', () => {

@@ -133,7 +133,7 @@ export function getEnv() {
 }
 
 export function isArray(val) {
-  return toString.call(val) === '[object Array]';
+  return typeof val === 'object' && Object.prototype.toString.call(val) === '[object Array]';
 }
 
 export function isURLSearchParams(val) {
@@ -141,7 +141,7 @@ export function isURLSearchParams(val) {
 }
 
 export function isDate(val) {
-  return toString.call(val) === '[object Date]';
+  return typeof val === 'object' && Object.prototype.toString.call(val) === '[object Date]';
 }
 
 export function isObject(val) {
