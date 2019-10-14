@@ -2,10 +2,9 @@ import Core from './core';
 import Cancel from './cancel/cancel';
 import CancelToken from './cancel/cancelToken';
 import isCancel from './cancel/isCancel';
-import { getParamObject } from './utils';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
-const request = (initOptions = {}) => {
+const request = (initOptions = {}, isLocalInstance) => {
   const coreInstance = new Core(initOptions);
   const umiInstance = (url, options = {}) => {
     const mergeOptions = {
@@ -16,8 +15,8 @@ const request = (initOptions = {}) => {
         ...options.headers,
       },
       params: {
-        ...getParamObject(initOptions.params),
-        ...getParamObject(options.params),
+        ...initOptions.params,
+        ...options.params,
       },
       method: (options.method || initOptions.method || 'get').toLowerCase(),
     };
@@ -31,10 +30,10 @@ const request = (initOptions = {}) => {
   // 拦截器
   umiInstance.interceptors = {
     request: {
-      use: Core.requestUse,
+      use: isLocalInstance ? coreInstance.instanceRequestUse.bind(coreInstance) : Core.requestUse,
     },
     response: {
-      use: Core.responseUse,
+      use: isLocalInstance ? coreInstance.instanceResponseUse.bind(coreInstance) : Core.responseUse,
     },
   };
 
@@ -59,7 +58,7 @@ const request = (initOptions = {}) => {
  * @param {function} errorHandler 统一错误处理方法
  * @param {object} headers 统一的headers
  */
-export const extend = initOptions => request(initOptions);
+export const extend = initOptions => request(initOptions, true);
 
 /**
  * 暴露 fetch 中间件，保障依旧可以使用

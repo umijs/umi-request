@@ -594,6 +594,7 @@ request('/api/v1/rpc', {
 ## Interceptor
 You can intercept requests or responses before they are handled by then or catch.
 
+1. global Interceptor
 ``` javascript
 // request interceptor, change url or options.
 request.interceptors.request.use((url, options) => {
@@ -630,6 +631,41 @@ request.interceptors.response.use(async (response) => {
   }
   return response;
 })
+```
+
+1. instance Interceptor
+``` javascript
+// Global interceptors are used `request` instance method directly
+request.interceptors.request.use((url, options) => {
+  return {
+    url: `${url}&interceptors=yes`,
+    options: { ...options, interceptors: true },
+  };
+});
+
+function createClient(baseUrl) {
+  const request = extend({
+    prefix: baseUrl
+  });
+  return request;
+}
+
+const clientA = createClient('/api');
+const clientB = createClient('/api');
+// Independent instance Interceptor
+clientA.interceptors.request.use((url, options) => {
+  return {
+    url: `${url}&interceptors=clientA`,
+    options,
+  };
+});
+
+clientB.interceptors.request.use((url, options) => {
+  return {
+    url: `${url}&interceptors=clientB`,
+    options,
+  };
+});
 ```
 
 ## Cancel request

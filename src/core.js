@@ -6,10 +6,6 @@ import parseResponseMiddleware from './middleware/parseResponse';
 import simplePost from './middleware/simplePost';
 import simpleGet from './middleware/simpleGet';
 
-// 旧版拦截器为共享
-const requestInterceptors = [addfixInterceptor];
-const responseInterceptors = [];
-
 // 初始化全局和内核中间件
 const globalMiddlewares = [simplePost, simpleGet, parseResponseMiddleware];
 const coreMiddlewares = [fetchMiddleware];
@@ -24,32 +20,51 @@ class Core {
     this.onion = new Onion([]);
     this.fetchIndex = 0; // 【即将废弃】请求中间件位置
     this.mapCache = new MapCache(initOptions);
+    this.initOptions = initOptions;
+    this.instanceRequestInterceptors = [];
+    this.instanceResponseInterceptors = [];
   }
+  // 旧版拦截器为共享
+  static requestInterceptors = [addfixInterceptor];
+  static responseInterceptors = [];
 
   use(newMiddleware, opt = { global: false, core: false }) {
     this.onion.use(newMiddleware, opt);
     return this;
   }
 
+  // 全局拦截器
   static requestUse(handler) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    requestInterceptors.push(handler);
+    Core.requestInterceptors.push(handler);
   }
 
   static responseUse(handler) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    responseInterceptors.push(handler);
+    Core.responseInterceptors.push(handler);
+  }
+
+  // 局部拦截器
+  instanceRequestUse(handler) {
+    if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
+    this.instanceRequestInterceptors.push(handler);
+  }
+
+  instanceResponseUse(handler) {
+    if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
+    this.instanceResponseInterceptors.push(handler);
   }
 
   // 执行请求前拦截器
-  static dealRequestInterceptors(ctx) {
+  dealRequestInterceptors(ctx) {
     const reducer = (p1, p2) =>
       p1.then((ret = {}) => {
         ctx.req.url = ret.url || ctx.req.url;
         ctx.req.options = ret.options || ctx.req.options;
         return p2(ctx.req.url, ctx.req.options);
       });
-    return requestInterceptors.reduce(reducer, Promise.resolve()).then((ret = {}) => {
+    const allInterceptors = [...Core.requestInterceptors, ...this.instanceRequestInterceptors];
+    return allInterceptors.reduce(reducer, Promise.resolve()).then((ret = {}) => {
       ctx.req.url = ret.url || ctx.req.url;
       ctx.req.options = ret.options || ctx.req.options;
       return Promise.resolve();
@@ -62,14 +77,14 @@ class Core {
       req: { url, options },
       res: null,
       cache: this.mapCache,
-      responseInterceptors,
+      allResponseInterceptors: [...Core.responseInterceptors, ...this.instanceResponseInterceptors],
     };
     if (typeof url !== 'string') {
       throw new Error('url MUST be a string');
     }
 
     return new Promise((resolve, reject) => {
-      Core.dealRequestInterceptors(obj)
+      this.dealRequestInterceptors(obj)
         .then(() => onion.execute(obj))
         .then(() => {
           resolve(obj.res);

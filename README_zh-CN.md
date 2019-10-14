@@ -594,6 +594,7 @@ request('/api/v1/rpc', {
 ## 拦截器
 在请求或响应被 ```then``` 或 ```catch``` 处理前拦截它们。
 
+1. 全局拦截器
 ``` javascript
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options) => {
@@ -630,6 +631,41 @@ request.interceptors.response.use(async (response) => {
   }
   return response;
 })
+```
+
+2. 实例内部拦截器
+``` javascript
+// 全局拦截器直接使用 request 实例中的方法
+request.interceptors.request.use((url, options) => {
+  return {
+    url: `${url}&interceptors=yes`,
+    options: { ...options, interceptors: true },
+  };
+});
+
+function createClient(baseUrl) {
+  const request = extend({
+    prefix: baseUrl
+  });
+  return request;
+}
+
+const clientA = createClient('/api');
+const clientB = createClient('/api');
+// 局部拦截器使用
+clientA.interceptors.request.use((url, options) => {
+  return {
+    url: `${url}&interceptors=clientA`,
+    options,
+  };
+});
+
+clientB.interceptors.request.use((url, options) => {
+  return {
+    url: `${url}&interceptors=clientB`,
+    options,
+  };
+});
 ```
 
 ## 取消请求

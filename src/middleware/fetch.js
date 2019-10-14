@@ -3,7 +3,7 @@ import { timeout2Throw, cancel2Throw, getEnv } from '../utils';
 
 export default function fetchMiddleware(ctx, next) {
   if (!ctx) return next();
-  const { req: { options = {}, url = '' } = {}, cache, responseInterceptors } = ctx;
+  const { req: { options = {}, url = '' } = {}, cache, allResponseInterceptors } = ctx;
   const { timeout = 0, __umiRequestCoreType__ = 'normal', useCache = false, method = 'get', params, ttl } = options;
 
   if (__umiRequestCoreType__ !== 'normal') {
@@ -46,7 +46,7 @@ export default function fetchMiddleware(ctx, next) {
   }
 
   // 兼容老版本 response.interceptor
-  responseInterceptors.forEach(handler => {
+  allResponseInterceptors.forEach(handler => {
     response = response.then(res => handler(res, options));
   });
 
