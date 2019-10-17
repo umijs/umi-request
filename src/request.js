@@ -5,7 +5,7 @@ import isCancel from './cancel/isCancel';
 import { getParamObject } from './utils';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
-const request = (initOptions = {}, isLocalInstance) => {
+const request = (initOptions = {}) => {
   const coreInstance = new Core(initOptions);
   const umiInstance = (url, options = {}) => {
     const mergeOptions = {
@@ -31,10 +31,10 @@ const request = (initOptions = {}, isLocalInstance) => {
   // 拦截器
   umiInstance.interceptors = {
     request: {
-      use: isLocalInstance ? coreInstance.instanceRequestUse.bind(coreInstance) : Core.requestUse,
+      use: Core.requestUse.bind(coreInstance),
     },
     response: {
-      use: isLocalInstance ? coreInstance.instanceResponseUse.bind(coreInstance) : Core.responseUse,
+      use: Core.requestUse.bind(coreInstance),
     },
   };
 
@@ -59,7 +59,7 @@ const request = (initOptions = {}, isLocalInstance) => {
  * @param {function} errorHandler 统一错误处理方法
  * @param {object} headers 统一的headers
  */
-export const extend = initOptions => request(initOptions, true);
+export const extend = initOptions => request(initOptions);
 
 /**
  * 暴露 fetch 中间件，保障依旧可以使用

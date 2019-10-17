@@ -33,26 +33,24 @@ class Core {
     return this;
   }
 
-  // 全局拦截器
-  static requestUse(handler) {
+  // 请求拦截器 默认 { global: true } 兼容旧版本拦截器
+  static requestUse(handler, opt = { global: true }) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    Core.requestInterceptors.push(handler);
+    if(opt.global){
+      Core.requestInterceptors.push(handler);
+    } else {
+      this.instanceRequestInterceptors.push(handler);
+    }
   }
 
-  static responseUse(handler) {
+  // 响应拦截器 默认 { global: true } 兼容旧版本拦截器
+  static responseUse(handler, opt = { global: true }) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    Core.responseInterceptors.push(handler);
-  }
-
-  // 局部拦截器
-  instanceRequestUse(handler) {
-    if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    this.instanceRequestInterceptors.push(handler);
-  }
-
-  instanceResponseUse(handler) {
-    if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    this.instanceResponseInterceptors.push(handler);
+    if(opt.global){
+      Core.responseInterceptors.push(handler);
+    } else {
+      this.instanceResponseInterceptors.push(handler);
+    }
   }
 
   // 执行请求前拦截器
@@ -77,7 +75,7 @@ class Core {
       req: { url, options },
       res: null,
       cache: this.mapCache,
-      allResponseInterceptors: [...Core.responseInterceptors, ...this.instanceResponseInterceptors],
+      responseInterceptors: [...Core.responseInterceptors, ...this.instanceResponseInterceptors],
     };
     if (typeof url !== 'string') {
       throw new Error('url MUST be a string');
