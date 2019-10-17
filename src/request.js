@@ -34,7 +34,7 @@ const request = (initOptions = {}) => {
       use: Core.requestUse.bind(coreInstance),
     },
     response: {
-      use: Core.requestUse.bind(coreInstance),
+      use: Core.responseUse.bind(coreInstance),
     },
   };
 
