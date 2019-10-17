@@ -606,6 +606,17 @@ request.interceptors.request.use((url, options) => {
   );
 });
 
+// 和上一个相同
+request.interceptors.request.use((url, options) => {
+  return (
+    {
+      url: `${url}&interceptors=yes`,
+      options: { ...options, interceptors: true },
+    }
+  );
+}, { global: true });
+
+
 // response拦截器, 处理response
 request.interceptors.response.use((response, options) => {
   response.headers.append('interceptors', 'yes yo');
@@ -641,7 +652,7 @@ request.interceptors.request.use((url, options) => {
     url: `${url}&interceptors=yes`,
     options: { ...options, interceptors: true },
   };
-});
+}, { global: false }); // 第二个参数不传默认为 { global: true }
 
 function createClient(baseUrl) {
   const request = extend({
@@ -658,14 +669,14 @@ clientA.interceptors.request.use((url, options) => {
     url: `${url}&interceptors=clientA`,
     options,
   };
-});
+}, { global: false });
 
 clientB.interceptors.request.use((url, options) => {
   return {
     url: `${url}&interceptors=clientB`,
     options,
   };
-});
+}, { global: false });
 ```
 
 ## 取消请求
