@@ -56,6 +56,15 @@ class Core {
     });
   }
 
+  // 执行响应后拦截器
+  static dealResponseInterceptors(ctx) {
+    const reducer = (p1, p2) =>
+      p1.then((ret = {}) => {
+        return p2(ret, ctx.req.options);
+      });
+    return responseInterceptors.reduce(reducer, Promise.resolve()).then(() => Promise.resolve());
+  }
+
   request(url, options) {
     const { onion } = this;
     const obj = {
@@ -71,6 +80,8 @@ class Core {
     return new Promise((resolve, reject) => {
       Core.dealRequestInterceptors(obj)
         .then(() => onion.execute(obj))
+
+      Core.dealResponseInterceptors(obj)
         .then(() => {
           resolve(obj.res);
         })
