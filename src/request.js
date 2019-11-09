@@ -31,10 +31,10 @@ const request = (initOptions = {}) => {
   // 拦截器
   umiInstance.interceptors = {
     request: {
-      use: Core.requestUse,
+      use: Core.requestUse.bind(coreInstance),
     },
     response: {
-      use: Core.responseUse,
+      use: Core.responseUse.bind(coreInstance),
     },
   };
 

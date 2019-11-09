@@ -65,6 +65,78 @@ describe('interceptor', () => {
     }
   });
 
+  it('global and instance interceptor', async done => {
+    expect.assertions(6);
+    server.get('/test/global/interceptors', (req, res) => {
+      writeData(req.query, res);
+    });
+
+    // request global interceptors change request's url
+    request.interceptors.request.use((url, options) => {
+      return {
+        url: `${url}&isGlobal=yes`,
+        options: { ...options, interceptors: true },
+      };
+    });
+
+    request.interceptors.request.use(
+      (url, options) => {
+        return {
+          url: `${url}&instance=request`,
+          options: { ...options, interceptors: true },
+        };
+      },
+      { global: false }
+    );
+
+    request.interceptors.response.use(
+      (res, options) => {
+        res.headers.append('instance', 'yes request');
+        return res;
+      },
+      { global: false }
+    );
+
+    const clientA = extend();
+
+    // request instance self interceptors change request's url
+    clientA.interceptors.request.use(
+      (url, options) => {
+        return {
+          url: `${url}&instance=clientA`,
+          options,
+        };
+      },
+      { global: false }
+    );
+
+    // response instance self interceptor, change response's header
+    clientA.interceptors.response.use(
+      (res, options) => {
+        res.headers.append('instance', 'yes clientA');
+        return res;
+      },
+      { global: false }
+    );
+
+    const responseClientA = await clientA(prefix('/test/global/interceptors'), {
+      getResponse: true,
+    });
+
+    const response = await request(prefix('/test/global/interceptors'), {
+      getResponse: true,
+    });
+
+    expect(response.data.instance).toBe('request');
+    expect(response.data.isGlobal).toBe('yes');
+    expect(response.response.headers.get('instance')).toBe('yes request');
+
+    expect(responseClientA.data.instance).toBe('clientA');
+    expect(responseClientA.data.isGlobal).toBe('yes');
+    expect(responseClientA.response.headers.get('instance')).toBe('yes clientA');
+    done();
+  });
+
   it('invalid interceptor constructor', async done => {
     expect.assertions(2);
     try {
