@@ -2,7 +2,7 @@
  * 实现一个简单的Map cache, 稍后可以挪到 utils中, 提供session local map三种前端cache方式.
  * 1. 可直接存储对象   2. 内存无5M限制   3.缺点是刷新就没了, 看反馈后期完善.
  */
-import { parse } from 'query-string';
+import { parse } from 'qs';
 
 export class MapCache {
   constructor(options) {
@@ -172,7 +172,7 @@ export function forEach2ObjArr(target, callback) {
 
 export function getParamObject(val) {
   if (isURLSearchParams(val)) {
-    return parse(val.toString());
+    return parse(val.toString(), { strictNullHandling: true });
   }
   if (typeof val === 'string') {
     return [val];
