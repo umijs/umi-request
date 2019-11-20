@@ -40,6 +40,7 @@ export interface RequestOptionsInit extends RequestInit {
   parseResponse?: boolean;
   cancelToken?: CancelToken;
   getResponse?: boolean;
+  validateCache?: (url: string, options: RequestOptionsInit) => boolean;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {

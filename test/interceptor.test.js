@@ -201,4 +201,26 @@ describe('interceptor', () => {
     expect(data.promiseFoo).toBe('promiseFoo');
     done();
   });
+
+  // reject in interceptor
+  it('throw error in response interceptor', async done => {
+    server.post('/test/reject/interceptor', (req, res) => {
+      writeData(req.body, res);
+    });
+
+    request.interceptors.response.use((response, options) => {
+      const { status, url } = response;
+      console.log('status', status, url);
+      if (status === 200 && url.indexOf('/test/reject/interceptor')) {
+        throw Error('reject when response is 200 status');
+      }
+    });
+
+    try {
+      const data = await request(prefix('/test/reject/interceptor'), { method: 'post' });
+    } catch (e) {
+      expect(e.message).toBe('reject when response is 200 status');
+      done();
+    }
+  });
 });

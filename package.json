@@ -44,7 +44,7 @@
   },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
-    "query-string": "^6.0.0"
+    "qs": "^6.9.1"
   },
   "files": [
     "dist/",

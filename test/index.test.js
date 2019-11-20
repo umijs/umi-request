@@ -318,6 +318,37 @@ describe('test fetch:', () => {
     expect(response.data.defaultParams).toBe('true');
   }, 10000);
 
+  it('test validate cache', async () => {
+    server.post('/test/validate/cache', (req, res) => {
+      writeData(req.query, res);
+    });
+    server.get('/test/validate/cache', (req, res) => {
+      writeData(req.query, res);
+    });
+    const extendRequest = extend({
+      maxCache: 2,
+      prefix: server.url,
+      headers: { Connection: 'keep-alive' },
+      params: { defaultParams: true },
+      validateCache: (url, options) => {
+        const { method = 'get' } = options;
+        if (method.toLowerCase() === 'post') {
+          return true;
+        }
+        return false;
+      },
+      getResponse: true,
+      useCache: true,
+    });
+    let response = await extendRequest('/test/validate/cache', { method: 'post' });
+    response = await extendRequest('/test/validate/cache', { method: 'post' });
+
+    expect(response.response.useCache).toBe(true);
+
+    response = await extendRequest('/test/validate/cache', { method: 'get' });
+    expect(response.response.useCache).toBe(false);
+  });
+
   it('test extends', async () => {
     server.get('/test/method', (req, res) => {
       writeData({ method: req.method }, res);

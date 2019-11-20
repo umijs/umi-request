@@ -1,4 +1,4 @@
-import { stringify } from 'query-string';
+import { stringify } from 'qs';
 import { isArray, isURLSearchParams, forEach2ObjArr, isObject, isDate } from '../utils';
 
 export function paramsSerialize(params, paramsSerializer) {
@@ -20,7 +20,8 @@ export function paramsSerialize(params, paramsSerializer) {
             jsonStringifiedParams.push(isObject(item) ? JSON.stringify(item) : item);
           }
         });
-        serializedParams = stringify(jsonStringifiedParams);
+        // a: [1,2,3] => a=1&a=2&a=3
+        serializedParams = stringify(jsonStringifiedParams, { arrayFormat: 'repeat', strictNullHandling: true });
       } else {
         jsonStringifiedParams = {};
         forEach2ObjArr(params, function(value, key) {
@@ -36,7 +37,7 @@ export function paramsSerialize(params, paramsSerializer) {
           }
           jsonStringifiedParams[key] = jsonStringifiedValue;
         });
-        const tmp = stringify(jsonStringifiedParams);
+        const tmp = stringify(jsonStringifiedParams, { arrayFormat: 'repeat', strictNullHandling: true });
         serializedParams = tmp;
       }
     }

@@ -1,4 +1,4 @@
-import { stringify } from 'query-string';
+import { stringify } from 'qs';
 
 // 对请求参数做处理，实现 query 简化、 post 简化
 export default function simplePostMiddleware(ctx, next) {
