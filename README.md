@@ -225,6 +225,7 @@ More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pr
 | suffix | suffix, such as some scenes api need to be unified .json | string | -- |
 | credentials | fetch request with cookies | string | -- | credentials: 'same-origin' |
 | useCache | Whether to use caching (only support browser environment) | boolean | -- | false |
+| validateCache | cache strategy function | (url, options) => boolean | -- | only get request to cache |
 | ttl | Cache duration, 0 is not expired | number | -- | 60000 |
 | maxCache | Maximum number of caches | number | -- | 0(Infinity) |
 | requestType | post request data type | string | json , form | json |
@@ -299,7 +300,7 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
   credentials: 'same-origin', // default
 
   // ’useCache‘ The GET request would be cache in ttl milliseconds when 'useCache' is true.
-  // The cache key would be 'url + params'.
+  // The cache key would be 'url + params + method'.
   useCache: false, // default
 
   // 'ttl' cache duration（milliseconds），0 is infinity
@@ -307,6 +308,11 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
 
   // 'maxCache' are the max number of requests to be cached, 0 means infinity.
   maxCache: 0,
+
+  // According to http protocal, request of GET used to get data from server, it's necessary to cache response data when server data update not frequently. We provide 'validateCache'
+  // for some cases that need to cache data with other method reqeust.
+  validateCache: (url, options) => { return options.method.toLowerCase() === 'get' },
+
 
   // 'requestType' umi-request will add headers and body according to the 'requestType' when the type of data is object or array.
   // 1. requestType === 'json' :(default )

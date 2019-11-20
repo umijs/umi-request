@@ -231,8 +231,9 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
 | prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
 | suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
-| credentials | fetch 请求包含 cookies 信息 | object | -- | credentials: 'same-origin' |
+| credentials | fetch 请求包含 cookies 信息 | string | -- | credentials: 'same-origin' |
 | useCache | 是否使用缓存（仅支持浏览器客户端） | boolean | -- | false |
+| validateCache | 缓存策略函数 | (url, options) => boolean | -- | 默认 get 请求做缓存 |
 | ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
 | maxCache | 最大缓存数 | number | -- | 无限 |
 | requestType | post请求时数据类型 | string | json , form | json |
@@ -299,7 +300,7 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
   // 要改为确保浏览器不在请求中包含凭据，请使用credentials: 'omit'
   credentials: 'same-origin', // default
 
-  // ’useCache‘ 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params 组合
+  // ’useCache‘ 是否使用缓存，当值为 true 时，GET 请求在 ttl 毫秒内将被缓存，缓存策略唯一 key 为 url + params + method 组合
   useCache: false, // default
 
   // ’ttl‘ 缓存时长（毫秒）， 0 为不过期
@@ -307,6 +308,9 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
   // 'maxCache' 最大缓存数， 0 为无限制
   maxCache: 0,
+
+  // 根据协议规范， GET 请求用于获取、查询服务端数据，在数据更新频率不频繁的情况下做必要的缓存能减少服务端的压力，因为缓存策略是默认对 GET 请求做缓存，但对于一些特殊场景需要缓存其他类型请求的响应数据时，我们提供 validateCache 供用户自定义何时需要进行缓存， key 依旧为 url + params + method
+  validateCache: (url, options) => { return options.method.toLowerCase() === 'get' },
 
   // 'requestType' 当 data 为对象或者数组时， umi-request 会根据 requestType 动态添加 headers 和设置 body（可传入 headers 覆盖 Accept 和 Content-Type 头部属性）:
   // 1. requestType === 'json' 时, (默认为 json )
@@ -452,7 +456,8 @@ request('/api/v1/xxx')
 
 
 ## 中间件
-类 koa 的洋葱机制，让开发者优雅地做请求前后的增强处理，支持创建实例、全局、内核中间件。
+
+类 koa 的洋葱机制，让开发者优雅地做请求前后的增强处理，支持创建实例、全局、内核中间件。
 
 **实例中间件（默认）** ：request.use(fn) 不同实例创建的中间件相互独立不影响;
 
