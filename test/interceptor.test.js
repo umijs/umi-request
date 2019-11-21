@@ -210,7 +210,6 @@ describe('interceptor', () => {
 
     request.interceptors.response.use((response, options) => {
       const { status, url } = response;
-      console.log('status', status, url);
       if (status === 200 && url.indexOf('/test/reject/interceptor')) {
         throw Error('reject when response is 200 status');
       }

@@ -2,7 +2,7 @@
  * 实现一个简单的Map cache, 稍后可以挪到 utils中, 提供session local map三种前端cache方式.
  * 1. 可直接存储对象   2. 内存无5M限制   3.缺点是刷新就没了, 看反馈后期完善.
  */
-import { parse } from 'qs';
+import { parse, stringify } from 'qs';
 
 export class MapCache {
   constructor(options) {
@@ -178,4 +178,8 @@ export function getParamObject(val) {
     return [val];
   }
   return val;
+}
+
+export function reqStringify(val) {
+  return stringify(val, { arrayFormat: 'repeat', strictNullHandling: true });
 }

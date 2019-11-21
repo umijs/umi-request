@@ -1,4 +1,4 @@
-import { stringify } from 'qs';
+import { reqStringify } from '../utils';
 
 // 对请求参数做处理，实现 query 简化、 post 简化
 export default function simplePostMiddleware(ctx, next) {
@@ -28,7 +28,7 @@ export default function simplePostMiddleware(ctx, next) {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
           ...options.headers,
         };
-        options.body = stringify(data);
+        options.body = reqStringify(data, { arrayFormat: 'repeat', strictNullHandling: true });
       }
     } else {
       // 其他 requestType 自定义header
