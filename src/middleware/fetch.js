@@ -42,7 +42,6 @@ export default function fetchMiddleware(ctx, next) {
   // 从缓存池检查是否有缓存数据
   const isBrowser = getEnv() === 'BROWSER';
   const needCache = validateCache(url, options) && useCache && isBrowser;
-  console.log('needCache:', needCache, url);
   if (needCache) {
     let responseCache = cache.get({
       url,
