@@ -88,6 +88,7 @@ request.get('/api/v1/xxx', {
 ```
 
 Performing a ```POST``` request
+
 ``` javascript
 request.post('/api/v1/user', {
     data: {
@@ -103,9 +104,11 @@ request.post('/api/v1/user', {
 ```
 
 ## umi-request API
+
 Requests can be made by passing relevant options to ```umi-request```
 
 **umi-request(url[, options])**
+
 ```javascript
 import request from 'umi-request';
 
@@ -136,6 +139,7 @@ request('/api/v1/user', {
 ```
 
 ## Request method aliases
+
 For convenience umi-request have been provided for all supported methods.
 
 **request.get(url[, options])**
@@ -152,8 +156,8 @@ For convenience umi-request have been provided for all supported methods.
 
 **request.options(url[, options])**
 
-
 ## Creating an instance
+
 You can use ```extend({[options]})``` to create a new instance of umi-request.
 
 **extend([options])**
@@ -211,7 +215,6 @@ The available instance methods are list below. The specified options will be mer
 
 More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
 
-
 ## request options
 
 | Parameter | Description | Type | Optional Value | Default |
@@ -247,7 +250,6 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
 | params | url request parameters | object | -- | -- |
 | data | Submitted data | any | -- | -- |
 | ... |
-
 
 ``` javascript
 {
@@ -364,11 +366,21 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
 }
 ```
 
+### Extend Options
+Sometimes we need to update options after **extend** a request instance, umi-request provide **extendOptions** for users to update options:
 
+```javascript
+const request = extend({ timeout: 1000, params: { a: '1' }})
+// default options is: { timeout: 1000, params: { a: '1' }}
+
+request.extendOptions({ timeout: 3000, params: { b: '2' }})
+// after extendOptions: { timeout: 3000, params: { a: '1', b: '2' }}
+```
 
 ## Response Schema
 
 The response for a request contains the following information.
+
 ``` javascript
 {
   // 'data' is the response that was provided by the server
@@ -410,7 +422,6 @@ request.get('/api/v1/xxx', { getResponse: true })
 
 You can get Response from ```error``` object in errorHandler or request.catch.
 
-
 ## Error handling
 
 ```javascript
@@ -430,7 +441,6 @@ const errorHandler = function (error) {
     console.log(error.data);
     console.log(error.request);
     console.log(codeMap[error.data.status])
-    
   } else {
     // The request was made but no response was received or error occurs when setting up the request.
     console.log(error.message);
@@ -460,8 +470,8 @@ request('/api/v1/xxx')
 })
 ```
 
-
 ## Middleware
+
 Expressive HTTP middleware framework for node.js. For development to enhance before and after request. Support create instance, global, core middlewares.
 
 **Instance Middleware (default)** request.use(fn) Different instances's instance middleware are independence.
@@ -471,17 +481,21 @@ Expressive HTTP middleware framework for node.js. For development to enhance bef
 request.use(fn[, options])
 
 ### params
+
 fn params
+
 * ctx(Object)：context, content request and response
 * next(Function)：function to call the next middleware
 
 options params
+
 * global(boolean): whether global， higher priority than core
 * core(boolean): whether core
 
-
 ### example
+
 1. same type of middlewares
+
 ``` javascript
 import request, { extend } from 'umi-request';
 request.use(async (ctx, next) => {
@@ -499,12 +513,13 @@ const data = await request('/api/v1/a');
 ```
 
 order of middlewares be called:
-```
+
+```shell
 a1 -> b1 -> response -> b2 -> a2
 ```
 
-
 2. Defferent type of middlewares
+
 ``` javascript
 request.use( async (ctx, next) => {
   console.log('instanceA1');
@@ -529,11 +544,13 @@ request.use( async (ctx, next) => {
 ```
 
 order of middlewares be called:
-```
+
+```shell
 instanceA1 -> instanceB1 -> globalA1 -> coreA1 -> coreA2 -> globalA2 -> instanceB2 -> instanceA2
 ```
 
 3. Enhance request
+
 ``` javascript
 request.use(async (ctx, next) => {
   const { req } = ctx;
@@ -559,6 +576,7 @@ request.use(async (ctx, next) => {
 ```
 
 4. Use core middleware to expand request core.
+
 ``` javascript
 
 request.use(async (ctx, next) => {
@@ -596,11 +614,12 @@ request('/api/v1/rpc', {
 
 ```
 
-
 ## Interceptor
+
 You can intercept requests or responses before they are handled by then or catch.
 
 1. global Interceptor
+
 ``` javascript
 // request interceptor, change url or options.
 request.interceptors.request.use((url, options) => {
@@ -650,6 +669,7 @@ request.interceptors.response.use(async (response) => {
 ```
 
 1. instance Interceptor
+
 ``` javascript
 // Global interceptors are used `request` instance method directly
 request.interceptors.request.use((url, options) => {
@@ -685,13 +705,15 @@ clientB.interceptors.request.use((url, options) => {
 ```
 
 ## Cancel request
+
 1. You can cancel a request using a cancel token.
+
 ```javascript
 import Request from 'umi-request';
 
 const CancelToken = Request.CancelToken;
 const { token, cancel } = CancelToken.source();
- 
+
 Request.get('/api/cancel', {
   cancelToken: token
 }).catch(function(thrown) {
@@ -707,11 +729,10 @@ Request.post('/api/cancel', {
 }, {
   cancelToken: token
 })
- 
+
 // cancel request (the message parameter is optional)
 cancel('Operation canceled by the user.');
 ```
-
 
 2. You can also create a cancel token by passing an executor function to the CancelToken constructor:
 ```javascript
@@ -719,20 +740,22 @@ import Request from 'umi-request';
 
 const CancelToken = Request.CancelToken;
 let cancel;
- 
+
 Request.get('/api/cancel', {
   cancelToken: new CancelToken(function executor(c) {
     cancel = c;
   })
 });
- 
+
 // cancel request
 cancel();
 ```
 
-## FAQ
+## Cases
+
 ### How to get Response Headers
-use **Headers.get()** to get information from Response Headers. ( more detail see [MDN doc](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
+
+Use **Headers.get()** (more detail see [MDN 文档](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
 
 ``` javascript
 request('/api/v1/some/api', { getResponse: true })
@@ -743,30 +766,17 @@ request('/api/v1/some/api', { getResponse: true })
 
 If want to get a custem header, you need to set [Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers) on server.
 
-
-
-## Cases
-### How to get Response Headers
-
-Use **Headers.get()** (more detail see [MDN 文档](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
-``` javascript
-request('/api/v1/some/api', { getResponse: true })
-.then(({ data, response}) => {
-  response.headers.get('Content-Type');
-})
-```
-
 ### File upload
+
 Use FormData() contructor，the browser will add rerequest header  ```"Content-Type: multipart/form-data"``` automatically, developer don't need to add request header **Content-Type**
+
 ``` javascript
 const formData = new FormData();
 formData.append('file', file);
 request('/api/v1/some/api', { method:'post', data: formData });
 ```
 
-
 The Access-Control-Expose-Headers response header indicates which headers can be exposed as part of the response by listing their names.[Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers)
-
 
 ## Development and debugging
 

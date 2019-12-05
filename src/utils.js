@@ -8,6 +8,10 @@ export class MapCache {
   constructor(options) {
     this.cache = new Map();
     this.timer = {};
+    this.extendOptions(options);
+  }
+
+  extendOptions(options) {
     this.maxCache = options.maxCache || 0;
   }
 
@@ -182,4 +186,20 @@ export function getParamObject(val) {
 
 export function reqStringify(val) {
   return stringify(val, { arrayFormat: 'repeat', strictNullHandling: true });
+}
+
+export function mergeRequestOptions(options, options2Merge) {
+  return {
+    ...options,
+    ...options2Merge,
+    headers: {
+      ...options.headers,
+      ...options2Merge.headers,
+    },
+    params: {
+      ...getParamObject(options.params),
+      ...getParamObject(options2Merge.params),
+    },
+    method: (options.method || options2Merge.method || 'get').toLowerCase(),
+  };
 }
