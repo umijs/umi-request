@@ -35,6 +35,7 @@
     "iconv-lite": "^0.4.24",
     "jest": "^23.5.0",
     "np": "5.0.2",
+    "query-string": "^6.9.0",
     "typescript": "^3.0.3",
     "umi": "^2.8.15",
     "umi-lint": "^1.0.0-alpha.1",
