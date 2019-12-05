@@ -140,6 +140,7 @@ request('/api/v1/user', {
 ```
 
 ## 请求方法的别名
+
 为了方便起见，为所有支持的请求方法提供了别名, ```method``` 属性不必在配置中指定
 
 **request.get(url[, options])**
@@ -156,8 +157,8 @@ request('/api/v1/user', {
 
 **request.options(url[, options])**
 
-
 ## 创建实例
+
 有些通用的配置我们不想每个请求里都去添加，那么可以通过 ```extend``` 新建一个 umi-request 实例
 
 **extend([options])**
@@ -244,7 +245,6 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
 | errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
 | cancelToken | 取消请求的 Token | CancelToken.token | -- | -- |
-
 
 fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 
@@ -361,10 +361,23 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 }
 ```
 
+### 更新拓展实例默认参数
+
+实例化一个请求实例后，有时还需要动态更新默认参数，umi-request 提供 **extendOptions** 方法供用户进行更新：
+
+```javascript
+const request = extend({ timeout: 1000, params: { a: '1' }})
+// 默认参数是 { timeout: 1000, params: { a: '1' }}
+
+request.extendOptions({ timeout: 3000, params: { b: '2' }})
+// 此时默认参数是 { timeout: 3000, params: { a: '1', b: '2' }}
+
+```
 
 ## 响应结构
 
 某个请求的响应返回的响应对象 Response 如下：
+
 ``` javascript
 {
   // `data` 由服务器提供的响应, 需要进行解析才能获取
@@ -404,7 +417,6 @@ request.get('/api/v1/xxx', { getResponse: true })
 ```
 
 在使用 catch 或者 errorHandler, 响应对象可以通过 ```error``` 对象获取使用，参考**错误处理**这一节文档。
-
 
 ## 错误处理
 
@@ -465,20 +477,24 @@ request('/api/v1/xxx')
 
 **内核中间件** ：request.use(fn, { core: true }) 内核中间件， 方便开发者拓展请求内核；
 
-
 request.use(fn[, options])
 
 ### 参数
+
 fn 入参
+
 * ctx(Object)：上下文对象，包括req和res对象
 * next(Function)：调用下一个中间件的函数
 
 options 参数
+
 * global(boolean): 是否为全局中间件，优先级比 core 高
 * core(boolean): 是否为内核中间件
 
 ### 例子
+
 1. 同类型中间件执行顺序
+
 ``` javascript
 import request, { extend } from 'umi-request';
 request.use(async (ctx, next) => {
@@ -496,11 +512,13 @@ const data = await request('/api/v1/a');
 ```
 
 执行顺序如下：
-```
+
+``` shell
 a1 -> b1 -> response -> b2 -> a2
 ```
 
 2. 不同类型中间件执行顺序
+
 ``` javascript
 request.use( async (ctx, next) => {
   console.log('instanceA1');
@@ -525,11 +543,13 @@ request.use( async (ctx, next) => {
 ```
 
 执行顺序如下：
-```
+
+``` shell
 instanceA1 -> instanceB1 -> globalA1 -> coreA1 -> coreA2 -> globalA2 -> instanceB2 -> instanceA2
 ```
 
 3. 使用中间件对请求前后做处理
+
 ``` javascript
 request.use(async (ctx, next) => {
   const { req } = ctx;
@@ -556,6 +576,7 @@ request.use(async (ctx, next) => {
 ```
 
 4. 使用内核中间件拓展请求能力
+
 ``` javascript
 
 request.use(async (ctx, next) => {
@@ -595,11 +616,12 @@ request('/api/v1/rpc', {
 
 ```
 
-
 ## 拦截器
+
 在请求或响应被 ```then``` 或 ```catch``` 处理前拦截它们。
 
 1. 全局拦截器
+
 ``` javascript
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options) => {
@@ -624,7 +646,7 @@ request.interceptors.request.use((url, options) => {
 
 // response拦截器, 处理response
 request.interceptors.response.use((response, options) => {
-  response.headers.append('interceptors', 'yes yo');
+  const contentType = response.headers.get('Content-Type');
   return response;
 });
 
@@ -650,6 +672,7 @@ request.interceptors.response.use(async (response) => {
 ```
 
 2. 实例内部拦截器
+
 ``` javascript
 // 全局拦截器直接使用 request 实例中的方法
 request.interceptors.request.use((url, options) => {
@@ -685,16 +708,18 @@ clientB.interceptors.request.use((url, options) => {
 ```
 
 ## 取消请求
+
 你可以通过 **cancel token** 来取消一个请求
 > cancel token API 是基于已被撤销的 [cancelable-promises 方案](https://github.com/tc39/proposal-cancelable-promises)
 
 1. 你可以通过 **CancelToken.source** 来创建一个 cancel token，如下所示:
+
 ```javascript
 import Request from 'umi-request';
 
 const CancelToken = Request.CancelToken;
 const { token, cancel } = CancelToken.source();
- 
+
 Request.get('/api/cancel', {
   cancelToken: token
 }).catch(function(thrown) {
@@ -710,19 +735,20 @@ Request.post('/api/cancel', {
 }, {
   cancelToken: token
 })
- 
+
 // 取消请求(参数为非必填)
 cancel('Operation canceled by the user.');
 
 ```
 
 2. 你也可以通过实例化 CancelToken 来创建一个 token，同时通过传入函数来获取取消方法：
+
 ```javascript
 import Request from 'umi-request';
 
 const CancelToken = Request.CancelToken;
 let cancel;
- 
+
 Request.get('/api/cancel', {
   cancelToken: new CancelToken(function executor(c) {
     cancel = c;
@@ -733,9 +759,11 @@ cancel();
 ```
 
 ## 案例
+
 ### 如何获取响应头信息
 
 通过 **Headers.get()** 获取响应头信息。(可参考 [MDN 文档](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
+
 ``` javascript
 request('/api/v1/some/api', { getResponse: true })
 .then(({ data, response}) => {
@@ -744,7 +772,9 @@ request('/api/v1/some/api', { getResponse: true })
 ```
 
 ### 文件上传
+
 使用 FormData() 构造函数时，浏览器会自动识别并添加请求头 ```"Content-Type: multipart/form-data"```, 且参数依旧是表单提交时那种键值对，因此不需要开发者手动设置 **Content-Type**
+
 ``` javascript
 const formData = new FormData();
 formData.append('file', file);

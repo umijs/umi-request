@@ -41,6 +41,7 @@ export interface RequestOptionsInit extends RequestInit {
   cancelToken?: CancelToken;
   getResponse?: boolean;
   validateCache?: (url: string, options: RequestOptionsInit) => boolean;
+  __umiRequestCoreType__?: string;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
@@ -102,6 +103,7 @@ export interface RequestMethod<R = false> {
   Cancel: CancelStatic;
   CancelToken: CancelTokenStatic;
   isCancel(value: any): boolean;
+  extendOptions: (options: RequestOptionsInit) => void;
 }
 
 export interface ExtendOnlyOptions {
@@ -151,5 +153,6 @@ export interface CancelTokenSource {
 }
 
 declare var request: RequestMethod;
+declare var fetch: RequestMethod;
 
 export default request;

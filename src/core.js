@@ -1,5 +1,5 @@
 import Onion from './onion';
-import { MapCache } from './utils';
+import { MapCache, mergeRequestOptions } from './utils';
 import addfixInterceptor from './interceptor/addfix';
 import fetchMiddleware from './middleware/fetch';
 import parseResponseMiddleware from './middleware/parseResponse';
@@ -28,15 +28,10 @@ class Core {
   static requestInterceptors = [addfixInterceptor];
   static responseInterceptors = [];
 
-  use(newMiddleware, opt = { global: false, core: false }) {
-    this.onion.use(newMiddleware, opt);
-    return this;
-  }
-
   // 请求拦截器 默认 { global: true } 兼容旧版本拦截器
   static requestUse(handler, opt = { global: true }) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    if(opt.global){
+    if (opt.global) {
       Core.requestInterceptors.push(handler);
     } else {
       this.instanceRequestInterceptors.push(handler);
@@ -46,11 +41,21 @@ class Core {
   // 响应拦截器 默认 { global: true } 兼容旧版本拦截器
   static responseUse(handler, opt = { global: true }) {
     if (typeof handler !== 'function') throw new TypeError('Interceptor must be function!');
-    if(opt.global){
+    if (opt.global) {
       Core.responseInterceptors.push(handler);
     } else {
       this.instanceResponseInterceptors.push(handler);
     }
+  }
+
+  use(newMiddleware, opt = { global: false, core: false }) {
+    this.onion.use(newMiddleware, opt);
+    return this;
+  }
+
+  extendOptions(options) {
+    this.initOptions = mergeRequestOptions(this.initOptions, options);
+    this.mapCache.extendOptions(options);
   }
 
   // 执行请求前拦截器
