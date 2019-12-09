@@ -64,12 +64,13 @@ export default function fetchMiddleware(ctx, next) {
     response = Promise.race([cancel2Throw(options, ctx), adapter(url, options)]);
   }
 
-  // Fix multiple clones not working, issue: https://github.com/github/fetch/issues/504
-  response = response.clone ? response.clone() : response;
-
   // 兼容老版本 response.interceptor
   responseInterceptors.forEach(handler => {
-    response = response.then(res => handler(res, options));
+    response = response.then(res => {
+      // Fix multiple clones not working, issue: https://github.com/github/fetch/issues/504
+      let clonedRes = typeof res.clone === 'function' ? res.clone() : res;
+      return handler(clonedRes, options);
+    });
   });
 
   return response.then(res => {
