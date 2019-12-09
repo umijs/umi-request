@@ -208,17 +208,47 @@ describe('interceptor', () => {
       writeData(req.body, res);
     });
 
-    request.interceptors.response.use((response, options) => {
-      const { status, url } = response;
-      if (status === 200 && url.indexOf('/test/reject/interceptor')) {
-        throw Error('reject when response is 200 status');
-      }
-    });
+    const req = extend({});
+
+    req.interceptors.response.use(
+      (response, options) => {
+        const { status, url } = response;
+        if (status === 200 && url.indexOf('/test/reject/interceptor')) {
+          throw Error('reject when response is 200 status');
+        }
+      },
+      { global: false }
+    );
 
     try {
-      const data = await request(prefix('/test/reject/interceptor'), { method: 'post' });
+      const data = await req(prefix('/test/reject/interceptor'), { method: 'post' });
     } catch (e) {
       expect(e.message).toBe('reject when response is 200 status');
+      done();
+    }
+  });
+
+  // clone response
+  it('should throw error when reponse.clone().json() result is fail', async done => {
+    server.post('/test/multiple/clone/response', (req, res) => {
+      writeData({ result: { success: false } }, res);
+    });
+    const req = extend({});
+    req.interceptors.response.use(
+      async (response, options) => {
+        const { result } = await response.clone().json();
+        if (result && result.success === false) {
+          throw Error('reject when response is fail');
+        }
+        return response;
+      },
+      { global: false }
+    );
+
+    try {
+      const data = await req(prefix('/test/multiple/clone/response'), { method: 'post' });
+    } catch (e) {
+      expect(e.message).toBe('reject when response is fail');
       done();
     }
   });
