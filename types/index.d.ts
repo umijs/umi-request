@@ -92,10 +92,10 @@ export interface RequestMethod<R = false> {
   rpc: RequestMethod<R>;
   interceptors: {
     request: {
-      use: (handler: RequestInterceptor) => void;
+      use: (handler: RequestInterceptor, options?: OnionOptions) => void;
     };
     response: {
-      use: (handler: ResponseInterceptor) => void;
+      use: (handler: ResponseInterceptor, options?: OnionOptions) => void;
     };
   };
   use: (handler: OnionMiddleware, options?: OnionOptions) => void;
