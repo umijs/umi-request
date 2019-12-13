@@ -44,6 +44,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "dependencies": {
+    "abort-controller": "^3.0.0",
     "isomorphic-fetch": "^2.2.1",
     "qs": "^6.9.1"
   },
