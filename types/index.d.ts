@@ -7,6 +7,7 @@ export interface ResponseError<D = any> extends Error {
     url: string;
     options: RequestOptionsInit;
   };
+  type: string;
 }
 /**
  * 增加的参数
