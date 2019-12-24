@@ -1,4 +1,4 @@
-import { safeJsonParse, readerGBK, ResponseError, getEnv } from '../utils';
+import { safeJsonParse, readerGBK, ResponseError, getEnv, RequestError } from '../utils';
 
 export default function parseResponseMiddleware(ctx, next) {
   let copy;
@@ -37,7 +37,7 @@ export default function parseResponseMiddleware(ctx, next) {
             .then(readerGBK)
             .then(d => safeJsonParse(d, false, copy, req));
         } catch (e) {
-          throw new ResponseError(copy, e.message, null, req);
+          throw new ResponseError(copy, e.message, null, req, 'ParseError');
         }
       } else if (responseType === 'json') {
         return res.text().then(d => safeJsonParse(d, throwErrIfParseFail, copy, req));
@@ -46,7 +46,7 @@ export default function parseResponseMiddleware(ctx, next) {
         // 其他如text, blob, arrayBuffer, formData
         return res[responseType]();
       } catch (e) {
-        throw new ResponseError(copy, 'responseType not support', null, req);
+        throw new ResponseError(copy, 'responseType not support', null, req, 'ParseError');
       }
     })
     .then(body => {
@@ -66,6 +66,18 @@ export default function parseResponseMiddleware(ctx, next) {
         ctx.res = body;
         return;
       }
-      throw new ResponseError(copy, 'http error', body, req);
+      throw new ResponseError(copy, 'http error', body, req, 'HttpError');
+    })
+    .catch(e => {
+      if (e instanceof RequestError || e instanceof ResponseError) {
+        throw e;
+      }
+      // 对未知错误进行处理
+      const { req, res } = ctx;
+      e.request = req;
+      e.response = res;
+      e.type = e.name;
+      e.data = undefined;
+      throw e;
     });
 }

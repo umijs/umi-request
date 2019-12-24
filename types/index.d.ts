@@ -7,6 +7,7 @@ export interface ResponseError<D = any> extends Error {
     url: string;
     options: RequestOptionsInit;
   };
+  type: string;
 }
 /**
  * 增加的参数
@@ -153,6 +154,7 @@ export interface CancelTokenSource {
 }
 
 declare var request: RequestMethod;
-declare var fetch: RequestMethod;
+
+export declare var fetch: RequestMethod;
 
 export default request;
