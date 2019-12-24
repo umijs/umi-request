@@ -54,10 +54,11 @@ export class MapCache {
  * 请求异常
  */
 export class RequestError extends Error {
-  constructor(text, request) {
+  constructor(text, request, type = 'RequestError') {
     super(text);
     this.name = 'RequestError';
     this.request = request;
+    this.type = type;
   }
 }
 
@@ -65,12 +66,13 @@ export class RequestError extends Error {
  * 响应异常
  */
 export class ResponseError extends Error {
-  constructor(response, text, data, request) {
+  constructor(response, text, data, request, type = 'ResponseError') {
     super(text || response.statusText);
     this.name = 'ResponseError';
     this.data = data;
     this.response = response;
     this.request = request;
+    this.type = type;
   }
 }
 
@@ -97,7 +99,7 @@ export function safeJsonParse(data, throwErrIfParseFail = false, response = null
     return JSON.parse(data);
   } catch (e) {
     if (throwErrIfParseFail) {
-      throw new ResponseError(response, 'JSON.parse fail', data, request);
+      throw new ResponseError(response, 'JSON.parse fail', data, request, 'ParseError');
     }
   } // eslint-disable-line no-empty
   return data;
@@ -106,7 +108,7 @@ export function safeJsonParse(data, throwErrIfParseFail = false, response = null
 export function timeout2Throw(msec, request) {
   return new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new RequestError(`timeout of ${msec}ms exceeded`, request));
+      reject(new RequestError(`timeout of ${msec}ms exceeded`, request, 'Timeout'));
     }, msec);
   });
 }

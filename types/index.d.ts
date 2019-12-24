@@ -153,6 +153,7 @@ export interface CancelTokenSource {
 }
 
 declare var request: RequestMethod;
-declare var fetch: RequestMethod;
+
+export declare var fetch: RequestMethod;
 
 export default request;
