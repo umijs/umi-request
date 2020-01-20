@@ -22,6 +22,46 @@ describe('middleware', () => {
 
   const prefix = api => `${server.url}${api}`;
 
+  describe('use defaultInstance middlewares', () => {
+    it('default middleware should excute after instance middleware', async done => {
+      jest.spyOn(console, 'log');
+      process.env.NODE_ENV = 'development';
+      const req = extend({});
+      server.get('/test/defaultMiddleware', (req, res) => {
+        writeData(req.body, res);
+      });
+
+      req.use(
+        async (ctx, next) => {
+          console.log('default a');
+          await next();
+          console.log('default b');
+        },
+        { defaultInstance: true }
+      );
+
+      req.use(async (ctx, next) => {
+        console.log('instance a');
+        await next();
+        console.log('instance b');
+      });
+      expect(console.log.mock.calls.length).toBe(0);
+      const data = await req(
+        prefix('/test/defaultMiddleware', (req, res) => {
+          writeData(req.body, res);
+        })
+      );
+      expect(console.log.mock.calls.length).toBe(4);
+      expect(console.log.mock.calls[0][0]).toBe('instance a');
+      expect(console.log.mock.calls[1][0]).toBe('default a');
+      expect(console.log.mock.calls[2][0]).toBe('default b');
+      expect(console.log.mock.calls[3][0]).toBe('instance b');
+      expect(req.middlewares.defaultInstance.length).toBe(1);
+      expect(req.middlewares.instance.length).toBe(1);
+      done();
+    });
+  });
+
   describe('use middleware to modify request data and response data', () => {
     it('response should be { hello: "hello", foo: "foo" }', async done => {
       server.post('/test/promiseInterceptors/a/b', (req, res) => {

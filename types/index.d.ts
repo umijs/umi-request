@@ -77,7 +77,7 @@ export interface Context {
 export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
 
 export type OnionMiddleware = (ctx: Context, next: () => void) => void;
-export type OnionOptions = { global?: boolean; core?: boolean };
+export type OnionOptions = { global?: boolean; core?: boolean; defaultInstance?: boolean };
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
@@ -105,6 +105,12 @@ export interface RequestMethod<R = false> {
   CancelToken: CancelTokenStatic;
   isCancel(value: any): boolean;
   extendOptions: (options: RequestOptionsInit) => void;
+  middlewares: {
+    instance: OnionMiddleware[];
+    defaultInstance: OnionMiddleware[];
+    global: OnionMiddleware[];
+    core: OnionMiddleware[];
+  };
 }
 
 export interface ExtendOnlyOptions {

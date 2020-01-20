@@ -2,6 +2,7 @@ import Core from './core';
 import Cancel from './cancel/cancel';
 import CancelToken from './cancel/cancelToken';
 import isCancel from './cancel/isCancel';
+import Oinon from './onion';
 import { getParamObject, mergeRequestOptions } from './utils';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
@@ -37,6 +38,14 @@ const request = (initOptions = {}) => {
   umiInstance.isCancel = isCancel;
 
   umiInstance.extendOptions = coreInstance.extendOptions.bind(coreInstance);
+
+  // 暴露各个实例的中间件，供开发者自由组合
+  umiInstance.middlewares = {
+    instance: coreInstance.onion.middlewares,
+    defaultInstance: coreInstance.onion.defaultMiddlewares,
+    global: Oinon.globalMiddlewares,
+    core: Oinon.coreMiddlewares,
+  };
 
   return umiInstance;
 };
