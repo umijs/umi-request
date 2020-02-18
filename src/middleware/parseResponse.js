@@ -74,10 +74,10 @@ export default function parseResponseMiddleware(ctx, next) {
       }
       // 对未知错误进行处理
       const { req, res } = ctx;
-      e.request = req;
-      e.response = res;
-      e.type = e.name;
-      e.data = undefined;
+      e.request = e.request || req;
+      e.response = e.response || res;
+      e.type = e.type || e.name;
+      e.data = e.data || undefined;
       throw e;
     });
 }
