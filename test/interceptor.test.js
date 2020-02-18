@@ -228,6 +228,44 @@ describe('interceptor', () => {
     }
   });
 
+  it('throw error in response interceptor', async done => {
+    server.post('/test/reject/responseerror', (req, res) => {
+      writeData(req.body, res);
+    });
+
+    class ResponseError extends Error {
+      constructor({ response, data }) {
+        super('x-error');
+
+        this.name = 'x-error';
+        this.type = 'x-type';
+        this.response = response;
+        this.data = data;
+      }
+    }
+
+    const req = extend({});
+
+    req.interceptors.response.use(
+      (response, options) => {
+        const { status, url } = response;
+        if (status === 200 && url.indexOf('/test/reject/responseerror')) {
+          throw new ResponseError({ response: response, data: { hello: 'world' } });
+        }
+      },
+      { global: false }
+    );
+
+    try {
+      const data = await req(prefix('/test/reject/responseerror'), { method: 'post' });
+    } catch (e) {
+      expect(e.name).toBe('x-error');
+      expect(e instanceof ResponseError).toBe(true);
+      expect(e.data.hello).toEqual('world');
+      done();
+    }
+  });
+
   // clone response
   it('should throw error when reponse.clone().json() result is fail', async done => {
     server.post('/test/multiple/clone/response', (req, res) => {
