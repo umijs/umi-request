@@ -163,4 +163,7 @@ declare var request: RequestMethod;
 
 export declare var fetch: RequestMethod;
 
+export declare var AbortController: any;
+export declare var AbortSignal: any;
+
 export default request;

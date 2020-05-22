@@ -770,7 +770,7 @@ Request.get('/api/cancel', {
 cancel();
 ```
 
-3. create AbortCOntroller cancel
+3. create AbortController cancel
 
 ```javascript
 import Request, { AbortController } from 'umi-request';

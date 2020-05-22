@@ -770,7 +770,7 @@ Request.get('/api/cancel', {
 cancel();
 ```
 
-3. 通过 AbortCOntroller 取消
+3. 通过 AbortController 取消
 
 ```javascript
 import Request, { AbortController } from 'umi-request';
