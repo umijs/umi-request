@@ -43,6 +43,7 @@ export interface RequestOptionsInit extends RequestInit {
   getResponse?: boolean;
   validateCache?: (url: string, options: RequestOptionsInit) => boolean;
   __umiRequestCoreType__?: string;
+  [key: string]: any;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
@@ -163,7 +164,7 @@ declare var request: RequestMethod;
 
 export declare var fetch: RequestMethod;
 
-export declare var AbortController: any;
-export declare var AbortSignal: any;
+export declare var AbortController: { prototype: AbortController; new (): AbortController };
+export declare var AbortSignal: { prototype: AbortSignal; new (): AbortSignal };
 
 export default request;
