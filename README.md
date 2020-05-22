@@ -720,6 +720,34 @@ clientB.interceptors.request.use(
 
 ## Cancel request
 
+### Use AbortController
+
+Base on [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) that allows you to abort one or more Web requests as and when desired.
+
+```javascript
+import Request, { AbortController } from 'umi-request';
+
+const controller = new AbortController(); // create a controller
+const { signal } = controller; // grab a reference to its associated AbortSignal object using the AbortController.signal property
+
+signal.addEventListener('abort', () => {
+  console.log('aborted!');
+});
+
+Request('/api/response_after_1_sec', {
+  signal, // pass in the AbortSignal as an option inside the request's options object (see {signal}, below). This associates the signal and controller with the fetch request and allows us to abort it by calling AbortController.abort(),
+});
+
+// 取消请求
+setTimeout(() => {
+  controller.abort(); // Aborts a DOM request before it has completed. This is able to abort fetch requests, consumption of any response Body, and streams.
+}, 100);
+```
+
+### Use Cancel Token
+
+> Cancel Token still work, but we don’t recommend using them in the new code.
+
 1. You can cancel a request using a cancel token.
 
 ```javascript
@@ -768,27 +796,6 @@ Request.get('/api/cancel', {
 
 // cancel request
 cancel();
-```
-
-3. create AbortCOntroller cancel
-
-```javascript
-import Request, { AbortController } from 'umi-request';
-
-const controller = new AbortController();
-const { signal } = controller;
-
-signal.addEventListener('abort', () => {
-  console.log('aborted!');
-});
-
-Request('http://127.0.0.1:3009/', {
-  signal,
-});
-// 取消请求
-setTimeout(() => {
-  controller.abort();
-}, 1000);
 ```
 
 ## Cases

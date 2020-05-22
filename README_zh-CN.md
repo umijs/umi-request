@@ -715,11 +715,41 @@ clientB.interceptors.request.use(
 );
 ```
 
-## 取消请求
+## 中止请求
+
+### 通过 AbortController 来中止请求
+
+基于 [AbortController](https://developer.mozilla.org/zh-CN/docs/Web/API/FetchController) 方案来中止一个或多个DOM请求
+
+```javascript
+import Request, { AbortController } from 'umi-request';
+
+const controller = new AbortController(); // 创建一个控制器
+const { signal } = controller; // 返回一个 AbortSignal 对象实例，它可以用来 with/abort 一个 DOM 请求。
+
+signal.addEventListener('abort', () => {
+  console.log('aborted!');
+});
+
+Request('/api/response_after_1_sec', {
+  signal, // 这将信号和控制器与获取请求相关联然后允许我们通过调用 AbortController.abort() 中止请求
+});
+
+// 取消请求
+setTimeout(() => {
+  controller.abort(); // 中止一个尚未完成的DOM请求。这能够中止 fetch 请求，任何响应Body的消费者和流。
+}, 100);
+```
+
+### 使用cancel token 方案来中止请求
+
+> Cancel Token 将逐步退出历史舞台，推荐使用 AbortController 来实现请求中止。
+
 
 你可以通过 **cancel token** 来取消一个请求
 
-> cancel token API 是基于已被撤销的 [cancelable-promises 方案](https://github.com/tc39/proposal-cancelable-promises)
+> cancel token API 是基于已被撤销的 [cancelable-promises 方案](https://github.com/tc39/proposal-cancelable-promises)；
+
 
 1. 你可以通过 **CancelToken.source** 来创建一个 cancel token，如下所示:
 
@@ -770,26 +800,7 @@ Request.get('/api/cancel', {
 cancel();
 ```
 
-3. 通过 AbortCOntroller 取消
 
-```javascript
-import Request, { AbortController } from 'umi-request';
-
-const controller = new AbortController();
-const { signal } = controller;
-
-signal.addEventListener('abort', () => {
-  console.log('aborted!');
-});
-
-Request('http://127.0.0.1:3009/', {
-  signal,
-});
-// 取消请求
-setTimeout(() => {
-  controller.abort();
-}, 1000);
-```
 
 ## 案例
 
