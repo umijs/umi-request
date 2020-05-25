@@ -1,4 +1,4 @@
-import { AbortController as AcAbortController, AbortSignal as AcAbortSignal } from 'abort-controller';
+import 'abort-controller/polyfill';
 
 let AbortController = undefined;
 let AbortSignal = undefined;
