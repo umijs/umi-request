@@ -814,7 +814,7 @@ If want to get a custem header, you need to set [Access-Control-Expose-Headers](
 
 ### File upload
 
-Use FormData() contructor，the browser will add rerequest header `"Content-Type: multipart/form-data"` automatically, developer don't need to add request header **Content-Type**
+Use FormData() contructor，the browser will add request header `"Content-Type: multipart/form-data"` automatically, developer don't need to add request header **Content-Type**
 
 ```javascript
 const formData = new FormData();
