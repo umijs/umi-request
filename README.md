@@ -519,7 +519,7 @@ order of middlewares be called:
 a1 -> b1 -> response -> b2 -> a2
 ```
 
-2. Defferent type of middlewares
+2. Different type of middlewares
 
 ```javascript
 request.use(async (ctx, next) => {
