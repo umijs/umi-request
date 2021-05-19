@@ -77,7 +77,7 @@ class Core {
   request(url, options) {
     const { onion } = this;
     const obj = {
-      req: { url, options },
+      req: { url, options: { ...options, url } },
       res: null,
       cache: this.mapCache,
       responseInterceptors: [...Core.responseInterceptors, ...this.instanceResponseInterceptors],
