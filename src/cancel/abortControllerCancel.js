@@ -1,5 +1,3 @@
-import 'abort-controller/polyfill';
-
 let AbortController = undefined;
 let AbortSignal = undefined;
 
