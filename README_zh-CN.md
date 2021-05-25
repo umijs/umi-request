@@ -722,7 +722,9 @@ clientB.interceptors.request.use(
 基于 [AbortController](https://developer.mozilla.org/zh-CN/docs/Web/API/FetchController) 方案来中止一个或多个DOM请求
 
 ```javascript
-import Request, { AbortController } from 'umi-request';
+// 按需决定是否使用 polyfill
+import 'yet-another-abortcontroller-polyfill'
+import Request from 'umi-request';
 
 const controller = new AbortController(); // 创建一个控制器
 const { signal } = controller; // 返回一个 AbortSignal 对象实例，它可以用来 with/abort 一个 DOM 请求。

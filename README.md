@@ -725,7 +725,9 @@ clientB.interceptors.request.use(
 Base on [AbortController](https://developer.mozilla.org/en-US/docs/Web/API/AbortController) that allows you to abort one or more Web requests as and when desired.
 
 ```javascript
-import Request, { AbortController } from 'umi-request';
+// polyfill abort controller if needed
+import 'yet-another-abortcontroller-polyfill'
+import Request from 'umi-request';
 
 const controller = new AbortController(); // create a controller
 const { signal } = controller; // grab a reference to its associated AbortSignal object using the AbortController.signal property
