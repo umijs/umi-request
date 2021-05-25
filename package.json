@@ -3,7 +3,7 @@
   "version": "1.3.7",
   "description": "A request tool based on fetch.",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "module": "dist/index.esm.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:umijs/umi-request.git"
@@ -36,6 +36,7 @@
     "iconv-lite": "^0.4.24",
     "jest": "^23.5.0",
     "np": "5.0.2",
+    "prettier": "^2.3.0",
     "query-string": "^6.9.0",
     "typescript": "^3.0.3",
     "umi": "^2.8.15",
