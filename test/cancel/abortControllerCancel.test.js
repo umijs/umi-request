@@ -1,5 +1,5 @@
 import createTestServer from 'create-test-server';
-import request, { AbortController } from '../../src/index';
+import request from '../../src/index';
 
 const writeData = (data, res) => {
   res.setHeader('access-control-allow-origin', '*');
@@ -17,7 +17,7 @@ describe('test abortController', () => {
     server.close();
   });
 
-  const prefix = api => `${server.url}${api}`;
+  const prefix = (api) => `${server.url}${api}`;
 
   jest.useFakeTimers();
 
