@@ -1,7 +1,7 @@
-import fetch from "./lib/fetch";
-import request, { extend } from "./request";
-import { RequestError, ResponseError } from "./utils";
+import request, { extend, fetch } from './request';
+import Onion from './onion';
+import { RequestError, ResponseError } from './utils';
 
-export { fetch, extend, RequestError, ResponseError };
+export { extend, RequestError, ResponseError, Onion, fetch };
 
 export default request;

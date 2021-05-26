@@ -5,7 +5,8 @@
     "no-param-reassign": 0,
     "max-len": 0,
     "no-else-return": 0,
-    "no-underscore-dangle": 0
+    "no-underscore-dangle": 0,
+    "linebreak-style": [0, "error", "windows"],
   },
   "env": {
     "browser": true
