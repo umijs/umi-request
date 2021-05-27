@@ -18,14 +18,14 @@ export default function simplePostMiddleware(ctx, next) {
       if (requestType === 'json') {
         options.headers = {
           Accept: 'application/json',
-          'Content-Type': 'application/json;charset=UTF-8',
+          'Content-Type': 'application/json',
           ...options.headers,
         };
         options.body = JSON.stringify(data);
       } else if (requestType === 'form') {
         options.headers = {
           Accept: 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          'Content-Type': 'application/x-www-form-urlencoded',
           ...options.headers,
         };
         options.body = reqStringify(data, { arrayFormat: 'repeat', strictNullHandling: true });
