@@ -62,10 +62,15 @@ export type RequestResponse<T = any> = {
 export type RequestInterceptor = (
   url: string,
   options: RequestOptionsInit
-) => {
-  url?: string;
-  options?: RequestOptionsInit;
-};
+) =>
+  | {
+      url?: string;
+      options?: RequestOptionsInit;
+    }
+  | Promise<{
+      url?: string;
+      options?: RequestOptionsInit;
+    }>;
 
 export interface Context {
   req: {
