@@ -156,6 +156,10 @@ export function isObject(val) {
   return val !== null && typeof val === 'object';
 }
 
+export function isFormData(val) {
+  return (typeof FormData !== 'undefined') && (val instanceof FormData);
+}
+
 export function forEach2ObjArr(target, callback) {
   if (!target) return;
 

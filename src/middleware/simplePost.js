@@ -1,4 +1,4 @@
-import { reqStringify } from '../utils';
+import { reqStringify, isFormData } from '../utils';
 
 // 对请求参数做处理，实现 query 简化、 post 简化
 export default function simplePostMiddleware(ctx, next) {
@@ -38,6 +38,10 @@ export default function simplePostMiddleware(ctx, next) {
       };
       options.body = data;
     }
+  }
+
+  if (isFormData(options.body)) {
+    delete options.headers['Content-Type'];
   }
   ctx.req.options = options;
 
