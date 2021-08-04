@@ -2,7 +2,7 @@
 
 # umi-request
 
-网络请求库，基于 fetch 封装, 兼具 fetch 与 axios 的特点, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
+网络请求库，基于 fetch 封装, 兼具 fetch 与 axios 的特点, 旨在为开发者提供一个统一的 api 调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.
 
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
@@ -12,7 +12,7 @@
 [travis-image]: https://img.shields.io/travis/umijs/umi-request.svg?style=flat-square
 [travis-url]: https://travis-ci.org/umijs/umi-request.svg?branch=master
 
---------------------
+---
 
 ## 支持的功能
 
@@ -31,76 +31,82 @@
 ## 与 fetch, axios 异同
 
 | 特性       | umi-request    | fetch          | axios          |
-| :---------- | :-------------- | :-------------- | :-------------- |
+| :--------- | :------------- | :------------- | :------------- |
 | 实现       | 浏览器原生支持 | 浏览器原生支持 | XMLHttpRequest |
 | 大小       | 9k             | 4k (polyfill)  | 14k            |
-| query 简化 | ✅              | ❌              | ✅              |
-| post 简化  | ✅              | ❌              | ❌              |
-| 超时       | ✅              | ❌              | ✅              |
-| 缓存       | ✅              | ❌              | ❌              |
-| 错误检查   | ✅              | ❌              | ❌              |
-| 错误处理   | ✅              | ❌              | ✅              |
-| 拦截器     | ✅              | ❌              | ✅              |
-| 前缀       | ✅              | ❌              | ❌              |
-| 后缀       | ✅              | ❌              | ❌              |
-| 处理 gbk   | ✅              | ❌              | ❌              |
-| 中间件     | ✅              | ❌              | ❌              |
-| 取消请求   | ✅              | ❌              | ✅              |
+| query 简化 | ✅             | ❌             | ✅             |
+| post 简化  | ✅             | ❌             | ❌             |
+| 超时       | ✅             | ❌             | ✅             |
+| 缓存       | ✅             | ❌             | ❌             |
+| 错误检查   | ✅             | ❌             | ❌             |
+| 错误处理   | ✅             | ❌             | ✅             |
+| 拦截器     | ✅             | ❌             | ✅             |
+| 前缀       | ✅             | ❌             | ❌             |
+| 后缀       | ✅             | ❌             | ❌             |
+| 处理 gbk   | ✅             | ❌             | ❌             |
+| 中间件     | ✅             | ❌             | ❌             |
+| 取消请求   | ✅             | ❌             | ✅             |
 
 更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi/issues)
 
-## TODO 欢迎pr
+## TODO 欢迎 pr
 
-- [x] 测试用例覆盖85%+
+- [x] 测试用例覆盖 85%+
 - [x] 写文档
-- [x] CI集成
+- [x] CI 集成
 - [x] 发布配置
 - [x] typescript
 
 ## 安装
+
 ```
 npm install --save umi-request
 ```
 
 ## 快速上手
+
 执行 **GET** 请求
 
-``` javascript
+```javascript
 import request from 'umi-request';
 
-request.get('/api/v1/xxx?id=1')
-  .then(function (response) {
+request
+  .get('/api/v1/xxx?id=1')
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
 
 // 也可将 URL 的参数放到 options.params 里
-request.get('/api/v1/xxx', {
+request
+  .get('/api/v1/xxx', {
     params: {
-      id: 1
-    }
+      id: 1,
+    },
   })
-  .then(function (response) {
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
 ```
 
 执行 **POST** 请求
-``` javascript
-request.post('/api/v1/user', {
+
+```javascript
+request
+  .post('/api/v1/user', {
     data: {
-      name: 'Mike'
-    }
+      name: 'Mike',
+    },
   })
-  .then(function (response) {
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
 ```
@@ -110,38 +116,38 @@ request.post('/api/v1/user', {
 可以通过向 **umi-request** 传参来发起请求
 
 **umi-request(url[, options])**
+
 ```javascript
 import request from 'umi-request';
 
 request('/api/v1/xxx', {
-    method: 'get',
-    params: { id: 1 }
-  })
-  .then(function (response) {
+  method: 'get',
+  params: { id: 1 },
+})
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
 
 request('/api/v1/user', {
-    method: 'post',
-    data: {
-      name: 'Mike'
-    }
-  })
-  .then(function (response) {
+  method: 'post',
+  data: {
+    name: 'Mike',
+  },
+})
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
-
 ```
 
 ## 请求方法的别名
 
-为了方便起见，为所有支持的请求方法提供了别名, ```method``` 属性不必在配置中指定
+为了方便起见，为所有支持的请求方法提供了别名, `method` 属性不必在配置中指定
 
 **request.get(url[, options])**
 
@@ -159,26 +165,27 @@ request('/api/v1/user', {
 
 ## 创建实例
 
-有些通用的配置我们不想每个请求里都去添加，那么可以通过 ```extend``` 新建一个 umi-request 实例
+有些通用的配置我们不想每个请求里都去添加，那么可以通过 `extend` 新建一个 umi-request 实例
 
 **extend([options])**
 
-``` javascript
+```javascript
 import { extend } from 'umi-request';
 
 const request = extend({
   prefix: '/api/v1',
   timeout: 1000,
   headers: {
-    'Content-Type': 'multipart/form-data'
-  }
+    'Content-Type': 'multipart/form-data',
+  },
 });
 
-request.get('/user')
-  .then(function (response) {
+request
+  .get('/user')
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
   });
 ```
@@ -187,7 +194,7 @@ NodeJS 环境创建实例
 
 ```javascript
 const umi = require('umi-request');
-const extendRequest = umi.extend({ timeout: 10000 })
+const extendRequest = umi.extend({ timeout: 10000 });
 
 extendRequest('/api/user')
   .then(res => {
@@ -197,7 +204,6 @@ extendRequest('/api/user')
     console.log(err);
   });
 ```
-
 
 以下是可用的实例方法，指定的配置将与实例的配置合并。
 
@@ -215,49 +221,47 @@ extendRequest('/api/user')
 
 **request.options(url[, options])**
 
-
 umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
-
 
 ## 请求配置
 
 ### request options 参数
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-| :---  | :---  | :---  | :---  | :---  |
-| method | 请求方式 | string | get , post , put ... | get |
-| params | url请求参数 | object 或 URLSearchParams 对象 | -- | -- |
-| data | 提交的数据 | any | -- | -- |
-| headers | fetch 原有参数 | object | -- | {} |
-| timeout | 超时时长, 默认毫秒, 写操作慎用  | number | -- | -- |
-| prefix | 前缀, 一般用于覆盖统一设置的prefix | string | -- | -- |
-| suffix | 后缀, 比如某些场景 api 需要统一加 .json  | string | -- | -- |
-| credentials | fetch 请求包含 cookies 信息 | string | -- | credentials: 'same-origin' |
-| useCache | 是否使用缓存（仅支持浏览器客户端） | boolean | -- | false |
-| validateCache | 缓存策略函数 | (url, options) => boolean | -- | 默认 get 请求做缓存 |
-| ttl | 缓存时长, 0 为不过期 | number | -- | 60000 |
-| maxCache | 最大缓存数 | number | -- | 无限 |
-| requestType | post请求时数据类型 | string | json , form | json |
-| parseResponse | 是否对 response 做处理简化 | boolean | -- | true |
-| charset | 字符集 | string | utf8 , gbk | utf8 |
-| responseType | 如何解析返回的数据 | string | json , text , blob , formData ... | json , text |
-| throwErrIfParseFail | 当 responseType 为 'json', 对请求结果做 JSON.parse 出错时是否抛出异常 | boolean | -- |false |
-| getResponse | 是否获取源response, 返回结果将包裹一层 | boolean | -- | fasle |
-| errorHandler | 异常处理, 或者覆盖统一的异常处理 | function(error) | -- |
-| cancelToken | 取消请求的 Token | CancelToken.token | -- | -- |
+| 参数                | 说明                                                                  | 类型                           | 可选值                            | 默认值                     |
+| :------------------ | :-------------------------------------------------------------------- | :----------------------------- | :-------------------------------- | :------------------------- |
+| method              | 请求方式                                                              | string                         | get , post , put ...              | get                        |
+| params              | url 请求参数                                                          | object 或 URLSearchParams 对象 | --                                | --                         |
+| data                | 提交的数据                                                            | any                            | --                                | --                         |
+| headers             | fetch 原有参数                                                        | object                         | --                                | {}                         |
+| timeout             | 超时时长, 默认毫秒, 写操作慎用                                        | number                         | --                                | --                         |
+| prefix              | 前缀, 一般用于覆盖统一设置的 prefix                                   | string                         | --                                | --                         |
+| suffix              | 后缀, 比如某些场景 api 需要统一加 .json                               | string                         | --                                | --                         |
+| credentials         | fetch 请求包含 cookies 信息                                           | string                         | --                                | credentials: 'same-origin' |
+| useCache            | 是否使用缓存（仅支持浏览器客户端）                                    | boolean                        | --                                | false                      |
+| validateCache       | 缓存策略函数                                                          | (url, options) => boolean      | --                                | 默认 get 请求做缓存        |
+| ttl                 | 缓存时长, 0 为不过期                                                  | number                         | --                                | 60000                      |
+| maxCache            | 最大缓存数                                                            | number                         | --                                | 无限                       |
+| requestType         | post 请求时数据类型                                                   | string                         | json , form                       | json                       |
+| parseResponse       | 是否对 response 做处理简化                                            | boolean                        | --                                | true                       |
+| charset             | 字符集                                                                | string                         | utf8 , gbk                        | utf8                       |
+| responseType        | 如何解析返回的数据                                                    | string                         | json , text , blob , formData ... | json , text                |
+| throwErrIfParseFail | 当 responseType 为 'json', 对请求结果做 JSON.parse 出错时是否抛出异常 | boolean                        | --                                | false                      |
+| getResponse         | 是否获取源 response, 返回结果将包裹一层                               | boolean                        | --                                | fasle                      |
+| errorHandler        | 异常处理, 或者覆盖统一的异常处理                                      | function(error)                | --                                |
+| cancelToken         | 取消请求的 Token                                                      | CancelToken.token              | --                                | --                         |
 
-fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
+fetch 原其他参数有效, 详见[fetch 文档](https://github.github.io/fetch/)
 
 ### extend options 初始化默认参数, 支持以上所有
 
-| 参数 | 说明 | 类型 | 可选值 | 默认值 |
-| :---  | :---  | :---  | :---  | :---  |
-| method | 请求方式 | string | get , post , put ... | get |
-| params | url请求参数 | object | -- | -- |
-| data | 提交的数据 | any | -- | -- |
-| ... |
+| 参数   | 说明         | 类型   | 可选值               | 默认值 |
+| :----- | :----------- | :----- | :------------------- | :----- |
+| method | 请求方式     | string | get , post , put ... | get    |
+| params | url 请求参数 | object | --                   | --     |
+| data   | 提交的数据   | any    | --                   | --     |
+| ...    |
 
-``` javascript
+```javascript
 {
   // 'method' 是创建请求时使用的方法
   method: 'get', // default
@@ -366,19 +370,18 @@ fetch原其他参数有效, 详见[fetch文档](https://github.github.io/fetch/)
 实例化一个请求实例后，有时还需要动态更新默认参数，umi-request 提供 **extendOptions** 方法供用户进行更新：
 
 ```javascript
-const request = extend({ timeout: 1000, params: { a: '1' }})
+const request = extend({ timeout: 1000, params: { a: '1' } });
 // 默认参数是 { timeout: 1000, params: { a: '1' }}
 
-request.extendOptions({ timeout: 3000, params: { b: '2' }})
+request.extendOptions({ timeout: 3000, params: { b: '2' } });
 // 此时默认参数是 { timeout: 3000, params: { a: '1', b: '2' }}
-
 ```
 
 ## 响应结构
 
 某个请求的响应返回的响应对象 Response 如下：
 
-``` javascript
+```javascript
 {
   // `data` 由服务器提供的响应, 需要进行解析才能获取
   data: {},
@@ -396,34 +399,31 @@ request.extendOptions({ timeout: 3000, params: { b: '2' }})
 
 当 options.getResponse === false 时, 响应结构为解析后的 data
 
-``` javascript
-request.get('/api/v1/xxx', { getResponse: false })
-  .then(function(data) {
-    console.log(data);
-  })
+```javascript
+request.get('/api/v1/xxx', { getResponse: false }).then(function(data) {
+  console.log(data);
+});
 ```
 
 当 options.getResponse === true 时，响应结构为包含 data 和 Response 的对象
 
-``` javascript
-request.get('/api/v1/xxx', { getResponse: true })
-  .then(function({ data, response }) {
-    console.log(data);
-    console.log(response.status);
-    console.log(response.statusText);
-    console.log(response.headers);
-  })
-
+```javascript
+request.get('/api/v1/xxx', { getResponse: true }).then(function({ data, response }) {
+  console.log(data);
+  console.log(response.status);
+  console.log(response.statusText);
+  console.log(response.headers);
+});
 ```
 
-在使用 catch 或者 errorHandler, 响应对象可以通过 ```error``` 对象获取使用，参考**错误处理**这一节文档。
+在使用 catch 或者 errorHandler, 响应对象可以通过 `error` 对象获取使用，参考**错误处理**这一节文档。
 
 ## 错误处理
 
-``` javascript
+```javascript
 import request, { extend } from 'umi-request';
 
-const errorHandler = function (error) {
+const errorHandler = function(error) {
   const codeMap = {
     '021': '发生错误啦',
     '022': '发生大大大大错误啦',
@@ -435,18 +435,17 @@ const errorHandler = function (error) {
     console.log(error.response.headers);
     console.log(error.data);
     console.log(error.request);
-    console.log(codeMap[error.data.status])
-    
+    console.log(codeMap[error.data.status]);
   } else {
     // 请求初始化时出错或者没有响应返回的异常
     console.log(error.message);
   }
 
-  throw error;   // 如果throw. 错误将继续抛出.
-  
+  throw error; // 如果throw. 错误将继续抛出.
+
   // 如果return, 则将值作为返回. 'return;' 相当于return undefined, 在处理结果时判断response是否有值即可.
-  // return {some: 'data'}; 
-}
+  // return {some: 'data'};
+};
 
 // 1. 作为统一错误处理
 const extendRequest = extend({ errorHandler });
@@ -454,18 +453,15 @@ const extendRequest = extend({ errorHandler });
 // 2. 单独特殊处理, 如果配置了统一处理, 但某个api需要特殊处理. 则在请求时, 将errorHandler作为参数传入.
 request('/api/v1/xxx', { errorHandler });
 
-
 // 3. 通过 Promise.catch 做错误处理
 request('/api/v1/xxx')
-.then(function (response) {
-  console.log(response);
-})
-.catch(function (error) {
-  return errorHandler(error);
-})
-
+  .then(function(response) {
+    console.log(response);
+  })
+  .catch(function(error) {
+    return errorHandler(error);
+  });
 ```
-
 
 ## 中间件
 
@@ -483,85 +479,91 @@ request.use(fn[, options])
 
 fn 入参
 
-* ctx(Object)：上下文对象，包括req和res对象
-* next(Function)：调用下一个中间件的函数
+- ctx(Object)：上下文对象，包括 req 和 res 对象
+- next(Function)：调用下一个中间件的函数
 
 options 参数
 
-* global(boolean): 是否为全局中间件，优先级比 core 高
-* core(boolean): 是否为内核中间件
+- global(boolean): 是否为全局中间件，优先级比 core 高
+- core(boolean): 是否为内核中间件
 
 ### 例子
 
 1. 同类型中间件执行顺序
 
-``` javascript
+```javascript
 import request, { extend } from 'umi-request';
 request.use(async (ctx, next) => {
   console.log('a1');
   await next();
   console.log('a2');
-})
+});
 request.use(async (ctx, next) => {
   console.log('b1');
   await next();
   console.log('b2');
-})
+});
 
 const data = await request('/api/v1/a');
 ```
 
 执行顺序如下：
 
-``` shell
+```shell
 a1 -> b1 -> response -> b2 -> a2
 ```
 
 2. 不同类型中间件执行顺序
 
-``` javascript
-request.use( async (ctx, next) => {
+```javascript
+request.use(async (ctx, next) => {
   console.log('instanceA1');
   await next();
   console.log('instanceA2');
-})
-request.use( async (ctx, next) => {
+});
+request.use(async (ctx, next) => {
   console.log('instanceB1');
   await next();
   console.log('instanceB2');
-})
-request.use( async (ctx, next) => {
-  console.log('globalA1');
-  await next();
-  console.log('globalA2');
-}, { global: true })
-request.use( async (ctx, next) => {
-  console.log('coreA1');
-  await next();
-  console.log('coreA2');
-}, { core: true })
+});
+request.use(
+  async (ctx, next) => {
+    console.log('globalA1');
+    await next();
+    console.log('globalA2');
+  },
+  { global: true }
+);
+request.use(
+  async (ctx, next) => {
+    console.log('coreA1');
+    await next();
+    console.log('coreA2');
+  },
+  { core: true }
+);
 ```
 
 执行顺序如下：
 
-``` shell
+```shell
 instanceA1 -> instanceB1 -> globalA1 -> coreA1 -> coreA2 -> globalA2 -> instanceB2 -> instanceA2
 ```
 
 3. 使用中间件对请求前后做处理
 
-``` javascript
+```javascript
 request.use(async (ctx, next) => {
   const { req } = ctx;
   const { url, options } = req;
 
   // 判断是否需要添加前缀，如果是统一添加可通过 prefix、suffix 参数配置
-  if ( url.indexOf('/api') !== 0 ) {
+  if (url.indexOf('/api') !== 0) {
     ctx.req.url = `/api/v1/${url}`;
   }
   ctx.req.options = {
     ...options,
-    foo: 'foo'
+    foo: 'foo',
   };
 
   await next();
@@ -571,78 +573,75 @@ request.use(async (ctx, next) => {
   if (!success) {
     // 对异常情况做对应处理
   }
-})
-
+});
 ```
 
 4. 使用内核中间件拓展请求能力
 
-``` javascript
+```javascript
+request.use(
+  async (ctx, next) => {
+    const { req } = ctx;
+    const { url, options } = req;
+    const { __umiRequestCoreType__ = 'normal' } = options;
 
-request.use(async (ctx, next) => {
-  const { req } = ctx;
-  const { url, options } = req;
-  const { __umiRequestCoreType__ = 'normal' } = options;
-  
-  // __umiRequestCoreType__ 用于区分请求内核类型
-  // 值为 'normal' 使用 umi-request 内置的请求内核
-  if ( __umiRequestCoreType__ === 'normal') {
+    // __umiRequestCoreType__ 用于区分请求内核类型
+    // 值为 'normal' 使用 umi-request 内置的请求内核
+    if (__umiRequestCoreType__ === 'normal') {
+      await next();
+      return;
+    }
+
+    // 非 normal 使用自定义请求内核获取响应数据
+    const response = getResponseByOtherWay();
+
+    // 将响应数据写入 ctx 中
+    ctx.res = response;
+
     await next();
     return;
-  }
-
-  // 非 normal 使用自定义请求内核获取响应数据
-  const response = getResponseByOtherWay();
-
-  // 将响应数据写入 ctx 中
-  ctx.res = response;
-
-  await next();
-  return;
-}, { core: true });
-
+  },
+  { core: true }
+);
 
 // 使用自定义请求内核
 request('/api/v1/rpc', {
   __umiRequestCoreType__: 'rpc',
   parseResponse: false,
 })
-  .then(function (response) {
+  .then(function(response) {
     console.log(response);
   })
-  .catch(function (error) {
+  .catch(function(error) {
     console.log(error);
-  })
-
+  });
 ```
 
 ## 拦截器
 
-在请求或响应被 ```then``` 或 ```catch``` 处理前拦截它们。
+在请求或响应被 `then` 或 `catch` 处理前拦截它们。
 
 1. 全局拦截器
 
-``` javascript
+```javascript
 // request拦截器, 改变url 或 options.
 request.interceptors.request.use((url, options) => {
-  return (
-    {
-      url: `${url}&interceptors=yes`,
-      options: { ...options, interceptors: true },
-    }
-  );
+  return {
+    url: `${url}&interceptors=yes`,
+    options: { ...options, interceptors: true },
+  };
 });
 
 // 和上一个相同
-request.interceptors.request.use((url, options) => {
-  return (
-    {
+request.interceptors.request.use(
+  (url, options) => {
+    return {
       url: `${url}&interceptors=yes`,
       options: { ...options, interceptors: true },
-    }
-  );
-}, { global: true });
-
+    };
+  },
+  { global: true }
+);
 
 // response拦截器, 处理response
 request.interceptors.response.use((response, options) => {
@@ -651,7 +650,7 @@ request.interceptors.response.use((response, options) => {
 });
 
 // 提前对响应做异常处理
-request.interceptors.response.use((response) => {
+request.interceptors.response.use(response => {
   const codeMaps = {
     502: '网关错误。',
     503: '服务不可用，服务器暂时过载或维护。',
@@ -662,29 +661,32 @@ request.interceptors.response.use((response) => {
 });
 
 // 克隆响应对象做解析处理
-request.interceptors.response.use(async (response) => {
+request.interceptors.response.use(async response => {
   const data = await response.clone().json();
-  if(data && data.NOT_LOGIN) {
+  if (data && data.NOT_LOGIN) {
     location.href = '登录url';
   }
   return response;
-})
+});
 ```
 
 2. 实例内部拦截器
 
-``` javascript
+```javascript
 // 全局拦截器直接使用 request 实例中的方法
-request.interceptors.request.use((url, options) => {
-  return {
-    url: `${url}&interceptors=yes`,
-    options: { ...options, interceptors: true },
-  };
-}, { global: false }); // 第二个参数不传默认为 { global: true }
+request.interceptors.request.use(
+  (url, options) => {
+    return {
+      url: `${url}&interceptors=yes`,
+      options: { ...options, interceptors: true },
+    };
+  },
+  { global: false }
+); // 第二个参数不传默认为 { global: true }
 
 function createClient(baseUrl) {
   const request = extend({
-    prefix: baseUrl
+    prefix: baseUrl,
   });
   return request;
 }
@@ -692,25 +694,64 @@ function createClient(baseUrl) {
 const clientA = createClient('/api');
 const clientB = createClient('/api');
 // 局部拦截器使用
-clientA.interceptors.request.use((url, options) => {
-  return {
-    url: `${url}&interceptors=clientA`,
-    options,
-  };
-}, { global: false });
+clientA.interceptors.request.use(
+  (url, options) => {
+    return {
+      url: `${url}&interceptors=clientA`,
+      options,
+    };
+  },
+  { global: false }
+);
 
-clientB.interceptors.request.use((url, options) => {
-  return {
-    url: `${url}&interceptors=clientB`,
-    options,
-  };
-}, { global: false });
+clientB.interceptors.request.use(
+  (url, options) => {
+    return {
+      url: `${url}&interceptors=clientB`,
+      options,
+    };
+  },
+  { global: false }
+);
 ```
 
-## 取消请求
+## 中止请求
+
+### 通过 AbortController 来中止请求
+
+基于 [AbortController](https://developer.mozilla.org/zh-CN/docs/Web/API/FetchController) 方案来中止一个或多个DOM请求
+
+```javascript
+// 按需决定是否使用 polyfill
+import 'yet-another-abortcontroller-polyfill'
+import Request from 'umi-request';
+
+const controller = new AbortController(); // 创建一个控制器
+const { signal } = controller; // 返回一个 AbortSignal 对象实例，它可以用来 with/abort 一个 DOM 请求。
+
+signal.addEventListener('abort', () => {
+  console.log('aborted!');
+});
+
+Request('/api/response_after_1_sec', {
+  signal, // 这将信号和控制器与获取请求相关联然后允许我们通过调用 AbortController.abort() 中止请求
+});
+
+// 取消请求
+setTimeout(() => {
+  controller.abort(); // 中止一个尚未完成的DOM请求。这能够中止 fetch 请求，任何响应Body的消费者和流。
+}, 100);
+```
+
+### 使用cancel token 方案来中止请求
+
+> Cancel Token 将逐步退出历史舞台，推荐使用 AbortController 来实现请求中止。
+
 
 你可以通过 **cancel token** 来取消一个请求
-> cancel token API 是基于已被撤销的 [cancelable-promises 方案](https://github.com/tc39/proposal-cancelable-promises)
+
+> cancel token API 是基于已被撤销的 [cancelable-promises 方案](https://github.com/tc39/proposal-cancelable-promises)；
+
 
 1. 你可以通过 **CancelToken.source** 来创建一个 cancel token，如下所示:
 
@@ -721,7 +762,7 @@ const CancelToken = Request.CancelToken;
 const { token, cancel } = CancelToken.source();
 
 Request.get('/api/cancel', {
-  cancelToken: token
+  cancelToken: token,
 }).catch(function(thrown) {
   if (Request.isCancel(thrown)) {
     console.log('Request canceled', thrown.message);
@@ -730,15 +771,18 @@ Request.get('/api/cancel', {
   }
 });
 
-Request.post('/api/cancel', {
-  name: 'hello world'
-}, {
-  cancelToken: token
-})
+Request.post(
+  '/api/cancel',
+  {
+    name: 'hello world',
+  },
+  {
+    cancelToken: token,
+  }
+);
 
 // 取消请求(参数为非必填)
 cancel('Operation canceled by the user.');
-
 ```
 
 2. 你也可以通过实例化 CancelToken 来创建一个 token，同时通过传入函数来获取取消方法：
@@ -752,11 +796,13 @@ let cancel;
 Request.get('/api/cancel', {
   cancelToken: new CancelToken(function executor(c) {
     cancel = c;
-  })
+  }),
 });
 // 取消请求
 cancel();
 ```
+
+
 
 ## 案例
 
@@ -764,21 +810,20 @@ cancel();
 
 通过 **Headers.get()** 获取响应头信息。(可参考 [MDN 文档](https://developer.mozilla.org/zh-CN/docs/Web/API/Headers/get))
 
-``` javascript
-request('/api/v1/some/api', { getResponse: true })
-.then(({ data, response}) => {
+```javascript
+request('/api/v1/some/api', { getResponse: true }).then(({ data, response }) => {
   response.headers.get('Content-Type');
-})
+});
 ```
 
 ### 文件上传
 
-使用 FormData() 构造函数时，浏览器会自动识别并添加请求头 ```"Content-Type: multipart/form-data"```, 且参数依旧是表单提交时那种键值对，因此不需要开发者手动设置 **Content-Type**
+使用 FormData() 构造函数时，浏览器会自动识别并添加请求头 `"Content-Type: multipart/form-data"`, 且参数依旧是表单提交时那种键值对，因此不需要开发者手动设置 **Content-Type**
 
-``` javascript
+```javascript
 const formData = new FormData();
 formData.append('file', file);
-request('/api/v1/some/api', { method:'post', data: formData });
+request('/api/v1/some/api', { method: 'post', data: formData });
 ```
 
 如果希望获取自定义头部信息，需要在服务器设置 [Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers),然后可按照上述方式获取自定义头部信息。

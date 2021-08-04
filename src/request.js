@@ -2,7 +2,7 @@ import Core from './core';
 import Cancel from './cancel/cancel';
 import CancelToken from './cancel/cancelToken';
 import isCancel from './cancel/isCancel';
-import Oinon from './onion';
+import Onion from './onion';
 import { getParamObject, mergeRequestOptions } from './utils';
 
 // 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
@@ -43,8 +43,8 @@ const request = (initOptions = {}) => {
   umiInstance.middlewares = {
     instance: coreInstance.onion.middlewares,
     defaultInstance: coreInstance.onion.defaultMiddlewares,
-    global: Oinon.globalMiddlewares,
-    core: Oinon.coreMiddlewares,
+    global: Onion.globalMiddlewares,
+    core: Onion.coreMiddlewares,
   };
 
   return umiInstance;
