@@ -821,7 +821,7 @@ Use FormData() contructor，the browser will add request header `"Content-Type: 
 ```javascript
 const formData = new FormData();
 formData.append('file', file);
-request('/api/v1/some/api', { method: 'post', data: formData });
+request('/api/v1/some/api', { method: 'post', data: formData, requestType: 'form',});
 ```
 
 The Access-Control-Expose-Headers response header indicates which headers can be exposed as part of the response by listing their names.[Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers)
