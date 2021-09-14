@@ -1,27 +1,25 @@
 {
   "name": "umi-request",
-  "version": "1.0.3",
-  "description": "网络请求库，基于 fetch封装, 旨在为开发者提供一个统一的api调用方式, 简化使用, 并提供诸如缓存, 超时, 字符编码处理, 错误处理等常用功能.",
+  "version": "1.4.0",
+  "description": "A request tool based on fetch.",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
+  "module": "dist/index.esm.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:umijs/umi-request.git"
   },
   "bugs": "https://github.com/umijs/umi-request/issues",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development rollup -c -w",
-    "build": "cross-env NODE_ENV=production rollup -c",
-    "test": "cross-env NODE_ENV=test jest",
-    "test:watch": "cross-env NODE_ENV=test jest --watch",
-    "test:cover": "cross-env NODE_ENV=test jest --coverage",
-    "lint": "eslint src",
+    "dev": "father-build --w",
+    "build": "father-build",
+    "test": "umi-test",
+    "test:watch": "umi-test --watch",
+    "test:cover": "umi-test --coverage",
+    "lint": "umi-lint src",
     "ci": "npm run lint && npm run test:cover",
     "coveralls": "cat ./coverage/lcov.info | coveralls",
-    "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build",
-    "pub": "npm publish",
-    "pub-beta": "npm publish --tag beta",
-    "precommit": "lint-staged"
+    "prepublishOnly": "rm -rf ./dist && npm run lint && npm run test && npm run build && np --no-cleanup --yolo --no-publish",
+    "precommit": "umi-lint --staged --prettier --fix"
   },
   "author": {
     "name": "puwei",
@@ -29,52 +27,34 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@babel/cli": "^7.0.0",
-    "@babel/core": "^7.0.0",
-    "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/preset-env": "^7.0.0",
-    "@babel/runtime": "^7.0.0",
-    "babel-core": "^7.0.0-bridge.0",
-    "babel-eslint": "^9.0.0",
-    "babel-jest": "^23.4.2",
     "create-test-server": "2.3.1",
-    "cross-env": "^5.2.0",
     "debug": "^4.1.0",
-    "eslint": "^5.5.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-config-prettier": "^3.3.0",
     "eslint-plugin-import": "^2.14.0",
-    "husky": "^0.14.3",
+    "father-build": "^1.19.5",
     "iconv-lite": "^0.4.24",
     "jest": "^23.5.0",
-    "lint-staged": "^8.1.0",
-    "prettier": "^1.15.3",
-    "rollup": "^0.68.0",
-    "rollup-plugin-babel": "^4.0.3",
-    "rollup-plugin-commonjs": "^9.1.6",
-    "rollup-plugin-eslint": "^5.0.0",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-terser": "^3.0.0",
-    "rollup-plugin-uglify": "^5.0.0",
-    "typescript": "^3.0.3"
+    "np": "5.0.2",
+    "prettier": "^2.3.0",
+    "query-string": "^6.9.0",
+    "typescript": "^3.0.3",
+    "umi": "^2.8.15",
+    "umi-lint": "^1.0.0-alpha.1",
+    "umi-plugin-library": "^1.1.6",
+    "umi-test": "^1.4.0",
+    "whatwg-fetch": "^3.0.0"
   },
   "dependencies": {
-    "query-string": "^6.0.0",
-    "whatwg-fetch": "^2.0.0"
+    "isomorphic-fetch": "^2.2.1",
+    "qs": "^6.9.1"
   },
   "files": [
     "dist/",
     "package.json",
     "README.md",
     "CHANGELOG.md",
-    "src/index.d.ts"
+    "types/index.d.ts"
   ],
-  "types": "src/index.d.ts",
-  "lint-staged": {
-    "*.js": [
-      "prettier --write --singleQuote=true --trailingComma=all --printWidth=120",
-      "eslint --fix",
-      "git add"
-    ]
-  }
+  "types": "types/index.d.ts"
 }

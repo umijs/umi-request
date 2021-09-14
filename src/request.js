@@ -1,39 +1,53 @@
-import fetch from "./lib/fetch";
-import { MapCache } from "./utils";
-import WrappedFetch from "./wrapped-fetch";
-import WrappedRpc from "./wrapped-rpc";
+import Core from './core';
+import Cancel from './cancel/cancel';
+import CancelToken from './cancel/cancelToken';
+import isCancel from './cancel/isCancel';
+import Onion from './onion';
+import { getParamObject, mergeRequestOptions } from './utils';
 
-/**
- * 获取request实例 调用参数可以覆盖初始化的参数. 用于一些情况的特殊处理.
- * @param {*} initOptions 初始化参数
- */
+// 通过 request 函数，在 core 之上再封装一层，提供原 umi/request 一致的 api，无缝升级
 const request = (initOptions = {}) => {
-  const mapCache = new MapCache(initOptions);
-  const instance = (input, options = {}) => {
-    options.headers = { ...initOptions.headers, ...options.headers };
-    options.params = { ...initOptions.params, ...options.params };
-    options = { ...initOptions, ...options };
-    const method = options.method || "get";
-    options.method = method.toLowerCase();
-    if (method === "rpc") {
-      // call rpc
-      return new WrappedRpc(input, options, mapCache);
-    } else {
-      return new WrappedFetch(input, options, mapCache);
-    }
+  const coreInstance = new Core(initOptions);
+  const umiInstance = (url, options = {}) => {
+    const mergeOptions = mergeRequestOptions(coreInstance.initOptions, options);
+    return coreInstance.request(url, mergeOptions);
   };
 
-  // 增加语法糖如: request.get request.post
-  const methods = ["get", "post", "delete", "put", "rpc", "patch"];
-  methods.forEach(method => {
-    instance[method] = (input, options) =>
-      instance(input, { ...options, method });
+  // 中间件
+  umiInstance.use = coreInstance.use.bind(coreInstance);
+  umiInstance.fetchIndex = coreInstance.fetchIndex;
+
+  // 拦截器
+  umiInstance.interceptors = {
+    request: {
+      use: Core.requestUse.bind(coreInstance),
+    },
+    response: {
+      use: Core.responseUse.bind(coreInstance),
+    },
+  };
+
+  // 请求语法糖： reguest.get request.post ……
+  const METHODS = ['get', 'post', 'delete', 'put', 'patch', 'head', 'options', 'rpc'];
+  METHODS.forEach(method => {
+    umiInstance[method] = (url, options) => umiInstance(url, { ...options, method });
   });
 
-  // 给request 也增加一个interceptors引用;
-  instance.interceptors = fetch.interceptors;
+  umiInstance.Cancel = Cancel;
+  umiInstance.CancelToken = CancelToken;
+  umiInstance.isCancel = isCancel;
 
-  return instance;
+  umiInstance.extendOptions = coreInstance.extendOptions.bind(coreInstance);
+
+  // 暴露各个实例的中间件，供开发者自由组合
+  umiInstance.middlewares = {
+    instance: coreInstance.onion.middlewares,
+    defaultInstance: coreInstance.onion.defaultMiddlewares,
+    global: Onion.globalMiddlewares,
+    core: Onion.coreMiddlewares,
+  };
+
+  return umiInstance;
 };
 
 /**
@@ -45,4 +59,10 @@ const request = (initOptions = {}) => {
  * @param {object} headers 统一的headers
  */
 export const extend = initOptions => request(initOptions);
-export default request();
+
+/**
+ * 暴露 fetch 中间件，保障依旧可以使用
+ */
+export const fetch = request({ parseResponse: false });
+
+export default request({});

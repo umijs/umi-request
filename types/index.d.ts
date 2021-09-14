@@ -1,5 +1,14 @@
 export type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData';
-
+export interface ResponseError<D = any> extends Error {
+  name: string;
+  data: D;
+  response: Response;
+  request: {
+    url: string;
+    options: RequestOptionsInit;
+  };
+  type: string;
+}
 /**
  * 增加的参数
  * @param {string} requestType post类型, 用来简化写content-Type, 默认json
@@ -19,14 +28,23 @@ export interface RequestOptionsInit extends RequestInit {
   charset?: 'utf8' | 'gbk';
   requestType?: 'json' | 'form';
   data?: any;
-  params?: object;
+  params?: object | URLSearchParams;
+  paramsSerializer?: (params: object) => string;
   responseType?: ResponseType;
   useCache?: boolean;
   ttl?: number;
   timeout?: number;
-  errorHandler?: (error: Error) => void;
+  timeoutMessage?: string;
+  errorHandler?: (error: ResponseError) => void;
   prefix?: string;
   suffix?: string;
+  throwErrIfParseFail?: boolean;
+  parseResponse?: boolean;
+  cancelToken?: CancelToken;
+  getResponse?: boolean;
+  validateCache?: (url: string, options: RequestOptionsInit) => boolean;
+  __umiRequestCoreType__?: string;
+  [key: string]: any;
 }
 
 export interface RequestOptionsWithoutResponse extends RequestOptionsInit {
@@ -42,12 +60,26 @@ export type RequestResponse<T = any> = {
   response: Response;
 };
 
-export type RequestInterceptor = (url: string, options: RequestOptionsInit) => {
-  url?: string,
-  options?: RequestOptionsInit,
+export type RequestInterceptor = (
+  url: string,
+  options: RequestOptionsInit
+) => {
+  url?: string;
+  options?: RequestOptionsInit;
 };
 
-export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response;
+export interface Context {
+  req: {
+    url: string;
+    options: RequestOptionsInit;
+  };
+  res: any;
+}
+
+export type ResponseInterceptor = (response: Response, options: RequestOptionsInit) => Response | Promise<Response>;
+
+export type OnionMiddleware = (ctx: Context, next: () => void) => void;
+export type OnionOptions = { global?: boolean; core?: boolean; defaultInstance?: boolean };
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
@@ -57,15 +89,30 @@ export interface RequestMethod<R = false> {
   post: RequestMethod<R>;
   delete: RequestMethod<R>;
   put: RequestMethod<R>;
+  patch: RequestMethod<R>;
+  head: RequestMethod<R>;
+  options: RequestMethod<R>;
   rpc: RequestMethod<R>;
   interceptors: {
     request: {
-      use: (handler: RequestInterceptor) => void;
+      use: (handler: RequestInterceptor, options?: OnionOptions) => void;
     };
     response: {
-      use: (handler: ResponseInterceptor) => void;
-    }
-  }
+      use: (handler: ResponseInterceptor, options?: OnionOptions) => void;
+    };
+  };
+  use: (handler: OnionMiddleware, options?: OnionOptions) => void;
+  fetchIndex: number;
+  Cancel: CancelStatic;
+  CancelToken: CancelTokenStatic;
+  isCancel(value: any): boolean;
+  extendOptions: (options: RequestOptionsInit) => void;
+  middlewares: {
+    instance: OnionMiddleware[];
+    defaultInstance: OnionMiddleware[];
+    global: OnionMiddleware[];
+    core: OnionMiddleware[];
+  };
 }
 
 export interface ExtendOnlyOptions {
@@ -86,6 +133,39 @@ export interface Extend {
 
 export declare var extend: Extend;
 
+export interface CancelStatic {
+  new (message?: string): Cancel;
+}
+
+export interface Cancel {
+  message: string;
+}
+
+export interface Canceler {
+  (message?: string): void;
+}
+
+export interface CancelTokenStatic {
+  new (executor: (cancel: Canceler) => void): CancelToken;
+  source(): CancelTokenSource;
+}
+
+export interface CancelToken {
+  promise: Promise<Cancel>;
+  reason?: Cancel;
+  throwIfRequested(): void;
+}
+
+export interface CancelTokenSource {
+  token: CancelToken;
+  cancel: Canceler;
+}
+
 declare var request: RequestMethod;
+
+export declare var fetch: RequestMethod;
+
+export declare var AbortController: { prototype: AbortController; new (): AbortController };
+export declare var AbortSignal: { prototype: AbortSignal; new (): AbortSignal };
 
 export default request;
