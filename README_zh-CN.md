@@ -34,18 +34,18 @@
 | :--------- | :------------- | :------------- | :------------- |
 | 实现       | 浏览器原生支持 | 浏览器原生支持 | XMLHttpRequest |
 | 大小       | 9k             | 4k (polyfill)  | 14k            |
-| query 简化 | ✅             | ❌             | ✅             |
-| post 简化  | ✅             | ❌             | ❌             |
-| 超时       | ✅             | ❌             | ✅             |
-| 缓存       | ✅             | ❌             | ❌             |
-| 错误检查   | ✅             | ❌             | ❌             |
-| 错误处理   | ✅             | ❌             | ✅             |
-| 拦截器     | ✅             | ❌             | ✅             |
-| 前缀       | ✅             | ❌             | ❌             |
-| 后缀       | ✅             | ❌             | ❌             |
-| 处理 gbk   | ✅             | ❌             | ❌             |
-| 中间件     | ✅             | ❌             | ❌             |
-| 取消请求   | ✅             | ❌             | ✅             |
+| query 简化 | ✅              | ❌              | ✅              |
+| post 简化  | ✅              | ❌              | ❌              |
+| 超时       | ✅              | ❌              | ✅              |
+| 缓存       | ✅              | ❌              | ❌              |
+| 错误检查   | ✅              | ❌              | ❌              |
+| 错误处理   | ✅              | ❌              | ✅              |
+| 拦截器     | ✅              | ❌              | ✅              |
+| 前缀       | ✅              | ❌              | ❌              |
+| 后缀       | ✅              | ❌              | ❌              |
+| 处理 gbk   | ✅              | ❌              | ❌              |
+| 中间件     | ✅              | ❌              | ❌              |
+| 取消请求   | ✅              | ❌              | ✅              |
 
 更多讨论参考[传统 Ajax 已死，Fetch 永生](https://github.com/camsong/blog/issues/2), 如果你有好的建议和需求, 请提 [issue](https://github.com/umijs/umi/issues)
 
@@ -233,7 +233,8 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | params              | url 请求参数                                                          | object 或 URLSearchParams 对象 | --                                | --                         |
 | data                | 提交的数据                                                            | any                            | --                                | --                         |
 | headers             | fetch 原有参数                                                        | object                         | --                                | {}                         |
-| timeout             | 超时时长, 默认毫秒, 写操作慎用                                        | number                         | --                                | --                         |
+| timeout             | 超时时长, 默认毫秒, 写操作慎用                                        | number                         | --                                |
+| timeoutMessage      | 超时可自定义提示文案, 需先定义 timeout                                | string                         | --                                | --                         |
 | prefix              | 前缀, 一般用于覆盖统一设置的 prefix                                   | string                         | --                                | --                         |
 | suffix              | 后缀, 比如某些场景 api 需要统一加 .json                               | string                         | --                                | --                         |
 | credentials         | fetch 请求包含 cookies 信息                                           | string                         | --                                | credentials: 'same-origin' |

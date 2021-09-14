@@ -105,10 +105,10 @@ export function safeJsonParse(data, throwErrIfParseFail = false, response = null
   return data;
 }
 
-export function timeout2Throw(msec, request) {
+export function timeout2Throw(msec, timeoutMessage, request) {
   return new Promise((_, reject) => {
     setTimeout(() => {
-      reject(new RequestError(`timeout of ${msec}ms exceeded`, request, 'Timeout'));
+      reject(new RequestError(timeoutMessage || `timeout of ${msec}ms exceeded`, request, 'Timeout'));
     }, msec);
   });
 }
