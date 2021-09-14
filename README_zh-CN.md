@@ -819,12 +819,12 @@ request('/api/v1/some/api', { getResponse: true }).then(({ data, response }) => 
 
 ### 文件上传
 
-使用 FormData() 构造函数时，浏览器会自动识别并添加请求头 `"Content-Type: multipart/form-data"`, 且参数依旧是表单提交时那种键值对，因此不需要开发者手动设置 **Content-Type**
+使用 FormData() 构造函数时，需要制定`requestType: "form"`，然后浏览器会自动识别并添加请求头 `"Content-Type: multipart/form-data"`，且参数依旧是表单提交时那种键值对，因此不需要开发者手动设置请求头 **Content-Type**，否则可能接口会报 500 的错误。
 
 ```javascript
 const formData = new FormData();
 formData.append('file', file);
-request('/api/v1/some/api', { method: 'post', data: formData });
+request('/api/v1/some/api', { method: 'post', requestType: "form", data: formData });
 ```
 
 如果希望获取自定义头部信息，需要在服务器设置 [Access-Control-Expose-Headers](https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Headers/Access-Control-Expose-Headers),然后可按照上述方式获取自定义头部信息。
