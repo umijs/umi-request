@@ -30,18 +30,18 @@ The network request library, based on fetch encapsulation, combines the features
 | :------------------- | :--------------------- | :--------------------- | :------------- |
 | implementation       | Browser native support | Browser native support | XMLHttpRequest |
 | size                 | 9k                     | 4k (polyfill)          | 14k            |
-| query simplification | ✅                     | ❌                     | ✅             |
-| post simplification  | ✅                     | ❌                     | ❌             |
-| timeout              | ✅                     | ❌                     | ✅             |
-| cache                | ✅                     | ❌                     | ❌             |
-| error Check          | ✅                     | ❌                     | ❌             |
-| error Handling       | ✅                     | ❌                     | ✅             |
-| interceptor          | ✅                     | ❌                     | ✅             |
-| prefix               | ✅                     | ❌                     | ❌             |
-| suffix               | ✅                     | ❌                     | ❌             |
-| processing gbk       | ✅                     | ❌                     | ❌             |
-| middleware           | ✅                     | ❌                     | ❌             |
-| cancel request       | ✅                     | ❌                     | ✅             |
+| query simplification | ✅                      | ❌                      | ✅              |
+| post simplification  | ✅                      | ❌                      | ❌              |
+| timeout              | ✅                      | ❌                      | ✅              |
+| cache                | ✅                      | ❌                      | ❌              |
+| error Check          | ✅                      | ❌                      | ❌              |
+| error Handling       | ✅                      | ❌                      | ✅              |
+| interceptor          | ✅                      | ❌                      | ✅              |
+| prefix               | ✅                      | ❌                      | ❌              |
+| suffix               | ✅                      | ❌                      | ❌              |
+| processing gbk       | ✅                      | ❌                      | ❌              |
+| middleware           | ✅                      | ❌                      | ❌              |
+| cancel request       | ✅                      | ❌                      | ✅              |
 
 For more discussion, refer to [Traditional Ajax is dead, Fetch eternal life](https://github.com/camsong/blog/issues/2) If you have good suggestions and needs, please mention [issue](https://github.com/umijs/umi/issues)
 
@@ -227,7 +227,8 @@ More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pr
 | params              | url request parameters                                           | object or URLSearchParams | --                                | --                         |
 | data                | Submitted data                                                   | any                       | --                                | --                         |
 | headers             | fetch original parameters                                        | object                    | --                                | {}                         |
-| timeout             | timeout, default millisecond, write with caution                 | number                    | --                                | --                         |
+| timeout             | timeout, default millisecond, write with caution                 | number                    | --                                |
+| timeoutMessage      | customize timeout error message, please config `timeout` first   | string                    | --                                | --                         |
 | prefix              | prefix, generally used to override the uniform settings prefix   | string                    | --                                | --                         |
 | suffix              | suffix, such as some scenes api need to be unified .json         | string                    | --                                |
 | credentials         | fetch request with cookies                                       | string                    | --                                | credentials: 'same-origin' |

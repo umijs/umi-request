@@ -15,6 +15,7 @@ export default function fetchMiddleware(ctx, next) {
   const { req: { options = {}, url = '' } = {}, cache, responseInterceptors } = ctx;
   const {
     timeout = 0,
+    timeoutMessage,
     __umiRequestCoreType__ = 'normal',
     useCache = false,
     method = 'get',
@@ -59,7 +60,7 @@ export default function fetchMiddleware(ctx, next) {
   let response;
   // 超时处理、取消请求处理
   if (timeout > 0) {
-    response = Promise.race([cancel2Throw(options, ctx), adapter(url, options), timeout2Throw(timeout, ctx.req)]);
+    response = Promise.race([cancel2Throw(options, ctx), adapter(url, options), timeout2Throw(timeout, timeoutMessage, ctx.req)]);
   } else {
     response = Promise.race([cancel2Throw(options, ctx), adapter(url, options)]);
   }

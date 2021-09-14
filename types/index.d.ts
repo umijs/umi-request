@@ -34,6 +34,7 @@ export interface RequestOptionsInit extends RequestInit {
   useCache?: boolean;
   ttl?: number;
   timeout?: number;
+  timeoutMessage?: string;
   errorHandler?: (error: ResponseError) => void;
   prefix?: string;
   suffix?: string;

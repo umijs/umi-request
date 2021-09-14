@@ -50,7 +50,7 @@ describe('timeout', () => {
       response = await request(prefix('/test/timeout'), { timeout: 800 });
     } catch (error) {
       expect(error.name).toBe('RequestError');
-      expect(error.message).toBe('timeout of 800ms exceeded');
+      expect(error.message).toBe(error.request.options.timeoutMessage || 'timeout of 800ms exceeded');
       expect(error.request.options.timeout).toBe(800);
       done();
     }
