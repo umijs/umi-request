@@ -186,8 +186,8 @@ export function getParamObject(val) {
   return val;
 }
 
-export function reqStringify(val) {
-  return stringify(val, { arrayFormat: 'repeat', strictNullHandling: true });
+export function reqStringify(val, options = { arrayFormat: 'repeat', strictNullHandling: true }) {
+  return stringify(val, options);
 }
 
 export function mergeRequestOptions(options, options2Merge) {
