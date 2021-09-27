@@ -250,6 +250,7 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | getResponse         | 是否获取源 response, 返回结果将包裹一层                               | boolean                        | --                                | fasle                      |
 | errorHandler        | 异常处理, 或者覆盖统一的异常处理                                      | function(error)                | --                                |
 | cancelToken         | 取消请求的 Token                                                      | CancelToken.token              | --                                | --                         |
+| onDownloadProgress | get download progress | ({ received: number; total?: number; percentage?: number }) => void | -- | -- |
 
 fetch 原其他参数有效, 详见[fetch 文档](https://github.github.io/fetch/)
 
@@ -363,6 +364,11 @@ fetch 原其他参数有效, 详见[fetch 文档](https://github.github.io/fetch
 
   // 'cancelToken' 取消请求的 Token，详细使用请参考下方取消请求文档
   cancelToken: null,
+
+  // 'onDownloadProgress': 响应头需要设置 `content-length`，以获取下载进度。如果未设置 `content-length` 则只能获取到已接受的字节数
+  ({ received, total, percentage }) => {
+    console.log(percentage);
+  }
 }
 ```
 

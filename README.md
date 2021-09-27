@@ -244,6 +244,7 @@ More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pr
 | getResponse         | Whether to get the source response, the result will wrap a layer | boolean                   | --                                | fasle                      |
 | errorHandler        | exception handling, or override unified exception handling       | function(error)           | --                                |
 | cancelToken         | Token to cancel request                                          | CancelToken.token         | --                                | --                         |
+| onDownloadProgress | get download progress | ({ received: number; total?: number; percentage?: number }) => void | -- | -- |
 
 The other parameters of fetch are valid. See [fetch documentation](https://github.github.io/fetch/)
 
@@ -368,6 +369,12 @@ The other parameters of fetch are valid. See [fetch documentation](https://githu
 
   // 'cancelToken' the token of cancel request.
   cancelToken: null,
+
+  // 'onDownloadProgress': get download progress, when response header `content-length` is set.
+  // if 'content-length' is not available, you will only get received length.
+  ({ received, total, percentage }) => {
+    console.log(percentage);
+  }
 }
 ```
 
