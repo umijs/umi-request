@@ -43,6 +43,7 @@ export interface RequestOptionsInit extends RequestInit {
   cancelToken?: CancelToken;
   getResponse?: boolean;
   validateCache?: (url: string, options: RequestOptionsInit) => boolean;
+  onDownloadProgress?: (progress: { received: number; total?: number; percentage?: number }) => void;
   __umiRequestCoreType__?: string;
   [key: string]: any;
 }

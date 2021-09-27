@@ -1,6 +1,7 @@
 import Onion from './onion';
 import { MapCache, mergeRequestOptions } from './utils';
 import addfixInterceptor from './interceptor/addfix';
+import downloadProgressInterceptor from './interceptor/downloadProgress';
 import fetchMiddleware from './middleware/fetch';
 import parseResponseMiddleware from './middleware/parseResponse';
 import simplePost from './middleware/simplePost';
@@ -26,7 +27,7 @@ class Core {
   }
   // 旧版拦截器为共享
   static requestInterceptors = [addfixInterceptor];
-  static responseInterceptors = [];
+  static responseInterceptors = [downloadProgressInterceptor];
 
   // 请求拦截器 默认 { global: true } 兼容旧版本拦截器
   static requestUse(handler, opt = { global: true }) {
@@ -92,7 +93,7 @@ class Core {
         .then(() => {
           resolve(obj.res);
         })
-        .catch(error => {
+        .catch((error) => {
           const { errorHandler } = obj.req.options;
           if (errorHandler) {
             try {
