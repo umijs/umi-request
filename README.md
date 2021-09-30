@@ -29,7 +29,7 @@ The network request library, based on fetch encapsulation, combines the features
 | Features             | umi-request            | fetch                  | axios          |
 | :------------------- | :--------------------- | :--------------------- | :------------- |
 | implementation       | Browser native support | Browser native support | XMLHttpRequest |
-| size                 | 9k                     | 4k (polyfill)          | 14k            |
+| size                 | 18k                    | 4k (polyfill)          | 14k            |
 | query simplification | ✅                      | ❌                      | ✅              |
 | post simplification  | ✅                      | ❌                      | ❌              |
 | timeout              | ✅                      | ❌                      | ✅              |
