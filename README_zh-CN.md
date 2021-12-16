@@ -247,7 +247,7 @@ umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](htt
 | charset             | 字符集                                                                | string                         | utf8 , gbk                        | utf8                       |
 | responseType        | 如何解析返回的数据                                                    | string                         | json , text , blob , formData ... | json , text                |
 | throwErrIfParseFail | 当 responseType 为 'json', 对请求结果做 JSON.parse 出错时是否抛出异常 | boolean                        | --                                | false                      |
-| getResponse         | 是否获取源 response, 返回结果将包裹一层                               | boolean                        | --                                | fasle                      |
+| getResponse         | 是否获取源 response, 返回结果将包裹一层                               | boolean                        | --                                | false                      |
 | errorHandler        | 异常处理, 或者覆盖统一的异常处理                                      | function(error)                | --                                |
 | cancelToken         | 取消请求的 Token                                                      | CancelToken.token              | --                                | --                         |
 
