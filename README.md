@@ -241,7 +241,7 @@ More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pr
 | charset             | character set                                                    | string                    | utf8 , gbk                        | utf8                       |
 | responseType        | How to parse the returned data                                   | string                    | json , text , blob , formData ... | json , text                |
 | throwErrIfParseFail | throw error when JSON parse fail and responseType is 'json'      | boolean                   | --                                | false                      |
-| getResponse         | Whether to get the source response, the result will wrap a layer | boolean                   | --                                | fasle                      |
+| getResponse         | Whether to get the source response, the result will wrap a layer | boolean                   | --                                | false                      |
 | errorHandler        | exception handling, or override unified exception handling       | function(error)           | --                                |
 | cancelToken         | Token to cancel request                                          | CancelToken.token         | --                                | --                         |
 
