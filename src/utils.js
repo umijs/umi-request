@@ -107,6 +107,11 @@ export function safeJsonParse(data, throwErrIfParseFail = false, response = null
 
 export function timeout2Throw(msec, timeoutMessage, request) {
   return new Promise((_, reject) => {
+    // If msec is Infinity, will immediately cancel request.
+    if (msec === Infinity) {
+      // never cancel Inf request.
+      return
+    }
     setTimeout(() => {
       reject(new RequestError(timeoutMessage || `timeout of ${msec}ms exceeded`, request, 'Timeout'));
     }, msec);
