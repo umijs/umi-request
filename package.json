@@ -46,7 +46,7 @@
     "whatwg-fetch": "^3.0.0"
   },
   "dependencies": {
-    "isomorphic-fetch": "^2.2.1",
+    "isomorphic-fetch": "^3.0.0",
     "qs": "^6.9.1"
   },
   "files": [
