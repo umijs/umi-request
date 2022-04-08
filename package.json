@@ -1,5 +1,5 @@
 {
-  "name": "umi-request",
+  "name": "umi-request-enhance",
   "version": "1.4.0",
   "description": "A request tool based on fetch.",
   "main": "dist/index.js",
