@@ -117,7 +117,7 @@ export function timeout2Throw(msec, timeoutMessage, request) {
 export function cancel2Throw(opt) {
   return new Promise((_, reject) => {
     if (opt.cancelToken) {
-      opt.cancelToken.promise.then(cancel => {
+      opt.cancelToken.promise.then((cancel) => {
         reject(cancel);
       });
     }
@@ -154,6 +154,10 @@ export function isDate(val) {
 
 export function isObject(val) {
   return val !== null && typeof val === 'object';
+}
+
+export function isFormData(val) {
+  return typeof FormData !== 'undefined' && val instanceof FormData;
 }
 
 export function forEach2ObjArr(target, callback) {

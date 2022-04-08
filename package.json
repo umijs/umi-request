@@ -1,6 +1,6 @@
 {
-  "name": "umi-request",
-  "version": "1.4.0",
+  "name": "umi-request-enhance",
+  "version": "1.5.0",
   "description": "A request tool based on fetch.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
