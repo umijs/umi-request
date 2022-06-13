@@ -1,4 +1,5 @@
 export type ResponseType = 'json' | 'text' | 'blob' | 'arrayBuffer' | 'formData';
+
 export interface ResponseError<D = any> extends Error {
   name: string;
   data: D;
@@ -9,6 +10,7 @@ export interface ResponseError<D = any> extends Error {
   };
   type: string;
 }
+
 /**
  * 增加的参数
  * @param {string} requestType post类型, 用来简化写content-Type, 默认json
@@ -26,7 +28,7 @@ export interface ResponseError<D = any> extends Error {
  */
 export interface RequestOptionsInit extends RequestInit {
   charset?: 'utf8' | 'gbk';
-  requestType?: 'json' | 'form';
+  requestType?: 'json' | 'form' | string;
   data?: any;
   params?: object | URLSearchParams;
   paramsSerializer?: (params: object) => string;
@@ -44,6 +46,7 @@ export interface RequestOptionsInit extends RequestInit {
   getResponse?: boolean;
   validateCache?: (url: string, options: RequestOptionsInit) => boolean;
   __umiRequestCoreType__?: string;
+
   [key: string]: any;
 }
 
@@ -83,8 +86,11 @@ export type OnionOptions = { global?: boolean; core?: boolean; defaultInstance?:
 
 export interface RequestMethod<R = false> {
   <T = any>(url: string, options: RequestOptionsWithResponse): Promise<RequestResponse<T>>;
+
   <T = any>(url: string, options: RequestOptionsWithoutResponse): Promise<T>;
+
   <T = any>(url: string, options?: RequestOptionsInit): R extends true ? Promise<RequestResponse<T>> : Promise<T>;
+
   get: RequestMethod<R>;
   post: RequestMethod<R>;
   delete: RequestMethod<R>;
@@ -105,7 +111,9 @@ export interface RequestMethod<R = false> {
   fetchIndex: number;
   Cancel: CancelStatic;
   CancelToken: CancelTokenStatic;
+
   isCancel(value: any): boolean;
+
   extendOptions: (options: RequestOptionsInit) => void;
   middlewares: {
     instance: OnionMiddleware[];
@@ -127,14 +135,16 @@ export type ExtendOptionsWithResponse = RequestOptionsWithResponse & ExtendOnlyO
 
 export interface Extend {
   (options: ExtendOptionsWithoutResponse): RequestMethod<false>;
+
   (options: ExtendOptionsWithResponse): RequestMethod<true>;
+
   (options: ExtendOptionsInit): RequestMethod;
 }
 
 export declare var extend: Extend;
 
 export interface CancelStatic {
-  new (message?: string): Cancel;
+  new(message?: string): Cancel;
 }
 
 export interface Cancel {
@@ -146,13 +156,15 @@ export interface Canceler {
 }
 
 export interface CancelTokenStatic {
-  new (executor: (cancel: Canceler) => void): CancelToken;
+  new(executor: (cancel: Canceler) => void): CancelToken;
+
   source(): CancelTokenSource;
 }
 
 export interface CancelToken {
   promise: Promise<Cancel>;
   reason?: Cancel;
+
   throwIfRequested(): void;
 }
 
@@ -165,7 +177,7 @@ declare var request: RequestMethod;
 
 export declare var fetch: RequestMethod;
 
-export declare var AbortController: { prototype: AbortController; new (): AbortController };
-export declare var AbortSignal: { prototype: AbortSignal; new (): AbortSignal };
+export declare var AbortController: { prototype: AbortController; new(): AbortController };
+export declare var AbortSignal: { prototype: AbortSignal; new(): AbortSignal };
 
 export default request;
