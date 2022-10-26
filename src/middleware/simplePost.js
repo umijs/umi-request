@@ -13,8 +13,10 @@ export default function simplePostMiddleware(ctx, next) {
   const { requestType = 'json', data } = options;
   // 数据使用类axios的新字段data, 避免引用后影响旧代码, 如将body stringify多次
   if (data) {
-    const dataType = Object.prototype.toString.call(data);
-    if (dataType === '[object Object]' || dataType === '[object Array]') {
+    const dataType = Object.prototype.toString.call(data).slice(8,-1);
+    const isFormData = data instanceof FormData;
+    // 判断是否是FormData, FormData不作处理
+    if (!isFormData && ['Object', 'Array'].includes(dataType)) {
       if (requestType === 'json') {
         options.headers = {
           Accept: 'application/json',
