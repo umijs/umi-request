@@ -221,7 +221,9 @@ extendRequest('/api/user')
 
 **request.options(url[, options])**
 
-umi-request 可以进行一层简单封装后再使用, 可参考 [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
+**request.rpc(url[, options])**
+
+更多细节, 可参考 [request.js](https://github.com/umijs/umi-request/blob/master/src/request.js)
 
 ## 请求配置
 
