@@ -217,7 +217,9 @@ The available instance methods are list below. The specified options will be mer
 
 **request.options(url[, options])**
 
-More umi-request cases can see [antd-pro](https://github.com/umijs/ant-design-pro/blob/master/src/utils/request.js)
+**request.rpc(url[, options])**
+
+For more details, see [request.js](https://github.com/umijs/umi-request/blob/master/src/request.js)
 
 ## request options
 
